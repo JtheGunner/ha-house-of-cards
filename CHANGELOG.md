@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-27
+
 ### Added
 
 - YouTrack issues card: a title (project and query name, `name` replaces it), an optional `badge` for the number of matches or an attribute, coloured state badges and priority edges (`colors` overrides them), a `+N more` line that expands to every issue (`expandable`), a link to the same search in YouTrack for issues the sensor does not list, and a detail view per issue with its full summary, priority and assignee.
@@ -74,7 +76,8 @@ All notable changes to this project are documented here. The format follows [Kee
 - Visual editors for all cards, English and German labels, and theme-variable styling for the classic dashboard and UI Lovelace Minimalist.
 - Warn-only documentation drift check for pull requests.
 
-[Unreleased]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.1.0...v0.2.0
