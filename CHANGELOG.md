@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.2] - 2026-11-27
 
 ### Fixed
 
@@ -46,7 +46,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Visual editors for all cards, English and German labels, and theme-variable styling for the classic dashboard and UI Lovelace Minimalist.
 - Warn-only documentation drift check for pull requests.
 
-[Unreleased]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.1...HEAD
+[0.2.2]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/JtheGunner/ha-house-of-cards/releases/tag/v0.1.0
