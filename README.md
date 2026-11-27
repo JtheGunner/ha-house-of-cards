@@ -34,9 +34,16 @@ House of Cards is a small set of cards for the integrations you build yourself, 
 
 [![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=JtheGunner&repository=ha-house-of-cards&category=plugin)
 
-1. In HACS, add `https://github.com/JtheGunner/ha-house-of-cards` as a **custom repository** with the category **Dashboard**.
-2. Download **House of Cards** and reload the browser.
+1. In HACS, search for **House of Cards** (category **Dashboard**) and download it.
+2. Reload the browser.
 3. Add a card from the card picker, or use the YAML types below.
+
+<details>
+<summary>HACS does not list it yet?</summary>
+
+Add `https://github.com/JtheGunner/ha-house-of-cards` in HACS as a **custom repository** with the category **Dashboard**, then follow the steps above.
+
+</details>
 
 <details>
 <summary>Manual installation</summary>
