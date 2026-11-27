@@ -40,6 +40,8 @@ Without `devices` and `platform` the card asks you to choose one of them. With `
 
 A column is a sensor key or `sensor:attribute`, exactly like `fields` of the [device card](hoc-device-card.md#fields); objects work too: `name` replaces the column title, `icon` sets the icon used in the column title (see `column_titles`), `color` tints the values, `title_color` colours the column title, `align` sets `left`, `center` or `right` for the column, and `trend` adds a change arrow from another sensor. `sort_by` takes `name` or a column. In the visual editor you choose from every sensor and attribute of the listed devices.
 
+Without `name`, a column is titled with the entity name Home Assistant shows, in your language (for example "Offene Issues"). The keys in `columns` and `sort_by` stay the sensors' English keys, such as `issues_open`; the editor lists them under the entity names.
+
 Without `align`, columns that hold only numbers are right-aligned and everything else is left-aligned, titles included.
 
 Default columns:

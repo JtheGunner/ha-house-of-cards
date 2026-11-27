@@ -24,6 +24,8 @@ export type Tone = "success" | "failure" | "pending";
 export interface FieldView {
   id: string;
   label: string;
+  /** The Home Assistant entity name (without the device name), as shown in column titles and the editor. */
+  entityLabel: string;
   value: string;
   unit?: string;
   color: string;
@@ -151,6 +153,27 @@ function baseLabel(
   return humanize(key);
 }
 
+/**
+ * The name Home Assistant shows for the entity, minus the device name. Unlike `baseLabel` it never
+ * swaps a known key for a short text, so it matches what the user sees in their language.
+ */
+function entityName(
+  hass: Pick<HomeAssistant, "locale">,
+  key: string,
+  stateObj: HassEntityState,
+  deviceName: string | undefined,
+): string {
+  const friendly = stateObj.attributes["friendly_name"];
+  if (typeof friendly === "string" && friendly.trim() !== "") {
+    const stripped =
+      deviceName && friendly.startsWith(`${deviceName} `)
+        ? friendly.slice(deviceName.length + 1)
+        : friendly;
+    if (stripped.trim() !== "") return stripped.trim();
+  }
+  return baseLabel(hass, key, stateObj, deviceName);
+}
+
 function toneOf(key: string, state: string): Tone | undefined {
   if (state === "success") return "success";
   if (state === "failure" || state === "error") return "failure";
@@ -219,11 +242,17 @@ export function buildFieldViews(
       (spec.attribute
         ? `${baseLabel(hass, spec.key, stateObj, deviceName)} › ${humanize(spec.attribute)}`
         : baseLabel(hass, spec.key, stateObj, deviceName));
+    const entityLabel =
+      spec.name ??
+      (spec.attribute
+        ? `${entityName(hass, spec.key, stateObj, deviceName)} › ${humanize(spec.attribute)}`
+        : entityName(hass, spec.key, stateObj, deviceName));
     const trendState = spec.trend ? entities[spec.trend]?.state : undefined;
 
     const view: FieldView = {
       id: fieldId(spec),
       label,
+      entityLabel,
       ...formatted,
       raw,
       color: resolveColor(spec, tone),
@@ -262,7 +291,7 @@ export function discoverFieldOptions(hass: HomeAssistant, deviceId: string): Fie
     const key = entry.translation_key || entry.entity_id;
     if (seen.has(key)) continue;
     seen.add(key);
-    const label = baseLabel(hass, key, stateObj, deviceName);
+    const label = entityName(hass, key, stateObj, deviceName);
     options.push({ value: key, label });
     for (const [name, raw] of Object.entries(stateObj.attributes)) {
       if (INTERNAL_ATTRIBUTES.has(name) || formatAttribute(raw) === undefined) continue;
