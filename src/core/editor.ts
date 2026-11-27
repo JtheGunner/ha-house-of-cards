@@ -64,10 +64,14 @@ export function fieldsSelectorFromOptions(
           color: { label: label("color"), selector: { ui_color: {} } },
           ...(withAlign
             ? {
+                title_color: { label: label("title_color"), selector: { ui_color: {} } },
                 align: {
                   label: label("align"),
                   selector: { select: { mode: "dropdown", options: alignOptions } },
                 },
+              }
+            : {}),
+        },
                 title_color: { label: label("title_color"), selector: { ui_color: {} } },
               }
             : {}),
