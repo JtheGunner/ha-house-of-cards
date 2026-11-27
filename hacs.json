@@ -1,5 +1,6 @@
 {
   "name": "House of Cards",
   "render_readme": true,
-  "filename": "ha-house-of-cards.js"
+  "filename": "ha-house-of-cards.js",
+  "homeassistant": "2026.9.0"
 }
