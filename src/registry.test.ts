@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { registerCards, type CardDefinition } from "./registry";
+import { cards, registerCards, type CardDefinition } from "./registry";
 
 class Dummy extends HTMLElement {}
 
@@ -41,5 +41,20 @@ describe("registerCards", () => {
       },
     ]);
     expect(customElements.get("hoc-registry-edit-card-editor")).toBe(Editor);
+  });
+});
+
+describe("cards", () => {
+  it("contains every GitHub card with a unique tag", () => {
+    const tags = cards.map((card) => card.tag);
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "hoc-github-repo-card",
+        "hoc-github-repos-card",
+        "hoc-github-profile-card",
+        "hoc-github-attention-card",
+      ]),
+    );
+    expect(new Set(tags).size).toBe(tags.length);
   });
 });

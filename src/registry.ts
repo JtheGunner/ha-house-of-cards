@@ -1,4 +1,5 @@
 import { repoCardDefinition } from "./cards/github-pulse/repo/card";
+import { attentionCardDefinition } from "./cards/github-pulse/attention/card";
 import { profileCardDefinition } from "./cards/github-pulse/profile/card";
 import { reposCardDefinition } from "./cards/github-pulse/repos/card";
 
@@ -30,6 +31,7 @@ export const cards: CardDefinition[] = [
   repoCardDefinition,
   reposCardDefinition,
   profileCardDefinition,
+  attentionCardDefinition,
 ];
 
 function defineOnce(tag: string, ctor: CustomElementConstructor): void {
