@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { fixtureHass, type FixtureEntity } from "../../../../test/fixtures/hass";
 import { registerCards } from "../../../registry";
-import { GithubReposCard, reposCardDefinition } from "./card";
+import { DevicesCard, devicesCardDefinition } from "./card";
 
-beforeAll(() => registerCards([reposCardDefinition]));
+beforeAll(() => registerCards([devicesCardDefinition]));
 
 const P = "github_pulse";
 interface Repo {
@@ -42,10 +42,10 @@ async function mount(repos: Repo[], config: Record<string, unknown> = {}) {
       ...repos.flatMap(repoEntities),
     ],
   });
-  const card = document.createElement("hoc-github-repos-card") as GithubReposCard;
+  const card = document.createElement("hoc-devices-card") as DevicesCard;
   card.setConfig({
-    type: "custom:hoc-github-repos-card",
-    ...("repositories" in config ? {} : { repositories: "all" }),
+    type: "custom:hoc-devices-card",
+    ...("devices" in config ? {} : { platform: P }),
     ...config,
   } as never);
   card.hass = hass;
@@ -62,26 +62,26 @@ const REPOS: Repo[] = [
   { id: "r3", name: "charlie", stars: "unavailable", ci: "pending", commits: "30", release: "v3" },
 ];
 
-describe("hoc-github-repos-card", () => {
+describe("hoc-devices-card", () => {
   it("all lists every repository device but not the account device", async () => {
     const { names } = await mount(REPOS);
     expect(names).toEqual(["alpha", "bravo", "charlie"]);
   });
 
   it("an explicit list restricts the rows and skips unknown devices", async () => {
-    const { names } = await mount(REPOS, { repositories: ["r2", "gone"] });
+    const { names } = await mount(REPOS, { devices: ["r2", "gone"] });
     expect(names).toEqual(["alpha"]);
   });
 
-  it("treats an empty repositories list as all repositories", async () => {
-    const { names } = await mount(REPOS, { repositories: [] });
+  it("treats an empty devices list as every device of the platform", async () => {
+    const { names } = await mount(REPOS, { devices: [], platform: P });
     expect(names).toEqual(["alpha", "bravo", "charlie"]);
   });
 
   it("applies the default columns", async () => {
     const { root } = await mount(REPOS);
     const headers = [...root.querySelectorAll("thead th")].map((th) => th.textContent?.trim());
-    expect(headers).toEqual(["Repository", "CI", "Stars", "Commits this month", "Release"]);
+    expect(headers).toEqual(["Device", "CI", "Stars", "Commits this month", "Release"]);
   });
 
   it("sorts by a column ascending and descending", async () => {
@@ -98,9 +98,9 @@ describe("hoc-github-repos-card", () => {
     expect(desc.names).toEqual(["alpha", "bravo", "charlie"]);
   });
 
-  it("shows an empty message without repositories", async () => {
+  it("shows an empty message without devices", async () => {
     const { text } = await mount([]);
-    expect(text).toContain("No repositories");
+    expect(text).toContain("No devices");
   });
 
   it("renders 50 repositories inside a scroll container", async () => {
@@ -119,9 +119,20 @@ describe("hoc-github-repos-card", () => {
     expect(text).toContain("—");
   });
 
-  it("works from the card picker without any option", async () => {
-    const { names } = await mount(REPOS, { repositories: undefined });
+  it("works from the card picker with the stub config", async () => {
+    const hass = fixtureHass({
+      devices: REPOS.map((repo) => ({ id: repo.id, name: repo.name })),
+      entities: REPOS.flatMap(repoEntities),
+    });
+    expect(DevicesCard.getStubConfig(hass)).toEqual({ platform: P });
+    expect(DevicesCard.getStubConfig(fixtureHass())).toEqual({});
+    const { names } = await mount(REPOS, DevicesCard.getStubConfig(hass));
     expect(names).toEqual(["alpha", "bravo", "charlie"]);
+  });
+
+  it("asks for devices or an integration when neither is set", async () => {
+    const { text } = await mount(REPOS, { devices: undefined });
+    expect(text).toContain("Choose devices or an integration");
   });
 
   it("excludes every account device, not only the first", async () => {
@@ -137,8 +148,8 @@ describe("hoc-github-repos-card", () => {
         ...repoEntities({ id: "r1", name: "alpha", stars: "1" }),
       ],
     });
-    const card = document.createElement("hoc-github-repos-card") as GithubReposCard;
-    card.setConfig({ type: "custom:hoc-github-repos-card" } as never);
+    const card = document.createElement("hoc-devices-card") as DevicesCard;
+    card.setConfig({ type: "custom:hoc-devices-card", platform: P } as never);
     card.hass = hass;
     document.body.append(card);
     await card.updateComplete;
@@ -173,9 +184,10 @@ describe("hoc-github-repos-card", () => {
         { platform: P, deviceId: "b", translationKey: "forks", state: "3" },
       ],
     });
-    const card = document.createElement("hoc-github-repos-card") as GithubReposCard;
+    const card = document.createElement("hoc-devices-card") as DevicesCard;
     card.setConfig({
-      type: "custom:hoc-github-repos-card",
+      type: "custom:hoc-devices-card",
+      platform: P,
       columns: ["forks", "latest_release:downloads"],
       sort_by: "latest_release:downloads",
       sort_order: "desc",
@@ -187,7 +199,7 @@ describe("hoc-github-repos-card", () => {
     const names = [...root.querySelectorAll("tbody tr .name")].map((el) => el.textContent?.trim());
     const headers = [...root.querySelectorAll("thead th")].map((th) => th.textContent?.trim());
     expect(names).toEqual(["bravo", "alpha"]);
-    expect(headers).toEqual(["Repository", "Forks", "Release › Downloads"]);
+    expect(headers).toEqual(["Device", "Forks", "Release › Downloads"]);
   });
 
   it("shows the repository name without the owner when hide_owner is on", async () => {
@@ -247,10 +259,13 @@ describe("hoc-github-repos-card", () => {
         { id: "a", name: "active", commits: "4" },
         { id: "b", name: "idle", commits: "0" },
       ],
-      { show_activity: true },
+      { show_status: true },
     );
     const dots = [...root.querySelectorAll("tbody tr .name .dot")].map((d) => d.className);
-    expect(dots).toEqual(["dot dot--success", "dot dot--neutral"]);
+    expect(dots).toEqual(["dot", "dot dot--neutral"]);
+    expect(root.querySelector("tbody tr .name .dot")?.getAttribute("style")).toContain(
+      "--success-color",
+    );
   });
 
   it("shows no activity dots by default", async () => {
@@ -259,12 +274,12 @@ describe("hoc-github-repos-card", () => {
   });
 
   it("lists a repository once even when it is selected twice", async () => {
-    const { names } = await mount(REPOS, { repositories: ["r1", "r1", "r2"] });
+    const { names } = await mount(REPOS, { devices: ["r1", "r1", "r2"] });
     expect(names).toEqual(["alpha", "bravo"]);
   });
 
   it("keeps the activity dot apart from the name text", async () => {
-    const { root } = await mount([{ id: "a", name: "o/a", commits: "4" }], { show_activity: true });
+    const { root } = await mount([{ id: "a", name: "o/a", commits: "4" }], { show_status: true });
     const cell = root.querySelector("tbody .name");
     expect(cell?.querySelector(".name__content .dot")).not.toBeNull();
     expect(cell?.querySelector(".name__content .name__text")?.textContent?.trim()).toBe("o/a");
@@ -329,7 +344,7 @@ describe("hoc-github-repos-card", () => {
     );
   });
 
-  it("links the repository name only when link is on and the url is https", async () => {
+  it("links the name to the device page only when link is device and the url is https", async () => {
     const repos = [
       { id: "a", name: "o/a", url: "https://github.com/o/a" },
       { id: "b", name: "o/b", url: "javascript:alert(1)" },
@@ -337,11 +352,116 @@ describe("hoc-github-repos-card", () => {
     ];
     const off = await mount(repos);
     expect(off.root.querySelector("tbody .name a")).toBeNull();
-    const on = await mount(repos, { link: true });
-    const anchors = [...on.root.querySelectorAll("tbody .name a")];
-    expect(anchors).toHaveLength(1);
-    expect(anchors[0]?.getAttribute("href")).toBe("https://github.com/o/a");
-    expect(anchors[0]?.getAttribute("rel")).toContain("noopener");
-    expect(anchors[0]?.textContent?.trim()).toBe("o/a");
+    for (const link of ["device", true]) {
+      const on = await mount(repos, { link });
+      const anchors = [...on.root.querySelectorAll("tbody .name a")];
+      expect(anchors).toHaveLength(1);
+      expect(anchors[0]?.getAttribute("href")).toBe("https://github.com/o/a");
+      expect(anchors[0]?.getAttribute("rel")).toContain("noopener");
+      expect(anchors[0]?.textContent?.trim()).toBe("o/a");
+    }
+  });
+});
+
+describe("hoc-devices-card with other integrations", () => {
+  const T = "youtrack";
+  const sensor = (deviceId: string, translationKey: string, state: string, attributes = {}) => ({
+    platform: T,
+    deviceId,
+    translationKey,
+    state,
+    attributes,
+  });
+
+  async function mountTable(config: Record<string, unknown>, extra: FixtureEntity[] = []) {
+    const hass = fixtureHass({
+      devices: [
+        { id: "p1", name: "HHOC" },
+        { id: "p2", name: "DEV" },
+        { id: "x1", name: "Other thing" },
+        { id: "p3", name: "ZED" },
+      ],
+      entities: [
+        sensor("p1", "issues_open", "14"),
+        sensor("p1", "issues_overdue", "2"),
+        sensor("p1", "issues_critical_open", "0"),
+        sensor("p1", "has_overdue", "on"),
+        sensor("p2", "issues_open", "3"),
+        sensor("p2", "issues_overdue", "0"),
+        sensor("p2", "issues_critical_open", "0"),
+        sensor("p2", "has_overdue", "off"),
+        { platform: "other", deviceId: "x1", translationKey: "temp", state: "21" },
+        { platform: "other", deviceId: "x1", translationKey: "humidity", state: "40" },
+        ...extra,
+      ],
+    });
+    const card = document.createElement("hoc-devices-card") as DevicesCard;
+    card.setConfig({ type: "custom:hoc-devices-card", ...config } as never);
+    card.hass = hass;
+    document.body.append(card);
+    await card.updateComplete;
+    const root = card.shadowRoot as ShadowRoot;
+    return {
+      root,
+      names: [...root.querySelectorAll("tbody tr .name")].map((el) => el.textContent?.trim()),
+      headers: [...root.querySelectorAll("thead th")].map((th) => th.textContent?.trim()),
+    };
+  }
+
+  it("uses the columns of the integration's preset", async () => {
+    const { names, headers } = await mountTable({ platform: T });
+    expect(names).toEqual(["DEV", "HHOC"]);
+    expect(headers).toEqual(["Device", "Open", "Overdue", "Critical"]);
+  });
+
+  it("lists chosen devices of any integration with the first sensors as columns", async () => {
+    const { names, headers } = await mountTable({ devices: ["x1"] });
+    expect(names).toEqual(["Other thing"]);
+    expect(headers).toEqual(["Device", "Temp", "Humidity"]);
+  });
+
+  it("lists devices of different integrations together", async () => {
+    const { names } = await mountTable({ devices: ["p1", "x1"], columns: ["issues_open"] });
+    expect(names).toEqual(["HHOC", "Other thing"]);
+  });
+
+  it("uses the preset's default status per row", async () => {
+    const { root } = await mountTable({ platform: T, show_status: true });
+    const dots = [...root.querySelectorAll("tbody tr .name .dot")];
+    expect(dots[0]?.className).toBe("dot dot--neutral");
+    expect(dots[1]?.getAttribute("style")).toContain("--error-color");
+  });
+
+  it("lets status rules replace the preset's default", async () => {
+    const { root } = await mountTable({
+      platform: T,
+      show_status: true,
+      status: [{ field: "issues_open", operator: ">", value: 10, state: "pending" }],
+    });
+    const dots = [...root.querySelectorAll("tbody tr .name .dot")];
+    expect(dots[0]?.className).toBe("dot dot--neutral");
+    expect(dots[1]?.getAttribute("style")).toContain("--warning-color");
+  });
+
+  it("shows no dots without show_status", async () => {
+    const { root } = await mountTable({ platform: T });
+    expect(root.querySelector("tbody .name .dot")).toBeNull();
+  });
+
+  it("links the name to a URL held in an attribute, skipping devices without one", async () => {
+    const { root } = await mountTable({ platform: T, link: "issues_open:url" }, []);
+    expect(root.querySelector("tbody .name a")).toBeNull();
+    const withUrl = await mountTable(
+      { devices: ["p3"], columns: ["issues_open"], link: "issues_open:url" },
+      [sensor("p3", "issues_open", "1", { url: "https://tracker.example/p3" })],
+    );
+    expect(withUrl.root.querySelector("tbody .name a")?.getAttribute("href")).toBe(
+      "https://tracker.example/p3",
+    );
+  });
+
+  it("shows the shortened name for any integration with hide_owner", async () => {
+    const { names } = await mountTable({ platform: T, hide_owner: true });
+    expect(names).toEqual(["DEV", "HHOC"]);
   });
 });

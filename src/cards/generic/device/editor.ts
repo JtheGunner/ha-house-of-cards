@@ -4,13 +4,13 @@ import {
   HocBaseEditor,
   layoutSelector,
   linkSelector,
+  linkSources,
   statusSelector,
 } from "../../../core/editor";
 import { discoverFieldOptions, parseField, type FieldConfig } from "../../../core/fields";
 import { layoutOf } from "../../../core/fields-card";
 import { defaultFieldsFor, presetOfDevice } from "../../../core/presets";
 import { resolveDeviceEntities } from "../../../core/resolver";
-import { isHttps } from "../../../core/format";
 import type { DeviceCardConfig } from "./card";
 
 export class DeviceCardEditor extends HocBaseEditor<DeviceCardConfig> {
@@ -40,18 +40,7 @@ export class DeviceCardEditor extends HocBaseEditor<DeviceCardConfig> {
     const device = this.config?.device;
     const hass = this.hass;
     const options = hass && device ? discoverFieldOptions(hass, device) : [];
-    const hasDevicePage = hass && device ? isHttps(hass.devices[device]?.configuration_url) : false;
-    const attributeUrls = options.filter((option) => {
-      const [key, attribute] = option.value.split(":");
-      if (!hass || !key || !attribute) return false;
-      return Object.values(hass.entities).some((entry) => {
-        if (entry.device_id !== device || (entry.translation_key || entry.entity_id) !== key) {
-          return false;
-        }
-        const value = hass.states[entry.entity_id]?.attributes[attribute];
-        return typeof value === "string" && isHttps(value);
-      });
-    });
+    const { hasDevicePage, attributeUrls } = linkSources(hass, device ? [device] : []);
     return [
       { name: "device", required: true, selector: { device: {} } },
       layoutSelector(hass, ["compact", "standard", "list"]),

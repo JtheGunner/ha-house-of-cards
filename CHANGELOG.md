@@ -6,29 +6,23 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- `hoc-devices-card`: a sortable table of several devices, for any integration. Use `platform` to list every device of an integration or `devices` to pick them. GitHub Pulse and YouTrack bring default columns and status.
+- Columns take `name`, `icon`, `color`, `title_color` and `align` (numbers right, text left by default); `column_titles` shows titles as text, icon or both.
+- `show_status` and `status` rules show a dot before each name; `link` links the names to the device page or to a URL in an attribute; `hide_owner` shortens `owner/repo` to `repo`.
 - The visual editor of the device card lists the default fields of the chosen layout in `fields` so you can edit them in place. Changing nothing keeps the defaults, and they follow the layout.
 - Status of the device card: `status` is a list of rules (sensor or `sensor:attribute`, condition, value, resulting status). The first match wins and replaces the integration's default status. Rules are edited in the visual editor and only shown while `show_status` is on.
 - Presets: the device card knows GitHub Pulse and YouTrack devices and starts with their fields and status, including the GitHub profile for the account device.
 - `badge` on the device card: shows any sensor or attribute as a badge on the far side of the title. It is grey by default and takes a `color`.
 - `link` on the device card accepts `device` (the device's page) or `sensor:attribute` (a URL held in an attribute); `link_url` sets any https URL while `link` gives no target; the visual editor hides it once a link source is chosen. `link: true` keeps meaning the device page.
-- Per-column `title_color` in the repositories table colours the column title; `color` tints the values.
-- Per-column `align` in the repositories table. By default number columns align right, text columns left; the column title follows.
-- `link` on the repositories table: repository names link to GitHub. Off by default.
-- `column_titles` on the repositories table: titles as text, icon or icon and text.
-- `show_activity` on the repositories table: a green or grey dot before each name, by commits this month.
-- `hide_owner` on the repositories table: show `repo` instead of `owner/repo`.
-- Columns of the repositories table take `icon` and `color` besides `name`.
 
 ### Changed
 
-- **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. Update `type:` in existing dashboards; `device`, `layout`, `fields`, `name`, `link` and `show_status` keep working.
+- **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. `hoc-github-repos-card` is now `hoc-devices-card` with `platform: github_pulse` instead of `repositories: all`, `devices` instead of a repository list and `show_status` instead of `show_activity`. Update `type:` and these options in existing dashboards.
 - Every card offers a live preview in the card picker.
 
 ### Fixed
 
-- Selecting a repository twice in the repositories table no longer ties two entries together; duplicates are dropped.
-
-- The activity dot keeps its distance from the name and no longer wraps onto its own line.
+- Selecting a device twice in the table no longer ties two entries together; duplicates are dropped.
 
 ### Removed
 

@@ -1,6 +1,6 @@
 import { issuesCardDefinition } from "./cards/youtrack/issues/card";
 import { deviceCardDefinition } from "./cards/generic/device/card";
-import { reposCardDefinition } from "./cards/github-pulse/repos/card";
+import { devicesCardDefinition } from "./cards/generic/devices/card";
 
 export interface CardDefinition {
   tag: string;
@@ -27,7 +27,7 @@ declare global {
 
 /** Every card of the bundle. New cards add one entry here. */
 export const cards: CardDefinition[] = [
-  reposCardDefinition,
+  devicesCardDefinition,
   issuesCardDefinition,
   deviceCardDefinition,
 ];
