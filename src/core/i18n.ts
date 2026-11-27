@@ -21,7 +21,7 @@ export const EDITOR_OPTION_NAMES = [
   "badge",
   "expandable",
   "show_status",
-  "hide_owner",
+  "shorten_names",
   "column_titles",
   "align",
   "title_color",

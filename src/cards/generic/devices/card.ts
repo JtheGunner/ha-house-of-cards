@@ -40,8 +40,8 @@ export interface DevicesConfig extends BaseConfig {
   name?: string;
   /** Replaces the title of the name column, which is "Device". */
   device_title?: string;
-  /** Show the part after the last `/` of the name, such as `repo` instead of `owner/repo`. */
-  hide_owner?: boolean;
+  /** Show the part after the last `/` of a name, such as `repo` instead of `owner/repo`. */
+  shorten_names?: boolean;
   /** What the column titles show. Defaults to `text`. */
   column_titles?: "text" | "icon" | "icon_text";
   /** A status dot before each name. Off by default. */
@@ -190,7 +190,9 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
         url: resolveLink(config.link, undefined, hass.devices[device.id], entities),
         statusColor: status.color,
         name:
-          config.hide_owner === true ? (device.name.split("/").pop() ?? device.name) : device.name,
+          config.shorten_names === true
+            ? (device.name.split("/").pop() ?? device.name)
+            : device.name,
         views: new Map(views.map((view) => [view.id, view])),
       };
     });

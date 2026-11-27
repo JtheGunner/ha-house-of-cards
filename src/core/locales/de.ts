@@ -61,7 +61,7 @@ export const de: Record<LocaleKey, string> = {
   layout_list: "Liste",
   order_asc: "Aufsteigend",
   order_desc: "Absteigend",
-  editor_hide_owner: "Besitzer ausblenden",
+  editor_shorten_names: "Namen kürzen",
   titles_text: "Text",
   titles_icon: "Icon",
   titles_icon_text: "Icon und Text",

@@ -202,18 +202,18 @@ describe("hoc-devices-card", () => {
     expect(headers).toEqual(["Device", "Forks", "Release › Downloads"]);
   });
 
-  it("shows the repository name without the owner when hide_owner is on", async () => {
+  it("shows the repository name without the owner when shorten_names is on", async () => {
     const repos = [{ id: "a", name: "JtheGunner/bullseye-eye", stars: "1" }];
     const off = await mount(repos);
     expect(off.root.querySelector("tbody .name")?.textContent?.trim()).toBe(
       "JtheGunner/bullseye-eye",
     );
-    const on = await mount(repos, { hide_owner: true });
+    const on = await mount(repos, { shorten_names: true });
     expect(on.root.querySelector("tbody .name")?.textContent?.trim()).toBe("bullseye-eye");
   });
 
   it("keeps names without an owner as they are", async () => {
-    const { root } = await mount([{ id: "a", name: "plain", stars: "1" }], { hide_owner: true });
+    const { root } = await mount([{ id: "a", name: "plain", stars: "1" }], { shorten_names: true });
     expect(root.querySelector("tbody .name")?.textContent?.trim()).toBe("plain");
   });
 
@@ -460,8 +460,8 @@ describe("hoc-devices-card with other integrations", () => {
     );
   });
 
-  it("shows the shortened name for any integration with hide_owner", async () => {
-    const { names } = await mountTable({ platform: T, hide_owner: true });
+  it("shows the shortened name for any integration with shorten_names", async () => {
+    const { names } = await mountTable({ platform: T, shorten_names: true });
     expect(names).toEqual(["DEV", "HHOC"]);
   });
 

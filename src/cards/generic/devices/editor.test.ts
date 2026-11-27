@@ -24,10 +24,10 @@ describe("hoc-devices-card-editor", () => {
     expect(received[0]?.devices).toEqual(["a", "b"]);
   });
 
-  async function mountPlain(config: Record<string, unknown>) {
+  async function mountPlain(config: Record<string, unknown>, deviceName = "alpha") {
     const editor = document.createElement("hoc-devices-card-editor") as DevicesEditor;
     editor.hass = fixtureHass({
-      devices: [{ id: "a", name: "alpha", configuration_url: "https://github.com/o/a" }],
+      devices: [{ id: "a", name: deviceName, configuration_url: "https://github.com/o/a" }],
       entities: [
         { platform: "github_pulse", deviceId: "a", translationKey: "stars", state: "1" },
         { platform: "youtrack", deviceId: "a", translationKey: "issues_open", state: "2" },
@@ -64,6 +64,13 @@ describe("hoc-devices-card-editor", () => {
     expect(names.indexOf("device_title")).toBe(names.indexOf("name") + 1);
     const labelOf = (name: string) => form.computeLabel({ name, selector: {} });
     expect(labelOf("name")).toBe("Title");
+  });
+
+  it("offers shorten_names only when a listed name contains a slash", async () => {
+    const plain = await mountPlain({ platform: "github_pulse" });
+    expect(plain.form.schema.map((item) => item.name)).not.toContain("shorten_names");
+    const slashed = await mountPlain({ platform: "github_pulse" }, "owner/alpha");
+    expect(slashed.form.schema.map((item) => item.name)).toContain("shorten_names");
   });
 
   it("stores no platform when none is chosen", async () => {

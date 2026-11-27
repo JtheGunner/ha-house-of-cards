@@ -49,6 +49,9 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
     const ids = this.deviceIds();
     const options = this.columnOptions(ids);
     const { hasDevicePage, attributeUrls } = linkSources(hass, ids);
+    const hasPathNames =
+      !!hass &&
+      selectDevices(hass, config?.devices, config?.platform).some((d) => d.name.includes("/"));
     const platforms = hass ? listPlatforms(hass) : [];
     const platformOptions = [
       { value: "none", label: hass ? t(hass, "platform_none") : "none" },
@@ -57,6 +60,7 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
     return [
       { name: "name", selector: { text: {} } },
       { name: "device_title", selector: { text: {} } },
+      choiceSelector(hass, "titles", ["text", "icon", "icon_text"], "column_titles"),
       { name: "platform", selector: { select: { mode: "dropdown", options: platformOptions } } },
       {
         name: "devices",
@@ -79,11 +83,12 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
         },
       },
       choiceSelector(hass, "order", ["asc", "desc"], "sort_order"),
-      { name: "hide_owner", selector: { boolean: {} } },
+      ...(hasPathNames || config?.shorten_names
+        ? [{ name: "shorten_names", selector: { boolean: {} } }]
+        : []),
       linkSelector(hass, hasDevicePage, attributeUrls),
       { name: "show_status", selector: { boolean: {} } },
       ...(config?.show_status ? [statusSelector(hass, options)] : []),
-      choiceSelector(hass, "titles", ["text", "icon", "icon_text"], "column_titles"),
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },
     ];
   }
