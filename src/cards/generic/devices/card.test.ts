@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { fixtureHass, type FixtureEntity } from "../../../../test/fixtures/hass";
 import { registerCards } from "../../../registry";
 import { DevicesCard, devicesCardDefinition } from "./card";
@@ -534,5 +534,114 @@ describe("hoc-devices-card with other integrations", () => {
   it("lets device_title replace the title of the name column", async () => {
     const { root } = await mount(REPOS, { platform: P, device_title: "Repository" });
     expect(root.querySelector("thead th")?.textContent?.trim()).toBe("Repository");
+  });
+});
+
+describe("hoc-devices-card actions", () => {
+  const linked: Repo[] = REPOS.map((repo) => ({ ...repo, url: `https://example.com/${repo.id}` }));
+
+  function titleOf(root: ShadowRoot, name: string): HTMLElement {
+    const rows = [...root.querySelectorAll("tbody tr")];
+    const row = rows.find(
+      (candidate) => candidate.querySelector(".name")?.textContent?.trim() === name,
+    );
+    return row?.querySelector(".name .action") as HTMLElement;
+  }
+
+  function collect(root: ShadowRoot, type: string): CustomEvent[] {
+    const received: CustomEvent[] = [];
+    root.host.addEventListener(type, (event) => received.push(event as CustomEvent));
+    return received;
+  }
+
+  function press(title: HTMLElement, ms: number): void {
+    title.dispatchEvent(new Event("pointerdown"));
+    vi.advanceTimersByTime(ms);
+    title.dispatchEvent(new Event("pointerup"));
+    title.click();
+  }
+
+  it("opens more-info of the first column's entity on tap and drops the link", async () => {
+    const { root } = await mount(linked, { link: "device", tap_action: { action: "more-info" } });
+    const received = collect(root, "hass-more-info");
+    const title = titleOf(root, "bravo");
+    expect(root.querySelector("tbody a")).toBeNull();
+    title.click();
+    expect(received.map((event) => event.detail)).toEqual([
+      { entityId: "sensor.github_pulse_r1_ci_state" },
+    ]);
+  });
+
+  it("opens more-info of the entity named in the action", async () => {
+    const { root } = await mount(REPOS, { tap_action: { action: "more-info", entity: "stars" } });
+    const received = collect(root, "hass-more-info");
+    titleOf(root, "alpha").click();
+    expect(received[0]?.detail).toEqual({ entityId: "sensor.github_pulse_r2_stars" });
+  });
+
+  it("fires ll-custom with each row's own placeholders on hold", async () => {
+    vi.useFakeTimers();
+    try {
+      const action = {
+        action: "fire-dom-event",
+        browser_mod: { data: { title: "{{ device_name }}" } },
+      };
+      const { root } = await mount(REPOS, { hold_action: action });
+      const received = collect(root, "ll-custom");
+      press(titleOf(root, "bravo"), 500);
+      press(titleOf(root, "alpha"), 500);
+      expect(received.map((event) => event.detail.browser_mod.data.title)).toEqual([
+        "bravo",
+        "alpha",
+      ]);
+      expect(action.browser_mod.data.title).toBe("{{ device_name }}");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not run the tap action after a hold", async () => {
+    vi.useFakeTimers();
+    try {
+      const { root } = await mount(REPOS, {
+        tap_action: { action: "more-info" },
+        hold_action: { action: "fire-dom-event" },
+      });
+      const taps = collect(root, "hass-more-info");
+      const holds = collect(root, "ll-custom");
+      press(titleOf(root, "bravo"), 500);
+      expect(taps).toHaveLength(0);
+      expect(holds).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("keeps the link when only hold_action is set", async () => {
+    const { root } = await mount(linked, { link: "device", hold_action: { action: "more-info" } });
+    expect(root.querySelector("tbody a")?.getAttribute("href")).toMatch(
+      /^https:\/\/example\.com\//,
+    );
+  });
+
+  it("changes nothing for none or without actions", async () => {
+    const plain = await mount(linked, { link: "device" });
+    const none = await mount(linked, {
+      link: "device",
+      tap_action: { action: "none" },
+      hold_action: { action: "none" },
+    });
+    expect(none.root.querySelector(".action")).toBeNull();
+    expect(none.root.querySelector("tbody")?.innerHTML).toBe(
+      plain.root.querySelector("tbody")?.innerHTML,
+    );
+  });
+
+  it("renders no action target for a device without entities", async () => {
+    const { root } = await mount([{ id: "r1", name: "bravo" }], {
+      devices: ["r1"],
+      tap_action: { action: "more-info" },
+    });
+    expect(root.querySelector(".action")).toBeNull();
   });
 });
