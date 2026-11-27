@@ -1,5 +1,7 @@
 # YouTrack issues card
 
+<!-- drift: src/cards/youtrack/issues/card.ts -->
+
 The first issues of a YouTrack **query sensor**.
 
 ```yaml

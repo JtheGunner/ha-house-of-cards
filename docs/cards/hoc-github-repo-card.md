@@ -1,5 +1,7 @@
 # GitHub repository card
 
+<!-- drift: src/cards/github-pulse/repo/card.ts, src/cards/github-pulse/repo/fields.ts -->
+
 One repository of the [GitHub Pulse](https://github.com/JtheGunner/ha-github-pulse) integration.
 
 ```yaml

@@ -1,5 +1,7 @@
 # Adding a card
 
+<!-- drift: src/registry.ts, src/core/base-card.ts, src/core/editor.ts, src/core/resolver.ts -->
+
 A card is one folder plus one registry entry.
 
 1. Create `src/cards/<integration>/<name>/` with `card.ts`, `editor.ts` and `card.test.ts`. Generic cards go under `src/cards/generic/`.

@@ -1,5 +1,7 @@
 # GitHub repositories card
 
+<!-- drift: src/cards/github-pulse/repos/card.ts -->
+
 Several repositories as a sortable table.
 
 ```yaml

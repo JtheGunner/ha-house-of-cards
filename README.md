@@ -55,7 +55,7 @@ npm test
 npm run build   # writes dist/ha-house-of-cards.js
 ```
 
-Commit the rebuilt `dist/`; CI fails if it is stale. See [adding a card](docs/adding-a-card.md) for how to extend the bundle.
+Commit the rebuilt `dist/`; CI fails if it is stale. Pull requests also get a warn-only documentation drift check that points out docs whose linked code changed. See [adding a card](docs/adding-a-card.md) for how to extend the bundle.
 
 ---
 
