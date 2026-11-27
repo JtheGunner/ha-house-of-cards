@@ -212,9 +212,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
   protected singleFieldNames: string[] = [];
 
   /** Fields a list option shows while it is empty; `undefined` leaves it empty. */
-  protected defaultFields(_name: string): FieldConfig[] | undefined {
-    return undefined;
-  }
+  protected defaultFields?(name: string): FieldConfig[] | undefined;
 
   /** Lets an editor adjust the config before it is sent, for example to drop options that no longer apply. */
   protected finalizeConfig(config: Record<string, unknown>): void {
@@ -230,7 +228,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       if (Array.isArray(list) && list.length > 0) {
         data[name] = (list as FieldConfig[]).map(toFormEntry);
       } else {
-        const defaults = this.defaultFields(name);
+        const defaults = this.defaultFields?.(name);
         if (defaults?.length) data[name] = defaults.map(toFormEntry);
       }
     }
@@ -258,7 +256,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       if (!(name in config)) continue;
       const entries = cleanEntries(config[name], "key");
       const wasEmpty = !Array.isArray(previous[name]) || previous[name].length === 0;
-      const shown = wasEmpty ? (this.defaultFields(name) ?? []).map(toFormEntry) : [];
+      const shown = wasEmpty ? (this.defaultFields?.(name) ?? []).map(toFormEntry) : [];
       const untouched = shown.length > 0 && JSON.stringify(entries) === JSON.stringify(shown);
       if (entries.length > 0 && !untouched) config[name] = entries;
       else delete config[name];

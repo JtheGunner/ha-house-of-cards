@@ -1229,7 +1229,6 @@ var ut = class extends R {
 	setConfig(e) {
 		this.config = e;
 	}
-	defaultFields(e) {}
 	finalizeConfig(e) {}
 	formData() {
 		let e = { ...this.config };
@@ -1237,7 +1236,7 @@ var ut = class extends R {
 			let n = e[t];
 			if (Array.isArray(n) && n.length > 0) e[t] = n.map(Z);
 			else {
-				let n = this.defaultFields(t);
+				let n = this.defaultFields?.(t);
 				n?.length && (e[t] = n.map(Z));
 			}
 		}
@@ -1256,7 +1255,7 @@ var ut = class extends R {
 		};
 		for (let e of this.fieldListNames) {
 			if (!(e in n)) continue;
-			let r = lt(n[e], "key"), i = !Array.isArray(t[e]) || t[e].length === 0 ? (this.defaultFields(e) ?? []).map(Z) : [], a = i.length > 0 && JSON.stringify(r) === JSON.stringify(i);
+			let r = lt(n[e], "key"), i = !Array.isArray(t[e]) || t[e].length === 0 ? (this.defaultFields?.(e) ?? []).map(Z) : [], a = i.length > 0 && JSON.stringify(r) === JSON.stringify(i);
 			r.length > 0 && !a ? n[e] = r : delete n[e];
 		}
 		for (let e of this.singleFieldNames) {
