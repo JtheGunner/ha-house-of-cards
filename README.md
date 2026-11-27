@@ -11,47 +11,103 @@
 [![Home Assistant](https://img.shields.io/badge/home%20assistant-2026.9%2B-0ea5e9?style=flat-square&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
 [![HACS](https://img.shields.io/badge/HACS-dashboard-8b5cf6?style=flat-square)](https://hacs.xyz/)
 
+<br>
+
+<img src="docs/images/overview.png" alt="The House of Cards cards: device card, devices table and YouTrack issues" width="900">
+
 </div>
 
 ---
 
 ## 🎯 What it is
 
-One bundle with cards for [GitHub Pulse](https://github.com/JtheGunner/ha-github-pulse) and [YouTrack](https://github.com/JtheGunner/ha-youtrack). You pick a repository or project in the visual editor; the cards find their sensors themselves. They use only Home Assistant theme variables, so they fit the classic dashboard and [UI Lovelace Minimalist](https://ui-lovelace-minimalist.github.io/UI/).
+House of Cards is a small set of cards for the integrations you build yourself, such as [GitHub Pulse](https://github.com/JtheGunner/ha-github-pulse) and [YouTrack](https://github.com/JtheGunner/ha-youtrack). Two generic cards show **any device**, and you pick the sensors and attributes in the visual editor. Integrations bring presets with sensible defaults, so a GitHub repository or a YouTrack project looks right from the first click.
+
+- 🛠 **Visual editor for every option**, no YAML needed
+- 🧩 **Any device or integration**, not only the two it ships presets for
+- 🎨 **Coloured icon tiles, badges and status rules** you define yourself
+- 🌓 **Light and dark theme**: only Home Assistant theme variables, text sizes like Mushroom
+- 🌎 **English and German**, following your Home Assistant language
+- 🚀 **No dependencies**: one file, works in the classic dashboard and [UI Lovelace Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
 
 ---
 
 ## 📥 Installation
 
-1. In HACS, open **Custom repositories** and add `https://github.com/JtheGunner/ha-house-of-cards` with the category **Dashboard**.
+[![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=JtheGunner&repository=ha-house-of-cards&category=plugin)
+
+1. In HACS, add `https://github.com/JtheGunner/ha-house-of-cards` as a **custom repository** with the category **Dashboard**.
 2. Download **House of Cards** and reload the browser.
 3. Add a card from the card picker, or use the YAML types below.
+
+<details>
+<summary>Manual installation</summary>
+
+1. Download `ha-house-of-cards.js` from the [latest release](https://github.com/JtheGunner/ha-house-of-cards/releases/latest) into `config/www`.
+2. Add it as a resource under _Settings_ → _Dashboards_ → _Resources_: URL `/local/ha-house-of-cards.js`, type **JavaScript Module**.
+
+</details>
 
 ---
 
 ## 🃏 Cards
 
-|     | Card                                                                 | Integration | Purpose                                                                                         |
-| --- | -------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------- |
-| 📋  | [`hoc-devices-card`](docs/cards/hoc-devices-card.md)                 | any         | Several devices as a sortable table, with defaults for GitHub Pulse and YouTrack                |
-| 🧩  | [`hoc-device-card`](docs/cards/hoc-device-card.md)                   | any         | Any device, with ready-made defaults for GitHub repositories and profiles and YouTrack projects |
-| 📝  | [`hoc-youtrack-issues-card`](docs/cards/hoc-youtrack-issues-card.md) | YouTrack    | Issues of a query sensor                                                                        |
+### 🧩 Device card
 
-<table>
-  <tr>
-    <td align="center" valign="top"><a href="docs/cards/hoc-device-card.md"><img src="docs/images/device-card-list.png" alt="Device card, list layout" width="320"></a><br><sub>Device card · list</sub></td>
-    <td align="center" valign="top"><a href="docs/cards/hoc-devices-card.md"><img src="docs/images/devices-card.png" alt="Devices card" width="320"></a><br><sub>Devices card</sub></td>
-    <td align="center" valign="top"><a href="docs/cards/hoc-youtrack-issues-card.md"><img src="docs/images/issues-card.png" alt="YouTrack issues card" width="320"></a><br><sub>Issues card</sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top"><img src="docs/images/device-card-standard.png" alt="Device card, standard layout" width="320"><br><sub>Device card · standard</sub></td>
-    <td align="center" valign="top"><img src="docs/images/device-card-compact.png" alt="Device card, compact layout" width="320"><br><sub>Device card · compact</sub></td>
-    <td></td>
-  </tr>
-</table>
+Any device, shown as coloured tiles in the layout you like: `compact`, `standard` or `list`. Add a badge to the title, link the name, and let rules colour the status. GitHub repositories and profiles and YouTrack projects start with ready-made fields.
+
+<p align="center">
+  <img src="docs/images/device-card-standard.png" alt="Device card, standard layout" width="48%">
+  &nbsp;
+  <img src="docs/images/device-card-list.png" alt="Device card, list layout" width="48%">
+</p>
+<p align="center">
+  <img src="docs/images/device-card-compact.png" alt="Device card, compact layout" width="48%">
+</p>
+
+```yaml
+type: custom:hoc-device-card
+device: <device id>
+layout: standard
+```
+
+📖 [All options](docs/cards/hoc-device-card.md)
+
+### 📋 Devices card
+
+Several devices as a sortable table. List every device of an integration, or pick the devices yourself. Columns take the same sensors and attributes as the device card, with colours, trend arrows and a status dot.
+
+<p align="center">
+  <img src="docs/images/devices-card.png" alt="Devices card" width="60%">
+</p>
+
+```yaml
+type: custom:hoc-devices-card
+platform: github_pulse
+sort_by: commits_this_month
+sort_order: desc
+```
+
+📖 [All options](docs/cards/hoc-devices-card.md)
+
+### 📝 YouTrack issues card
+
+The issues of a YouTrack query sensor, with coloured states and priorities. Click an issue for its details, or `+N more` to see them all.
+
+<p align="center">
+  <img src="docs/images/issues-card.png" alt="YouTrack issues card" width="60%">
+</p>
+
+```yaml
+type: custom:hoc-youtrack-issues-card
+entity: sensor.my_open_bugs
+badge: count
+```
+
+📖 [All options](docs/cards/hoc-youtrack-issues-card.md)
 
 > [!TIP]
-> Every card shows its values as coloured icon tiles, and you choose which sensors and attributes to show with `fields`; see the [device card](docs/cards/hoc-device-card.md#fields).
+> You choose which sensors and attributes the cards show with `fields` and `columns`; see [fields](docs/cards/hoc-device-card.md#fields).
 
 > [!NOTE]
 > Optional sensors are disabled by default in the integrations. A card shows a field only if its sensor is enabled.
