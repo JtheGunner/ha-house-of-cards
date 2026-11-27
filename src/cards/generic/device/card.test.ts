@@ -90,4 +90,16 @@ describe("hoc-device-card", () => {
     const { text } = await mount(ENTITIES, { device: "gone" });
     expect(text).toContain("Device not found");
   });
+
+  it("proposes the first device that has sensors for a new card", () => {
+    const hass = fixtureHass({
+      devices: [
+        { id: "empty", name: "Empty" },
+        { id: "d1", name: "Thing" },
+      ],
+      entities: ENTITIES,
+    });
+    expect(DeviceCard.getStubConfig(hass)).toEqual({ device: "d1" });
+    expect(DeviceCard.getStubConfig(fixtureHass())).toEqual({});
+  });
 });

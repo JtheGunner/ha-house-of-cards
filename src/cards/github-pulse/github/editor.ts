@@ -4,9 +4,9 @@ import {
   HocBaseEditor,
   layoutSelector,
 } from "../../../core/editor";
-import type { GithubRepoConfig } from "./card";
+import type { GithubConfig } from "./card";
 
-export class GithubRepoEditor extends HocBaseEditor<GithubRepoConfig> {
+export class GithubEditor extends HocBaseEditor<GithubConfig> {
   protected override fieldListNames = ["fields"];
 
   protected schema() {

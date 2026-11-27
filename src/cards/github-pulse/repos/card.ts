@@ -13,7 +13,7 @@ import { t } from "../../../core/i18n";
 import { statusDot, trendArrow } from "../../../core/parts";
 import { findAccountDevices, listDevices, resolveDeviceEntities } from "../../../core/resolver";
 import type { CardDefinition } from "../../../registry";
-import { PLATFORM } from "../repo/card";
+import { PLATFORM } from "../github/card";
 import { GithubReposEditor } from "./editor";
 
 export const REPOS_CARD_TAG = "hoc-github-repos-card";
@@ -32,6 +32,8 @@ export interface GithubReposConfig extends BaseConfig {
   sort_by?: string;
   sort_order?: "asc" | "desc";
   max_height?: number;
+  /** Show `repo` instead of `owner/repo`. Off by default. */
+  hide_owner?: boolean;
 }
 
 interface Row {
@@ -135,7 +137,10 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         const views = buildFieldViews(hass, entities, specs, device.name);
         return {
           id: device.id,
-          name: device.name,
+          name:
+            config.hide_owner === true
+              ? (device.name.split("/").pop() ?? device.name)
+              : device.name,
           views: new Map(views.map((view) => [view.id, view])),
         };
       });
@@ -147,7 +152,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
       return html`<td>${statusDot(view.stateObj.state)}</td>`;
     }
     return html`<td>
-      <span class="cell ${view.tone ? "cell--tone" : ""}" style="--c: ${view.color}"
+      <span class="cell ${view.tone || spec.color ? "cell--tone" : ""}" style="--c: ${view.color}"
         >${view.value}${view.unit ? html`<span class="cell__unit">${view.unit}</span>` : nothing}${
           view.trend ? trendArrow(view.trend) : nothing
         }</span
@@ -166,10 +171,14 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
 
     const headers = specs.map((spec) => {
       const id = fieldId(spec);
-      const label = rows
-        .map((row) => row.views.get(id)?.label)
-        .find((value) => value !== undefined);
-      return spec.name ?? label ?? humanize(spec.key);
+      const view = rows
+        .map((row) => row.views.get(id))
+        .find((candidate) => candidate !== undefined);
+      return {
+        text: spec.name ?? view?.label ?? humanize(spec.key),
+        icon: spec.icon,
+        color: spec.color ? view?.color : undefined,
+      };
     });
 
     return html`<ha-card>
@@ -178,7 +187,19 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
           <thead>
             <tr>
               <th>${t(hass, "repository")}</th>
-              ${headers.map((header) => html`<th>${header}</th>`)}
+              ${headers.map(
+                (header) =>
+                  html`<th>
+                    ${
+                      header.icon
+                        ? html`<ha-icon
+                            icon=${header.icon}
+                            style=${header.color ? `color: ${header.color}` : ""}
+                          ></ha-icon>`
+                        : nothing
+                    }${header.text}
+                  </th>`,
+              )}
             </tr>
           </thead>
           <tbody>

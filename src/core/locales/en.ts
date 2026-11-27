@@ -1,5 +1,4 @@
 export const en = {
-  all_clear: "All clear",
   device_not_found: "Device not found",
   no_repositories: "No repositories",
   unavailable: "Unavailable",
@@ -10,9 +9,6 @@ export const en = {
   commits_this_month: "Commits this month",
   release: "Release",
   ci: "CI",
-  failing_ci: "Failing CI",
-  review_requests: "Review requests",
-  stale_pull_requests: "Stale pull requests",
   repository: "Repository",
   vs_last_month: "vs last month",
   contributions: "Contributions this month",
@@ -56,6 +52,7 @@ export const en = {
   order_asc: "Ascending",
   order_desc: "Descending",
   editor_show_release: "Show release version",
+  editor_hide_owner: "Hide owner",
 } as const;
 
 export type LocaleKey = keyof typeof en;

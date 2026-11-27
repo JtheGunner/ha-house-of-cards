@@ -16,6 +16,7 @@ export const EDITOR_OPTION_NAMES = [
   "link",
   "show_status",
   "show_release",
+  "hide_owner",
   "repositories",
   "sort_by",
   "sort_order",

@@ -1,9 +1,7 @@
-import { repoCardDefinition } from "./cards/github-pulse/repo/card";
+import { githubCardDefinition } from "./cards/github-pulse/github/card";
 import { issuesCardDefinition } from "./cards/youtrack/issues/card";
 import { projectCardDefinition } from "./cards/youtrack/project/card";
 import { deviceCardDefinition } from "./cards/generic/device/card";
-import { attentionCardDefinition } from "./cards/github-pulse/attention/card";
-import { profileCardDefinition } from "./cards/github-pulse/profile/card";
 import { reposCardDefinition } from "./cards/github-pulse/repos/card";
 
 export interface CardDefinition {
@@ -31,10 +29,8 @@ declare global {
 
 /** Every card of the bundle. New cards add one entry here. */
 export const cards: CardDefinition[] = [
-  repoCardDefinition,
+  githubCardDefinition,
   reposCardDefinition,
-  profileCardDefinition,
-  attentionCardDefinition,
   projectCardDefinition,
   issuesCardDefinition,
   deviceCardDefinition,
@@ -54,7 +50,7 @@ export function registerCards(definitions: CardDefinition[] = cards): void {
         type: card.tag,
         name: card.name,
         description: card.description,
-        preview: card.preview ?? false,
+        preview: card.preview ?? true,
       });
     }
   }

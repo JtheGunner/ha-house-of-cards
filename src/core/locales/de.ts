@@ -1,7 +1,6 @@
 import type { LocaleKey } from "./en";
 
 export const de: Record<LocaleKey, string> = {
-  all_clear: "Alles in Ordnung",
   device_not_found: "Gerät nicht gefunden",
   no_repositories: "Keine Repositories",
   unavailable: "Nicht verfügbar",
@@ -12,9 +11,6 @@ export const de: Record<LocaleKey, string> = {
   commits_this_month: "Commits im Monat",
   release: "Release",
   ci: "CI",
-  failing_ci: "CI fehlgeschlagen",
-  review_requests: "Review-Anfragen",
-  stale_pull_requests: "Veraltete Pull Requests",
   repository: "Repository",
   vs_last_month: "ggü. Vormonat",
   contributions: "Contributions im Monat",
@@ -58,4 +54,5 @@ export const de: Record<LocaleKey, string> = {
   order_asc: "Aufsteigend",
   order_desc: "Absteigend",
   editor_show_release: "Release-Version anzeigen",
+  editor_hide_owner: "Besitzer ausblenden",
 };

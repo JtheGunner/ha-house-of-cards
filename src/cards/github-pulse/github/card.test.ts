@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { registerCards } from "../../../registry";
 import { fixtureHass, type FixtureEntity } from "../../../../test/fixtures/hass";
-import { GithubRepoCard, repoCardDefinition } from "./card";
+import { GithubCard, githubCardDefinition } from "./card";
 
-beforeAll(() => registerCards([repoCardDefinition]));
+beforeAll(() => registerCards([githubCardDefinition]));
 
 const P = "github_pulse";
 function sensor(translationKey: string, state?: string): FixtureEntity {
@@ -39,8 +39,8 @@ async function mount(
     devices: [{ id: "d1", name: "ha-github-pulse", configuration_url: url }],
     entities,
   });
-  const card = document.createElement("hoc-github-repo-card") as GithubRepoCard;
-  card.setConfig({ type: "custom:hoc-github-repo-card", device: deviceId, ...config } as never);
+  const card = document.createElement("hoc-github-card") as GithubCard;
+  card.setConfig({ type: "custom:hoc-github-card", device: deviceId, ...config } as never);
   card.hass = hass;
   document.body.append(card);
   await card.updateComplete;
@@ -48,7 +48,7 @@ async function mount(
   return { root, text: root.textContent?.replace(/\s+/g, " ") ?? "" };
 }
 
-describe("hoc-github-repo-card", () => {
+describe("hoc-github-card", () => {
   it("compact shows name, ci dot, stars and release only", async () => {
     const { root, text } = await mount(ALWAYS_ON, { layout: "compact" });
     expect(text).toContain("ha-github-pulse");
@@ -123,10 +123,8 @@ describe("hoc-github-repo-card", () => {
   });
 
   it("requires a device in the config", () => {
-    const card = document.createElement("hoc-github-repo-card") as GithubRepoCard;
-    expect(() => card.setConfig({ type: "custom:hoc-github-repo-card" } as never)).toThrow(
-      /device/,
-    );
+    const card = document.createElement("hoc-github-card") as GithubCard;
+    expect(() => card.setConfig({ type: "custom:hoc-github-card" } as never)).toThrow(/device/);
   });
 
   it("hides the release badge and workflow tile for unknown or unavailable values", async () => {
@@ -157,7 +155,7 @@ describe("hoc-github-repo-card", () => {
         },
       ],
     });
-    expect(GithubRepoCard.getStubConfig(hass)).toEqual({ device: "d1" });
+    expect(GithubCard.getStubConfig(hass)).toEqual({ device: "d1" });
   });
 
   it("shows exactly the fields chosen in the config, including attributes", async () => {
@@ -243,5 +241,50 @@ describe("hoc-github-repo-card", () => {
     const { root } = await mount(ALWAYS_ON, { show_release: true });
     const header = root.querySelector(".header");
     expect([...(header?.children ?? [])].map((c) => c.className)).toEqual(["title", "release"]);
+  });
+
+  it("shows the profile fields when the device is the account device", async () => {
+    const account = [
+      sensor("contributions_this_month", "87"),
+      sensor("commits_vs_last_month", "5"),
+      sensor("current_streak", "12"),
+      sensor("longest_streak", "40"),
+      sensor("top_language", "TypeScript"),
+    ];
+    const { text } = await mount(account);
+    for (const label of ["Contributions", "Current streak", "Longest streak", "TypeScript"]) {
+      expect(text).toContain(label);
+    }
+    expect(text).not.toContain("Forks");
+  });
+
+  it("uses the profile defaults in compact only for the account device", async () => {
+    const { text } = await mount(
+      [sensor("contributions_this_month", "87"), sensor("current_streak", "3")],
+      {
+        layout: "compact",
+      },
+    );
+    expect(text).toContain("87");
+    expect(text).toContain("3");
+  });
+
+  it("proposes a repository device for a new card, else the account", () => {
+    const hass = fixtureHass({
+      devices: [
+        { id: "acc", name: "GitHub octocat" },
+        { id: "r1", name: "repo" },
+      ],
+      entities: [
+        { platform: P, deviceId: "acc", translationKey: "contributions_this_month", state: "1" },
+        { platform: P, deviceId: "r1", translationKey: "stars", state: "1" },
+      ],
+    });
+    expect(GithubCard.getStubConfig(hass)).toEqual({ device: "r1" });
+    delete hass.devices["r1"];
+    for (const id of Object.keys(hass.entities)) {
+      if (hass.entities[id]?.device_id === "r1") delete hass.entities[id];
+    }
+    expect(GithubCard.getStubConfig(hass)).toEqual({ device: "acc" });
   });
 });

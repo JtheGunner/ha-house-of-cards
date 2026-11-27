@@ -4,12 +4,12 @@ import { isMissing } from "../../../core/format";
 import { findAccountDevices, listDevices, type ResolvedEntities } from "../../../core/resolver";
 import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
-import { GithubRepoEditor } from "./editor";
+import { GithubEditor } from "./editor";
 
 export const PLATFORM = "github_pulse";
-export const REPO_CARD_TAG = "hoc-github-repo-card";
+export const GITHUB_CARD_TAG = "hoc-github-card";
 
-export interface GithubRepoConfig extends FieldsConfig {
+export interface GithubConfig extends FieldsConfig {
   device: string;
   /** Show the latest release version on the far side of the header. Off by default. */
   show_release?: boolean;
@@ -24,13 +24,29 @@ const STANDARD: FieldConfig[] = [
   "latest_release",
 ];
 
-const DEFAULT_FIELDS: Record<FieldsLayout, FieldConfig[]> = {
+const REPOSITORY_FIELDS: Record<FieldsLayout, FieldConfig[]> = {
   compact: ["stars", "latest_release"],
   standard: STANDARD,
   list: STANDARD,
 };
 
-export class GithubRepoCard extends HocFieldsCard<GithubRepoConfig> {
+const PROFILE: FieldConfig[] = [
+  { key: "contributions_this_month", trend: "commits_vs_last_month" },
+  "current_streak",
+  "longest_streak",
+  "top_language",
+];
+
+const PROFILE_FIELDS: Record<FieldsLayout, FieldConfig[]> = {
+  compact: ["contributions_this_month", "current_streak"],
+  standard: PROFILE,
+  list: PROFILE,
+};
+
+/** Only the account device has this sensor. */
+const ACCOUNT_MARKER = "contributions_this_month";
+
+export class GithubCard extends HocFieldsCard<GithubConfig> {
   static override requiredKeys = ["device"];
 
   protected get platform(): string {
@@ -47,26 +63,28 @@ export class GithubRepoCard extends HocFieldsCard<GithubRepoConfig> {
     return state === undefined || isMissing(state) ? undefined : state;
   }
 
-  protected defaultFields(layout: FieldsLayout): FieldConfig[] {
-    return DEFAULT_FIELDS[layout];
+  protected defaultFields(layout: FieldsLayout, entities: ResolvedEntities): FieldConfig[] {
+    return (ACCOUNT_MARKER in entities ? PROFILE_FIELDS : REPOSITORY_FIELDS)[layout];
   }
 
-  static getStubConfig(hass: HomeAssistant): Partial<GithubRepoConfig> {
+  static getStubConfig(hass: HomeAssistant): Partial<GithubConfig> {
     const accounts = new Set(findAccountDevices(hass, PLATFORM));
-    const first = listDevices(hass, PLATFORM).find((device) => !accounts.has(device.id));
+    const devices = listDevices(hass, PLATFORM);
+    const first = devices.find((device) => !accounts.has(device.id)) ?? devices[0];
     return first ? { device: first.id } : {};
   }
 
   static getConfigElement(): HTMLElement {
-    return document.createElement(`${REPO_CARD_TAG}-editor`);
+    return document.createElement(`${GITHUB_CARD_TAG}-editor`);
   }
 }
 
-export const repoCardDefinition: CardDefinition = {
-  tag: REPO_CARD_TAG,
-  ctor: GithubRepoCard,
-  editorTag: `${REPO_CARD_TAG}-editor`,
-  editorCtor: GithubRepoEditor,
-  name: "GitHub repository",
-  description: "One GitHub Pulse repository with colourful, selectable fields.",
+export const githubCardDefinition: CardDefinition = {
+  tag: GITHUB_CARD_TAG,
+  ctor: GithubCard,
+  editorTag: `${GITHUB_CARD_TAG}-editor`,
+  editorCtor: GithubEditor,
+  name: "GitHub repository or profile",
+  description:
+    "A GitHub Pulse repository or your GitHub profile, with colourful, selectable fields.",
 };

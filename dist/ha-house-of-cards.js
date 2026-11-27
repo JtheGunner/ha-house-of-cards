@@ -29,11 +29,11 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 	let t = "";
 	for (let n of e.cssRules) t += n.cssText;
 	return a(t);
-})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: ee, getOwnPropertySymbols: f, getPrototypeOf: te } = Object, p = globalThis, m = p.trustedTypes, ne = m ? m.emptyScript : "", re = p.reactiveElementPolyfillSupport, h = (e, t) => e, g = {
+})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: f, getOwnPropertySymbols: p, getPrototypeOf: ee } = Object, m = globalThis, h = m.trustedTypes, te = h ? h.emptyScript : "", ne = m.reactiveElementPolyfillSupport, g = (e, t) => e, _ = {
 	toAttribute(e, t) {
 		switch (t) {
 			case Boolean:
-				e = e ? ne : null;
+				e = e ? te : null;
 				break;
 			case Object:
 			case Array: e = e == null ? e : JSON.stringify(e);
@@ -58,23 +58,23 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 		}
 		return n;
 	}
-}, ie = (e, t) => !l(e, t), ae = {
+}, re = (e, t) => !l(e, t), ie = {
 	attribute: !0,
 	type: String,
-	converter: g,
+	converter: _,
 	reflect: !1,
 	useDefault: !1,
-	hasChanged: ie
+	hasChanged: re
 };
-Symbol.metadata ??= Symbol("metadata"), p.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
-var _ = class extends HTMLElement {
+Symbol.metadata ??= Symbol("metadata"), m.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
+var v = class extends HTMLElement {
 	static addInitializer(e) {
 		this._$Ei(), (this.l ??= []).push(e);
 	}
 	static get observedAttributes() {
 		return this.finalize(), this._$Eh && [...this._$Eh.keys()];
 	}
-	static createProperty(e, t = ae) {
+	static createProperty(e, t = ie) {
 		if (t.state && (t.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((t = Object.create(t)).wrapped = !0), this.elementProperties.set(e, t), !t.noAccessor) {
 			let n = Symbol(), r = this.getPropertyDescriptor(e, n, t);
 			r !== void 0 && u(this.prototype, e, r);
@@ -100,17 +100,17 @@ var _ = class extends HTMLElement {
 		};
 	}
 	static getPropertyOptions(e) {
-		return this.elementProperties.get(e) ?? ae;
+		return this.elementProperties.get(e) ?? ie;
 	}
 	static _$Ei() {
-		if (this.hasOwnProperty(h("elementProperties"))) return;
-		let e = te(this);
+		if (this.hasOwnProperty(g("elementProperties"))) return;
+		let e = ee(this);
 		e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
 	}
 	static finalize() {
-		if (this.hasOwnProperty(h("finalized"))) return;
-		if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(h("properties"))) {
-			let e = this.properties, t = [...ee(e), ...f(e)];
+		if (this.hasOwnProperty(g("finalized"))) return;
+		if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(g("properties"))) {
+			let e = this.properties, t = [...f(e), ...p(e)];
 			for (let n of t) this.createProperty(n, e[n]);
 		}
 		let e = this[Symbol.metadata];
@@ -171,14 +171,14 @@ var _ = class extends HTMLElement {
 	_$ET(e, t) {
 		let n = this.constructor.elementProperties.get(e), r = this.constructor._$Eu(e, n);
 		if (r !== void 0 && !0 === n.reflect) {
-			let i = (n.converter?.toAttribute === void 0 ? g : n.converter).toAttribute(t, n.type);
+			let i = (n.converter?.toAttribute === void 0 ? _ : n.converter).toAttribute(t, n.type);
 			this._$Em = e, i == null ? this.removeAttribute(r) : this.setAttribute(r, i), this._$Em = null;
 		}
 	}
 	_$AK(e, t) {
 		let n = this.constructor, r = n._$Eh.get(e);
 		if (r !== void 0 && this._$Em !== r) {
-			let e = n.getPropertyOptions(r), i = typeof e.converter == "function" ? { fromAttribute: e.converter } : e.converter?.fromAttribute === void 0 ? g : e.converter;
+			let e = n.getPropertyOptions(r), i = typeof e.converter == "function" ? { fromAttribute: e.converter } : e.converter?.fromAttribute === void 0 ? _ : e.converter;
 			this._$Em = r;
 			let a = i.fromAttribute(t, e.type);
 			this[r] = a ?? this._$Ej?.get(r) ?? a, this._$Em = null;
@@ -187,7 +187,7 @@ var _ = class extends HTMLElement {
 	requestUpdate(e, t, n, r = !1, i) {
 		if (e !== void 0) {
 			let a = this.constructor;
-			if (!1 === r && (i = this[e]), n ??= a.getPropertyOptions(e), !((n.hasChanged ?? ie)(i, t) || n.useDefault && n.reflect && i === this._$Ej?.get(e) && !this.hasAttribute(a._$Eu(e, n)))) return;
+			if (!1 === r && (i = this[e]), n ??= a.getPropertyOptions(e), !((n.hasChanged ?? re)(i, t) || n.useDefault && n.reflect && i === this._$Ej?.get(e) && !this.hasAttribute(a._$Eu(e, n)))) return;
 			this.C(e, t, n);
 		}
 		!1 === this.isUpdatePending && (this._$ES = this._$EP());
@@ -251,88 +251,88 @@ var _ = class extends HTMLElement {
 	updated(e) {}
 	firstUpdated(e) {}
 };
-_.elementStyles = [], _.shadowRootOptions = { mode: "open" }, _[h("elementProperties")] = /* @__PURE__ */ new Map(), _[h("finalized")] = /* @__PURE__ */ new Map(), re?.({ ReactiveElement: _ }), (p.reactiveElementVersions ??= []).push("2.1.2");
+v.elementStyles = [], v.shadowRootOptions = { mode: "open" }, v[g("elementProperties")] = /* @__PURE__ */ new Map(), v[g("finalized")] = /* @__PURE__ */ new Map(), ne?.({ ReactiveElement: v }), (m.reactiveElementVersions ??= []).push("2.1.2");
 // node_modules/lit-html/lit-html.js
-var v = globalThis, oe = (e) => e, y = v.trustedTypes, se = y ? y.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, ce = "$lit$", b = `lit$${Math.random().toFixed(9).slice(2)}$`, le = "?" + b, ue = `<${le}>`, x = document, S = () => x.createComment(""), C = (e) => e === null || typeof e != "object" && typeof e != "function", de = Array.isArray, fe = (e) => de(e) || typeof e?.[Symbol.iterator] == "function", pe = "[ 	\n\f\r]", w = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, me = /-->/g, he = />/g, T = RegExp(`>|${pe}(?:([^\\s"'>=/]+)(${pe}*=${pe}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ge = /'/g, _e = /"/g, ve = /^(?:script|style|textarea|title)$/i, E = ((e) => (t, ...n) => ({
+var y = globalThis, ae = (e) => e, b = y.trustedTypes, oe = b ? b.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, se = "$lit$", x = `lit$${Math.random().toFixed(9).slice(2)}$`, ce = "?" + x, le = `<${ce}>`, S = document, C = () => S.createComment(""), w = (e) => e === null || typeof e != "object" && typeof e != "function", T = Array.isArray, ue = (e) => T(e) || typeof e?.[Symbol.iterator] == "function", E = "[ 	\n\f\r]", D = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, de = /-->/g, fe = />/g, O = RegExp(`>|${E}(?:([^\\s"'>=/]+)(${E}*=${E}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), pe = /'/g, me = /"/g, he = /^(?:script|style|textarea|title)$/i, k = ((e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
-}))(1), D = Symbol.for("lit-noChange"), O = Symbol.for("lit-nothing"), ye = /* @__PURE__ */ new WeakMap(), k = x.createTreeWalker(x, 129);
-function be(e, t) {
-	if (!de(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-	return se === void 0 ? t : se.createHTML(t);
+}))(1), A = Symbol.for("lit-noChange"), j = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), M = S.createTreeWalker(S, 129);
+function _e(e, t) {
+	if (!T(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+	return oe === void 0 ? t : oe.createHTML(t);
 }
-var xe = (e, t) => {
-	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = w;
+var ve = (e, t) => {
+	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = D;
 	for (let t = 0; t < n; t++) {
 		let n = e[t], s, c, l = -1, u = 0;
-		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === w ? c[1] === "!--" ? o = me : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = T) : (ve.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = T) : o = he : o === T ? c[0] === ">" ? (o = i ?? w, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? T : c[3] === "\"" ? _e : ge) : o === _e || o === ge ? o = T : o === me || o === he ? o = w : (o = T, i = void 0);
-		let d = o === T && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === w ? n + ue : l >= 0 ? (r.push(s), n.slice(0, l) + ce + n.slice(l) + b + d) : n + b + (l === -2 ? t : d);
+		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === D ? c[1] === "!--" ? o = de : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = O) : (he.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = O) : o = fe : o === O ? c[0] === ">" ? (o = i ?? D, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? O : c[3] === "\"" ? me : pe) : o === me || o === pe ? o = O : o === de || o === fe ? o = D : (o = O, i = void 0);
+		let d = o === O && e[t + 1].startsWith("/>") ? " " : "";
+		a += o === D ? n + le : l >= 0 ? (r.push(s), n.slice(0, l) + se + n.slice(l) + x + d) : n + x + (l === -2 ? t : d);
 	}
-	return [be(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
-}, Se = class e {
+	return [_e(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
+}, N = class e {
 	constructor({ strings: t, _$litType$: n }, r) {
 		let i;
 		this.parts = [];
-		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = xe(t, n);
-		if (this.el = e.createElement(l, r), k.currentNode = this.el.content, n === 2 || n === 3) {
+		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = ve(t, n);
+		if (this.el = e.createElement(l, r), M.currentNode = this.el.content, n === 2 || n === 3) {
 			let e = this.el.content.firstChild;
 			e.replaceWith(...e.childNodes);
 		}
-		for (; (i = k.nextNode()) !== null && c.length < s;) {
+		for (; (i = M.nextNode()) !== null && c.length < s;) {
 			if (i.nodeType === 1) {
-				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(ce)) {
-					let t = u[o++], n = i.getAttribute(e).split(b), r = /([.?@])?(.*)/.exec(t);
+				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(se)) {
+					let t = u[o++], n = i.getAttribute(e).split(x), r = /([.?@])?(.*)/.exec(t);
 					c.push({
 						type: 1,
 						index: a,
 						name: r[2],
 						strings: n,
-						ctor: r[1] === "." ? we : r[1] === "?" ? Te : r[1] === "@" ? Ee : M
+						ctor: r[1] === "." ? be : r[1] === "?" ? xe : r[1] === "@" ? Se : I
 					}), i.removeAttribute(e);
-				} else e.startsWith(b) && (c.push({
+				} else e.startsWith(x) && (c.push({
 					type: 6,
 					index: a
 				}), i.removeAttribute(e));
-				if (ve.test(i.tagName)) {
-					let e = i.textContent.split(b), t = e.length - 1;
+				if (he.test(i.tagName)) {
+					let e = i.textContent.split(x), t = e.length - 1;
 					if (t > 0) {
-						i.textContent = y ? y.emptyScript : "";
-						for (let n = 0; n < t; n++) i.append(e[n], S()), k.nextNode(), c.push({
+						i.textContent = b ? b.emptyScript : "";
+						for (let n = 0; n < t; n++) i.append(e[n], C()), M.nextNode(), c.push({
 							type: 2,
 							index: ++a
 						});
-						i.append(e[t], S());
+						i.append(e[t], C());
 					}
 				}
 			} else if (i.nodeType === 8) {
-				if (i.data === le) c.push({
+				if (i.data === ce) c.push({
 					type: 2,
 					index: a
 				});
 				else {
 					let e = -1;
-					for (; (e = i.data.indexOf(b, e + 1)) !== -1;) c.push({
+					for (; (e = i.data.indexOf(x, e + 1)) !== -1;) c.push({
 						type: 7,
 						index: a
-					}), e += b.length - 1;
+					}), e += x.length - 1;
 				}
 			}
 			a++;
 		}
 	}
 	static createElement(e, t) {
-		let n = x.createElement("template");
+		let n = S.createElement("template");
 		return n.innerHTML = e, n;
 	}
 };
-function A(e, t, n = e, r) {
-	if (t === D) return t;
-	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = C(t) ? void 0 : t._$litDirective$;
-	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = A(e, i._$AS(e, t.values), i, r)), t;
+function P(e, t, n = e, r) {
+	if (t === A) return t;
+	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = w(t) ? void 0 : t._$litDirective$;
+	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = P(e, i._$AS(e, t.values), i, r)), t;
 }
-var Ce = class {
+var ye = class {
 	constructor(e, t) {
 		this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
 	}
@@ -343,28 +343,28 @@ var Ce = class {
 		return this._$AM._$AU;
 	}
 	u(e) {
-		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? x).importNode(t, !0);
-		k.currentNode = r;
-		let i = k.nextNode(), a = 0, o = 0, s = n[0];
+		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? S).importNode(t, !0);
+		M.currentNode = r;
+		let i = M.nextNode(), a = 0, o = 0, s = n[0];
 		for (; s !== void 0;) {
 			if (a === s.index) {
 				let t;
-				s.type === 2 ? t = new j(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new De(i, this, e)), this._$AV.push(t), s = n[++o];
+				s.type === 2 ? t = new F(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new Ce(i, this, e)), this._$AV.push(t), s = n[++o];
 			}
-			a !== s?.index && (i = k.nextNode(), a++);
+			a !== s?.index && (i = M.nextNode(), a++);
 		}
-		return k.currentNode = x, r;
+		return M.currentNode = S, r;
 	}
 	p(e) {
 		let t = 0;
 		for (let n of this._$AV) n !== void 0 && (n.strings === void 0 ? n._$AI(e[t]) : (n._$AI(e, n, t), t += n.strings.length - 2)), t++;
 	}
-}, j = class e {
+}, F = class e {
 	get _$AU() {
 		return this._$AM?._$AU ?? this._$Cv;
 	}
 	constructor(e, t, n, r) {
-		this.type = 2, this._$AH = O, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
+		this.type = 2, this._$AH = j, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
 	}
 	get parentNode() {
 		let e = this._$AA.parentNode, t = this._$AM;
@@ -377,7 +377,7 @@ var Ce = class {
 		return this._$AB;
 	}
 	_$AI(e, t = this) {
-		e = A(this, e, t), C(e) ? e === O || e == null || e === "" ? (this._$AH !== O && this._$AR(), this._$AH = O) : e !== this._$AH && e !== D && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? fe(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
+		e = P(this, e, t), w(e) ? e === j || e == null || e === "" ? (this._$AH !== j && this._$AR(), this._$AH = j) : e !== this._$AH && e !== A && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? ue(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
 	}
 	O(e) {
 		return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -386,36 +386,36 @@ var Ce = class {
 		this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
 	}
 	_(e) {
-		this._$AH !== O && C(this._$AH) ? this._$AA.nextSibling.data = e : this.T(x.createTextNode(e)), this._$AH = e;
+		this._$AH !== j && w(this._$AH) ? this._$AA.nextSibling.data = e : this.T(S.createTextNode(e)), this._$AH = e;
 	}
 	$(e) {
-		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = Se.createElement(be(n.h, n.h[0]), this.options)), n);
+		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = N.createElement(_e(n.h, n.h[0]), this.options)), n);
 		if (this._$AH?._$AD === r) this._$AH.p(t);
 		else {
-			let e = new Ce(r, this), n = e.u(this.options);
+			let e = new ye(r, this), n = e.u(this.options);
 			e.p(t), this.T(n), this._$AH = e;
 		}
 	}
 	_$AC(e) {
-		let t = ye.get(e.strings);
-		return t === void 0 && ye.set(e.strings, t = new Se(e)), t;
+		let t = ge.get(e.strings);
+		return t === void 0 && ge.set(e.strings, t = new N(e)), t;
 	}
 	k(t) {
-		de(this._$AH) || (this._$AH = [], this._$AR());
+		T(this._$AH) || (this._$AH = [], this._$AR());
 		let n = this._$AH, r, i = 0;
-		for (let a of t) i === n.length ? n.push(r = new e(this.O(S()), this.O(S()), this, this.options)) : r = n[i], r._$AI(a), i++;
+		for (let a of t) i === n.length ? n.push(r = new e(this.O(C()), this.O(C()), this, this.options)) : r = n[i], r._$AI(a), i++;
 		i < n.length && (this._$AR(r && r._$AB.nextSibling, i), n.length = i);
 	}
 	_$AR(e = this._$AA.nextSibling, t) {
 		for (this._$AP?.(!1, !0, t); e !== this._$AB;) {
-			let t = oe(e).nextSibling;
-			oe(e).remove(), e = t;
+			let t = ae(e).nextSibling;
+			ae(e).remove(), e = t;
 		}
 	}
 	setConnected(e) {
 		this._$AM === void 0 && (this._$Cv = e, this._$AP?.(e));
 	}
-}, M = class {
+}, I = class {
 	get tagName() {
 		return this.element.tagName;
 	}
@@ -423,47 +423,47 @@ var Ce = class {
 		return this._$AM._$AU;
 	}
 	constructor(e, t, n, r, i) {
-		this.type = 1, this._$AH = O, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = O;
+		this.type = 1, this._$AH = j, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = j;
 	}
 	_$AI(e, t = this, n, r) {
 		let i = this.strings, a = !1;
-		if (i === void 0) e = A(this, e, t, 0), a = !C(e) || e !== this._$AH && e !== D, a && (this._$AH = e);
+		if (i === void 0) e = P(this, e, t, 0), a = !w(e) || e !== this._$AH && e !== A, a && (this._$AH = e);
 		else {
 			let r = e, o, s;
-			for (e = i[0], o = 0; o < i.length - 1; o++) s = A(this, r[n + o], t, o), s === D && (s = this._$AH[o]), a ||= !C(s) || s !== this._$AH[o], s === O ? e = O : e !== O && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
+			for (e = i[0], o = 0; o < i.length - 1; o++) s = P(this, r[n + o], t, o), s === A && (s = this._$AH[o]), a ||= !w(s) || s !== this._$AH[o], s === j ? e = j : e !== j && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
 		}
 		a && !r && this.j(e);
 	}
 	j(e) {
-		e === O ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
+		e === j ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
 	}
-}, we = class extends M {
+}, be = class extends I {
 	constructor() {
 		super(...arguments), this.type = 3;
 	}
 	j(e) {
-		this.element[this.name] = e === O ? void 0 : e;
+		this.element[this.name] = e === j ? void 0 : e;
 	}
-}, Te = class extends M {
+}, xe = class extends I {
 	constructor() {
 		super(...arguments), this.type = 4;
 	}
 	j(e) {
-		this.element.toggleAttribute(this.name, !!e && e !== O);
+		this.element.toggleAttribute(this.name, !!e && e !== j);
 	}
-}, Ee = class extends M {
+}, Se = class extends I {
 	constructor(e, t, n, r, i) {
 		super(e, t, n, r, i), this.type = 5;
 	}
 	_$AI(e, t = this) {
-		if ((e = A(this, e, t, 0) ?? O) === D) return;
-		let n = this._$AH, r = e === O && n !== O || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== O && (n === O || r);
+		if ((e = P(this, e, t, 0) ?? j) === A) return;
+		let n = this._$AH, r = e === j && n !== j || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== j && (n === j || r);
 		r && this.element.removeEventListener(this.name, this, n), i && this.element.addEventListener(this.name, this, e), this._$AH = e;
 	}
 	handleEvent(e) {
 		typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, e) : this._$AH.handleEvent(e);
 	}
-}, De = class {
+}, Ce = class {
 	constructor(e, t, n) {
 		this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = n;
 	}
@@ -471,18 +471,18 @@ var Ce = class {
 		return this._$AM._$AU;
 	}
 	_$AI(e) {
-		A(this, e);
+		P(this, e);
 	}
 };
-(0, v.litHtmlPolyfillSupport)?.(Se, j), (v.litHtmlVersions ??= []).push("3.3.3");
-var Oe = (e, t, n) => {
+(0, y.litHtmlPolyfillSupport)?.(N, F), (y.litHtmlVersions ??= []).push("3.3.3");
+var we = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
-		r._$litPart$ = i = new j(t.insertBefore(S(), e), e, void 0, n ?? {});
+		r._$litPart$ = i = new F(t.insertBefore(C(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
-}, N = globalThis, P = class extends _ {
+}, L = globalThis, R = class extends v {
 	constructor() {
 		super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
 	}
@@ -492,7 +492,7 @@ var Oe = (e, t, n) => {
 	}
 	update(e) {
 		let t = this.render();
-		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Oe(t, this.renderRoot, this.renderOptions);
+		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = we(t, this.renderRoot, this.renderOptions);
 	}
 	connectedCallback() {
 		super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -501,12 +501,12 @@ var Oe = (e, t, n) => {
 		super.disconnectedCallback(), this._$Do?.setConnected(!1);
 	}
 	render() {
-		return D;
+		return A;
 	}
 };
-P._$litElement$ = !0, P.finalized = !0, N.litElementHydrateSupport?.({ LitElement: P }), (0, N.litElementPolyfillSupport)?.({ LitElement: P }), (N.litElementVersions ??= []).push("4.2.2");
+R._$litElement$ = !0, R.finalized = !0, L.litElementHydrateSupport?.({ LitElement: R }), (0, L.litElementPolyfillSupport)?.({ LitElement: R }), (L.litElementVersions ??= []).push("4.2.2");
 // src/core/parts/index.ts
-function ke(e) {
+function Te(e) {
 	switch (e) {
 		case "success": return "success";
 		case "failure":
@@ -515,18 +515,18 @@ function ke(e) {
 		default: return "neutral";
 	}
 }
-function Ae(e) {
-	return E`<span class="dot dot--${ke(e)}" aria-hidden="true"></span>`;
+function Ee(e) {
+	return k`<span class="dot dot--${Te(e)}" aria-hidden="true"></span>`;
 }
-function je(e) {
+function De(e) {
 	let t = {
 		up: "▲",
 		down: "▼",
 		flat: "▬"
 	}[e.direction], n = e.direction !== "flat" && e.percent !== null ? ` ${Math.round(Math.abs(e.percent))} %` : "";
-	return E`<span class="trend trend--${e.direction}">${t}${n}</span>`;
+	return k`<span class="trend trend--${e.direction}">${t}${n}</span>`;
 }
-var Me = o`
+var Oe = o`
   .dot {
     display: inline-block;
     width: 0.6em;
@@ -553,8 +553,7 @@ var Me = o`
   .trend--down {
     color: var(--error-color);
   }
-`, Ne = {
-	all_clear: "Alles in Ordnung",
+`, ke = {
 	device_not_found: "Gerät nicht gefunden",
 	no_repositories: "Keine Repositories",
 	unavailable: "Nicht verfügbar",
@@ -565,9 +564,6 @@ var Me = o`
 	commits_this_month: "Commits im Monat",
 	release: "Release",
 	ci: "CI",
-	failing_ci: "CI fehlgeschlagen",
-	review_requests: "Review-Anfragen",
-	stale_pull_requests: "Veraltete Pull Requests",
 	repository: "Repository",
 	vs_last_month: "ggü. Vormonat",
 	contributions: "Contributions im Monat",
@@ -610,9 +606,9 @@ var Me = o`
 	layout_list: "Liste",
 	order_asc: "Aufsteigend",
 	order_desc: "Absteigend",
-	editor_show_release: "Release-Version anzeigen"
-}, F = {
-	all_clear: "All clear",
+	editor_show_release: "Release-Version anzeigen",
+	editor_hide_owner: "Besitzer ausblenden"
+}, z = {
 	device_not_found: "Device not found",
 	no_repositories: "No repositories",
 	unavailable: "Unavailable",
@@ -623,9 +619,6 @@ var Me = o`
 	commits_this_month: "Commits this month",
 	release: "Release",
 	ci: "CI",
-	failing_ci: "Failing CI",
-	review_requests: "Review requests",
-	stale_pull_requests: "Stale pull requests",
 	repository: "Repository",
 	vs_last_month: "vs last month",
 	contributions: "Contributions this month",
@@ -668,22 +661,23 @@ var Me = o`
 	layout_list: "List",
 	order_asc: "Ascending",
 	order_desc: "Descending",
-	editor_show_release: "Show release version"
-}, Pe = {
-	en: F,
-	de: Ne
+	editor_show_release: "Show release version",
+	editor_hide_owner: "Hide owner"
+}, Ae = {
+	en: z,
+	de: ke
 };
-function Fe(e, t) {
-	let n = `editor_${t}`, r = (Pe[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? F)[n] ?? F[n];
+function B(e, t) {
+	let n = `editor_${t}`, r = (Ae[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? z)[n] ?? z[n];
 	if (r) return r;
 	let i = t.replace(/_/g, " ");
 	return i.charAt(0).toUpperCase() + i.slice(1);
 }
-function I(e, t) {
-	return (Pe[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? F)[t];
+function V(e, t) {
+	return (Ae[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? z)[t];
 }
 // src/core/base-card.ts
-var L = class extends P {
+var H = class extends R {
 	static {
 		this.requiredKeys = [];
 	}
@@ -694,7 +688,7 @@ var L = class extends P {
 		};
 	}
 	static {
-		this.styles = [Me, o`
+		this.styles = [Oe, o`
       ha-card {
         padding: 12px 16px;
       }
@@ -722,20 +716,20 @@ var L = class extends P {
 		};
 	}
 	renderMessage(e, t = !1) {
-		let n = this.hass ? I(this.hass, e) : e;
-		return E`<ha-card
+		let n = this.hass ? V(this.hass, e) : e;
+		return k`<ha-card
       ><div class="message ${t ? "message--error" : ""}">${n}</div></ha-card
     >`;
 	}
 	render() {
-		return !this.config || !this.hass ? O : this.renderContent();
+		return !this.config || !this.hass ? j : this.renderContent();
 	}
-}, Ie = 1;
-function Le(e) {
+}, je = 1;
+function Me(e) {
 	return e === null || !Number.isFinite(e) ? {
 		direction: "flat",
 		percent: null
-	} : Math.abs(e) <= Ie ? {
+	} : Math.abs(e) <= je ? {
 		direction: "flat",
 		percent: e
 	} : {
@@ -743,25 +737,25 @@ function Le(e) {
 		percent: e
 	};
 }
-var Re = /* @__PURE__ */ new Set([
+var Ne = /* @__PURE__ */ new Set([
 	"unknown",
 	"unavailable",
 	""
 ]);
-function ze(e) {
-	return e === void 0 || Re.has(e);
+function Pe(e) {
+	return e === void 0 || Ne.has(e);
 }
-function R(e) {
+function U(e) {
 	if (e === void 0 || e.trim() === "") return null;
 	let t = Number(e);
 	return Number.isFinite(t) ? t : null;
 }
-function Be(e) {
-	let t = R(e);
+function Fe(e) {
+	let t = U(e);
 	return t === null ? "—" : Math.abs(t) < 1e3 ? String(t) : `${Number((t / 1e3).toFixed(1))}k`;
 }
 // src/core/fields.ts
-var Ve = {
+var Ie = {
 	stars: "stars",
 	forks: "forks",
 	open_issues: "issues",
@@ -786,7 +780,7 @@ var Ve = {
 	issues_critical_open: "issues_critical_open",
 	issues_created_7d: "issues_created_7d",
 	issues_resolved_7d: "issues_resolved_7d"
-}, He = [
+}, Le = [
 	"blue",
 	"purple",
 	"teal",
@@ -795,11 +789,11 @@ var Ve = {
 	"green",
 	"indigo",
 	"amber"
-], Ue = {
+], Re = {
 	success: "var(--success-color, var(--green-color))",
 	failure: "var(--error-color, var(--red-color))",
 	pending: "var(--warning-color, var(--amber-color))"
-}, We = /* @__PURE__ */ new Set([
+}, ze = /* @__PURE__ */ new Set([
 	"friendly_name",
 	"unit_of_measurement",
 	"device_class",
@@ -812,7 +806,7 @@ var Ve = {
 	"restored",
 	"editable"
 ]);
-function Ge(e) {
+function Be(e) {
 	if (typeof e != "string") {
 		if (e.attribute === void 0 && e.key.includes(":")) {
 			let [t = "", ...n] = e.key.split(":");
@@ -830,36 +824,36 @@ function Ge(e) {
 		attribute: n.join(":")
 	} : { key: t };
 }
-function z(e) {
+function W(e) {
 	return e.attribute ? `${e.key}:${e.attribute}` : e.key;
 }
-function B(e) {
+function G(e) {
 	let t = e.replace(/_/g, " ");
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
-function Ke(e) {
+function Ve(e) {
 	let t = 0;
 	for (let n of e) t = t * 31 + n.charCodeAt(0) >>> 0;
 	return t;
 }
-function qe(e) {
+function He(e) {
 	return `var(--${e}-color)`;
 }
-function Je(e, t) {
-	return e.color ? /^[a-z-]+$/.test(e.color) ? qe(e.color) : e.color : t ? Ue[t] : qe(He[Ke(e.key) % He.length] ?? "blue");
+function Ue(e, t) {
+	return e.color ? /^[a-z-]+$/.test(e.color) ? He(e.color) : e.color : t ? Re[t] : He(Le[Ve(e.key) % Le.length] ?? "blue");
 }
-function V(e, t, n, r) {
-	let i = Ve[t];
-	if (i) return I(e, i);
+function K(e, t, n, r) {
+	let i = Ie[t];
+	if (i) return V(e, i);
 	let a = n.attributes.friendly_name;
-	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || B(t);
+	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || G(t);
 }
-function Ye(e, t) {
+function We(e, t) {
 	if (t === "success") return "success";
 	if (t === "failure" || t === "error") return "failure";
 	if (t === "pending" || t === "queued") return "pending";
 	if (e.startsWith("has_") && t === "on") return "failure";
-	let n = R(t);
+	let n = U(t);
 	if (n !== null) {
 		if (/(overdue|critical|failing|stale)/.test(e)) return n > 0 ? "failure" : void 0;
 		if (/(_vs_|trend)/.test(e)) {
@@ -868,48 +862,48 @@ function Ye(e, t) {
 		}
 	}
 }
-function Xe(e) {
-	if (typeof e == "number") return Math.abs(e) >= 1e3 ? Be(String(e)) : String(e);
+function Ge(e) {
+	if (typeof e == "number") return Math.abs(e) >= 1e3 ? Fe(String(e)) : String(e);
 	if (typeof e == "string") return e.trim() === "" ? void 0 : e;
 	if (typeof e == "boolean") return e ? "✓" : "–";
 	if (Array.isArray(e)) return String(e.length);
 }
-function Ze(e, t) {
-	let n = t.attributes.unit_of_measurement, r = typeof n == "string" && n !== "" ? n : void 0, i = R(t.state);
+function Ke(e, t) {
+	let n = t.attributes.unit_of_measurement, r = typeof n == "string" && n !== "" ? n : void 0, i = U(t.state);
 	return i === null ? { value: e.formatEntityState?.(t) ?? t.state } : r ? {
 		value: String(i),
 		unit: r
-	} : { value: Math.abs(i) >= 1e3 ? Be(t.state) : String(i) };
+	} : { value: Math.abs(i) >= 1e3 ? Fe(t.state) : String(i) };
 }
-function H(e, t, n, r) {
+function q(e, t, n, r) {
 	return n.flatMap((n) => {
 		let i = t[n.key];
-		if (!i || ze(i.state)) return [];
+		if (!i || Pe(i.state)) return [];
 		let a, o;
 		if (n.attribute) {
-			let e = i.attributes[n.attribute], t = Xe(e);
+			let e = i.attributes[n.attribute], t = Ge(e);
 			if (t === void 0) return [];
 			a = { value: t }, o = typeof e == "number" ? e : t;
-		} else a = Ze(e, i), o = R(i.state) ?? i.state;
-		let s = n.attribute ? void 0 : Ye(n.key, i.state), c = n.name ?? (n.attribute ? `${V(e, n.key, i, r)} › ${B(n.attribute)}` : V(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
-			id: z(n),
+		} else a = Ke(e, i), o = U(i.state) ?? i.state;
+		let s = n.attribute ? void 0 : We(n.key, i.state), c = n.name ?? (n.attribute ? `${K(e, n.key, i, r)} › ${G(n.attribute)}` : K(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
+			id: W(n),
 			label: c,
 			...a,
 			raw: o,
-			color: Je(n, s),
+			color: Ue(n, s),
 			stateObj: i
 		};
-		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = Le(R(l))), [u];
+		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = Me(U(l))), [u];
 	});
 }
-function Qe(e) {
+function qe(e) {
 	for (let t of [
 		"failure",
 		"pending",
 		"success"
-	]) if (e.some((e) => e.tone === t)) return Ue[t];
+	]) if (e.some((e) => e.tone === t)) return Re[t];
 }
-function $e(e, t) {
+function Je(e, t) {
 	let n = e.devices[t]?.name ?? void 0, r = [], i = /* @__PURE__ */ new Set();
 	for (let a of Object.values(e.entities)) {
 		if (a.device_id !== t) continue;
@@ -918,14 +912,14 @@ function $e(e, t) {
 		let s = a.translation_key || a.entity_id;
 		if (i.has(s)) continue;
 		i.add(s);
-		let c = V(e, s, o, n);
+		let c = K(e, s, o, n);
 		r.push({
 			value: s,
 			label: c
 		});
-		for (let [e, t] of Object.entries(o.attributes)) We.has(e) || Xe(t) === void 0 || Array.isArray(t) || r.push({
+		for (let [e, t] of Object.entries(o.attributes)) ze.has(e) || Ge(t) === void 0 || Array.isArray(t) || r.push({
 			value: `${s}:${e}`,
-			label: `${c} › ${B(e)}`
+			label: `${c} › ${G(e)}`
 		});
 	}
 	return r.sort((e, t) => {
@@ -934,26 +928,26 @@ function $e(e, t) {
 	});
 }
 // src/core/parts/field-tile.ts
-function et(e, t) {
-	return t.icon ? E`<ha-icon icon=${t.icon}></ha-icon>` : t.attribute ? E`<ha-icon icon="mdi:information-outline"></ha-icon>` : E`<ha-state-icon .hass=${e} .stateObj=${t.stateObj}></ha-state-icon>`;
+function Ye(e, t) {
+	return t.icon ? k`<ha-icon icon=${t.icon}></ha-icon>` : t.attribute ? k`<ha-icon icon="mdi:information-outline"></ha-icon>` : k`<ha-state-icon .hass=${e} .stateObj=${t.stateObj}></ha-state-icon>`;
 }
-function U(e, t, n = "tile") {
-	let r = E`<span class="field__value"
-      >${t.value}${t.unit ? E` <span class="field__unit">${t.unit}</span>` : O}</span
-    >${t.trend ? je(t.trend) : O}`;
-	return E`<div
+function J(e, t, n = "tile") {
+	let r = k`<span class="field__value"
+      >${t.value}${t.unit ? k` <span class="field__unit">${t.unit}</span>` : j}</span
+    >${t.trend ? De(t.trend) : j}`;
+	return k`<div
     class="field field--${n} ${t.tone ? "field--tone" : ""}"
     style="--c: ${t.color}"
     title=${t.label}
   >
-    <span class="chip">${et(e, t)}</span>
-    ${n === "inline" ? E`<span class="field__text">${r}</span>` : E`<span class="field__text">
+    <span class="chip">${Ye(e, t)}</span>
+    ${n === "inline" ? k`<span class="field__text">${r}</span>` : k`<span class="field__text">
             <span class="field__main">${r}</span>
             <span class="field__label">${t.label}</span>
           </span>`}
   </div>`;
 }
-var tt = o`
+var Xe = o`
   .field {
     --c: var(--primary-color);
     display: flex;
@@ -1021,8 +1015,8 @@ var tt = o`
   .field--row .field__main {
     order: 2;
   }
-`, nt = "contributions_this_month";
-function W(e, t, n) {
+`, Ze = "contributions_this_month";
+function Qe(e, t, n) {
 	let r = {};
 	for (let i of Object.values(e.entities)) {
 		if (i.device_id !== t || n !== void 0 && i.platform !== n) continue;
@@ -1031,7 +1025,7 @@ function W(e, t, n) {
 	}
 	return r;
 }
-function G(e, t) {
+function Y(e, t) {
 	let n = /* @__PURE__ */ new Set();
 	for (let r of Object.values(e.entities)) r.platform === t && r.device_id && n.add(r.device_id);
 	return [...n].map((t) => {
@@ -1042,23 +1036,20 @@ function G(e, t) {
 		};
 	}).sort((e, t) => e.name.localeCompare(t.name));
 }
-function K(e, t, n = nt) {
+function X(e, t, n = Ze) {
 	let r = /* @__PURE__ */ new Set();
 	for (let i of Object.values(e.entities)) i.platform === t && i.translation_key === n && i.device_id && r.add(i.device_id);
 	return [...r];
 }
-function rt(e, t, n = nt) {
-	return Object.values(e.entities).find((e) => e.platform === t && e.translation_key === n && e.device_id)?.device_id ?? void 0;
-}
 // src/core/fields-card.ts
-function it(e) {
+function $e(e) {
 	if (e !== void 0 && !(Array.isArray(e) && e.every((e) => typeof e == "string" || typeof e == "object" && !!e && typeof e.key == "string"))) throw Error("`fields` must be a list of sensor keys or objects with a `key`");
 }
-var q = class extends L {
+var Z = class extends H {
 	static {
 		this.styles = [
-			...L.styles,
-			tt,
+			...H.styles,
+			Xe,
 			o`
       ha-card {
         box-shadow: inset 0 3px 0 var(--hoc-accent, transparent);
@@ -1121,61 +1112,61 @@ var q = class extends L {
 		return this.config?.device;
 	}
 	setConfig(e) {
-		it(e.fields), super.setConfig(e);
+		$e(e.fields), super.setConfig(e);
 	}
 	renderFields(e, t) {
 		let { hass: n } = this;
-		return !n || e.length === 0 ? O : t === "compact" ? E`<div class="inline-fields">
-        ${e.map((e) => U(n, e, "inline"))}
-      </div>` : t === "list" ? E`<div class="rows">${e.map((e) => U(n, e, "row"))}</div>` : E`<div class="grid">${e.map((e) => U(n, e, "tile"))}</div>`;
+		return !n || e.length === 0 ? j : t === "compact" ? k`<div class="inline-fields">
+        ${e.map((e) => J(n, e, "inline"))}
+      </div>` : t === "list" ? k`<div class="rows">${e.map((e) => J(n, e, "row"))}</div>` : k`<div class="grid">${e.map((e) => J(n, e, "tile"))}</div>`;
 	}
 	renderContent() {
 		let { hass: e, config: t } = this;
-		if (!e || !t) return E``;
+		if (!e || !t) return k``;
 		let n = this.deviceId(), r = n ? e.devices[n] : void 0;
 		if (!n || !r) return this.renderMessage("device_not_found", !0);
-		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = r.configuration_url, s = t.link === !0 && o?.startsWith("https://") ? o : void 0, c = t.show_status !== !1, l = W(e, n, this.platform), u = t.layout === "compact" || t.layout === "list" ? t.layout : "standard", d = H(e, l, (t.fields?.length ? t.fields : this.defaultFields(u, l)).map(Ge), i), ee = H(e, l, this.statusKeys.map((e) => ({ key: e })), i), f = c ? Qe(ee) : void 0, te = ee.some((e) => e.tone === "failure"), p = this.dotKey ? l[this.dotKey]?.state : void 0, m = this.headerBadge?.(l);
-		return E`<ha-card
-      class=${te ? "alert" : ""}
-      style=${f ? `--hoc-accent: ${f}` : ""}
+		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = r.configuration_url, s = t.link === !0 && o?.startsWith("https://") ? o : void 0, c = t.show_status !== !1, l = Qe(e, n, this.platform), u = t.layout === "compact" || t.layout === "list" ? t.layout : "standard", d = q(e, l, (t.fields?.length ? t.fields : this.defaultFields(u, l)).map(Be), i), f = q(e, l, this.statusKeys.map((e) => ({ key: e })), i), p = c ? qe(f) : void 0, ee = f.some((e) => e.tone === "failure"), m = this.dotKey ? l[this.dotKey]?.state : void 0, h = this.headerBadge?.(l);
+		return k`<ha-card
+      class=${ee ? "alert" : ""}
+      style=${p ? `--hoc-accent: ${p}` : ""}
     >
       <div class="header">
         <div class="title">
-          ${c && p !== void 0 ? Ae(p) : O}
+          ${c && m !== void 0 ? Ee(m) : j}
           <span class="name"
-            >${s ? E`<a href=${s} target="_blank" rel="noopener noreferrer">${a}</a>` : a}</span
+            >${s ? k`<a href=${s} target="_blank" rel="noopener noreferrer">${a}</a>` : a}</span
           >
         </div>
-        ${m ? E`<span class="release">${m}</span>` : O}
+        ${h ? k`<span class="release">${h}</span>` : j}
       </div>
       ${this.renderFields(d, u)}
     </ha-card>`;
 	}
 };
 // src/core/editor.ts
-function J(e, t = "device") {
+function et(e, t = "device") {
 	return {
 		name: t,
 		selector: { device: { integration: e } }
 	};
 }
-function at(e, t, n, r) {
+function tt(e, t, n, r) {
 	return {
 		name: r,
 		selector: { select: {
 			mode: "dropdown",
 			options: n.map((n) => ({
 				value: n,
-				label: e ? I(e, `${t}_${n}`) : n
+				label: e ? V(e, `${t}_${n}`) : n
 			}))
 		} }
 	};
 }
-function Y(e, t, n = "layout") {
-	return at(e, "layout", t, n);
+function nt(e, t, n = "layout") {
+	return tt(e, "layout", t, n);
 }
-function ot(e, t, n = "fields") {
-	let r = (t) => e ? Fe(e, t) : t;
+function rt(e, t, n = "fields") {
+	let r = (t) => e ? B(e, t) : t;
 	return {
 		name: n,
 		selector: { object: {
@@ -1207,10 +1198,10 @@ function ot(e, t, n = "fields") {
 		} }
 	};
 }
-function X(e, t, n = "fields") {
-	return ot(e, e && t ? $e(e, t) : [], n);
+function it(e, t, n = "fields") {
+	return rt(e, e && t ? Je(e, t) : [], n);
 }
-function st(e) {
+function at(e) {
 	if (typeof e == "string") return { key: e };
 	let { attribute: t, ...n } = e;
 	return t ? {
@@ -1218,16 +1209,16 @@ function st(e) {
 		key: `${e.key}:${t}`
 	} : { ...n };
 }
-function ct(e) {
+function ot(e) {
 	return Array.isArray(e) ? e.flatMap((e) => {
 		if (typeof e != "object" || !e) return [];
 		let t = Object.fromEntries(Object.entries(e).filter(([, e]) => e != null && e !== ""));
 		return typeof t.key == "string" ? [t] : [];
 	}) : [];
 }
-var Z = class extends P {
+var Q = class extends R {
 	constructor(...e) {
-		super(...e), this.fieldListNames = [], this.computeLabel = (e) => this.hass ? Fe(this.hass, e.name) : e.name;
+		super(...e), this.fieldListNames = [], this.computeLabel = (e) => this.hass ? B(this.hass, e.name) : e.name;
 	}
 	static {
 		this.properties = {
@@ -1242,7 +1233,7 @@ var Z = class extends P {
 		let e = { ...this.config };
 		for (let t of this.fieldListNames) {
 			let n = e[t];
-			Array.isArray(n) && (e[t] = n.map(st));
+			Array.isArray(n) && (e[t] = n.map(at));
 		}
 		return e;
 	}
@@ -1254,7 +1245,7 @@ var Z = class extends P {
 		};
 		for (let e of this.fieldListNames) {
 			if (!(e in t)) continue;
-			let n = ct(t[e]);
+			let n = ot(t[e]);
 			n.length > 0 ? t[e] = n : delete t[e];
 		}
 		this.dispatchEvent(new CustomEvent("config-changed", {
@@ -1264,7 +1255,7 @@ var Z = class extends P {
 		}));
 	}
 	render() {
-		return !this.hass || !this.config ? O : E`<ha-form
+		return !this.hass || !this.config ? j : k`<ha-form
       .hass=${this.hass}
       .data=${this.formData()}
       .schema=${this.schema()}
@@ -1272,17 +1263,17 @@ var Z = class extends P {
       @value-changed=${this.valueChanged}
     ></ha-form>`;
 	}
-}, lt = class extends Z {
+}, st = class extends Q {
 	constructor(...e) {
 		super(...e), this.fieldListNames = ["fields"];
 	}
 	schema() {
 		return [
 			{
-				...J("github_pulse"),
+				...et("github_pulse"),
 				required: !0
 			},
-			Y(this.hass, [
+			nt(this.hass, [
 				"compact",
 				"standard",
 				"list"
@@ -1303,10 +1294,10 @@ var Z = class extends P {
 				name: "show_status",
 				selector: { boolean: {} }
 			},
-			X(this.hass, this.config?.device)
+			it(this.hass, this.config?.device)
 		];
 	}
-}, Q = "github_pulse", ut = "hoc-github-repo-card", dt = [
+}, $ = "github_pulse", ct = "hoc-github-card", lt = [
 	"stars",
 	"forks",
 	"open_issues",
@@ -1316,18 +1307,30 @@ var Z = class extends P {
 		trend: "commits_vs_last_month"
 	},
 	"latest_release"
-], ft = {
+], ut = {
 	compact: ["stars", "latest_release"],
+	standard: lt,
+	list: lt
+}, dt = [
+	{
+		key: "contributions_this_month",
+		trend: "commits_vs_last_month"
+	},
+	"current_streak",
+	"longest_streak",
+	"top_language"
+], ft = {
+	compact: ["contributions_this_month", "current_streak"],
 	standard: dt,
 	list: dt
-}, pt = {
-	tag: ut,
-	ctor: class extends q {
+}, pt = "contributions_this_month", mt = {
+	tag: ct,
+	ctor: class extends Z {
 		static {
 			this.requiredKeys = ["device"];
 		}
 		get platform() {
-			return Q;
+			return $;
 		}
 		get dotKey() {
 			return "ci_state";
@@ -1335,24 +1338,24 @@ var Z = class extends P {
 		headerBadge(e) {
 			if (this.config?.show_release !== !0) return;
 			let t = e.latest_release?.state;
-			return t === void 0 || ze(t) ? void 0 : t;
+			return t === void 0 || Pe(t) ? void 0 : t;
 		}
-		defaultFields(e) {
-			return ft[e];
+		defaultFields(e, t) {
+			return (pt in t ? ft : ut)[e];
 		}
 		static getStubConfig(e) {
-			let t = new Set(K(e, Q)), n = G(e, Q).find((e) => !t.has(e.id));
-			return n ? { device: n.id } : {};
+			let t = new Set(X(e, $)), n = Y(e, $), r = n.find((e) => !t.has(e.id)) ?? n[0];
+			return r ? { device: r.id } : {};
 		}
 		static getConfigElement() {
-			return document.createElement(`${ut}-editor`);
+			return document.createElement(`${ct}-editor`);
 		}
 	},
-	editorTag: `${ut}-editor`,
-	editorCtor: lt,
-	name: "GitHub repository",
-	description: "One GitHub Pulse repository with colourful, selectable fields."
-}, mt = class extends Z {
+	editorTag: `${ct}-editor`,
+	editorCtor: st,
+	name: "GitHub repository or profile",
+	description: "A GitHub Pulse repository or your GitHub profile, with colourful, selectable fields."
+}, ht = class extends Q {
 	schema() {
 		return [{
 			name: "entity",
@@ -1370,8 +1373,8 @@ var Z = class extends P {
 			} }
 		}];
 	}
-}, ht = "hoc-youtrack-issues-card", gt = 5;
-function _t(e) {
+}, gt = "hoc-youtrack-issues-card", _t = 5;
+function vt(e) {
 	let t = e.issues;
 	return Array.isArray(t) ? t.flatMap((e) => {
 		if (typeof e != "object" || !e) return [];
@@ -1386,14 +1389,14 @@ function _t(e) {
 		}];
 	}) : [];
 }
-var vt = {
-	tag: ht,
-	ctor: class extends L {
+var yt = {
+	tag: gt,
+	ctor: class extends H {
 		static {
 			this.requiredKeys = ["entity"];
 		}
 		static {
-			this.styles = [...L.styles, o`
+			this.styles = [...H.styles, o`
       .issue {
         display: flex;
         gap: 8px;
@@ -1421,44 +1424,44 @@ var vt = {
 			return t ? { entity: t.entity_id } : {};
 		}
 		static getConfigElement() {
-			return document.createElement(`${ht}-editor`);
+			return document.createElement(`${gt}-editor`);
 		}
 		renderContent() {
 			let { hass: e, config: t } = this;
-			if (!e || !t) return E``;
+			if (!e || !t) return k``;
 			let n = e.states[t.entity];
 			if (!n) return this.renderMessage("entity_not_found", !0);
-			let r = _t(n.attributes).slice(0, t.max_items ?? gt);
-			return r.length === 0 ? this.renderMessage("no_issues") : E`<ha-card>
-      ${r.map((e) => E`<div class="issue">
-            ${e.url ? E`<a
+			let r = vt(n.attributes).slice(0, t.max_items ?? _t);
+			return r.length === 0 ? this.renderMessage("no_issues") : k`<ha-card>
+      ${r.map((e) => k`<div class="issue">
+            ${e.url ? k`<a
                     class="issue__id"
                     href=${e.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     >${e.id}</a
-                  >` : E`<span class="issue__id">${e.id}</span>`}
+                  >` : k`<span class="issue__id">${e.id}</span>`}
             <span class="issue__summary">${e.summary}</span>
             <span>${e.state}</span>
           </div>`)}
     </ha-card>`;
 		}
 	},
-	editorTag: `${ht}-editor`,
-	editorCtor: mt,
+	editorTag: `${gt}-editor`,
+	editorCtor: ht,
 	name: "YouTrack issues",
 	description: "The first issues of a YouTrack query sensor."
-}, yt = class extends Z {
+}, bt = class extends Q {
 	constructor(...e) {
 		super(...e), this.fieldListNames = ["fields"];
 	}
 	schema() {
 		return [
 			{
-				...J("youtrack"),
+				...et("youtrack"),
 				required: !0
 			},
-			Y(this.hass, [
+			nt(this.hass, [
 				"compact",
 				"standard",
 				"list"
@@ -1475,43 +1478,43 @@ var vt = {
 				name: "show_status",
 				selector: { boolean: {} }
 			},
-			X(this.hass, this.config?.device)
+			it(this.hass, this.config?.device)
 		];
 	}
-}, bt = "youtrack", xt = "hoc-youtrack-project-card", St = [
+}, xt = "youtrack", St = "hoc-youtrack-project-card", Ct = [
 	"issues_open",
 	"issues_overdue",
 	"issues_critical_open",
 	"issues_created_7d",
 	"issues_resolved_7d"
-], Ct = {
-	tag: xt,
-	ctor: class extends q {
+], wt = {
+	tag: St,
+	ctor: class extends Z {
 		static {
 			this.requiredKeys = ["device"];
 		}
 		get platform() {
-			return bt;
+			return xt;
 		}
 		get statusKeys() {
 			return ["has_overdue", "has_critical_open"];
 		}
 		defaultFields() {
-			return St;
+			return Ct;
 		}
 		static getStubConfig(e) {
-			let t = G(e, bt)[0];
+			let t = Y(e, xt)[0];
 			return t ? { device: t.id } : {};
 		}
 		static getConfigElement() {
-			return document.createElement(`${xt}-editor`);
+			return document.createElement(`${St}-editor`);
 		}
 	},
-	editorTag: `${xt}-editor`,
-	editorCtor: yt,
+	editorTag: `${St}-editor`,
+	editorCtor: bt,
 	name: "YouTrack project",
 	description: "A YouTrack project with colourful, selectable fields."
-}, wt = class extends Z {
+}, Tt = class extends Q {
 	constructor(...e) {
 		super(...e), this.fieldListNames = ["fields"];
 	}
@@ -1522,7 +1525,7 @@ var vt = {
 				required: !0,
 				selector: { device: {} }
 			},
-			Y(this.hass, [
+			nt(this.hass, [
 				"compact",
 				"standard",
 				"list"
@@ -1539,171 +1542,39 @@ var vt = {
 				name: "show_status",
 				selector: { boolean: {} }
 			},
-			X(this.hass, this.config?.device)
+			it(this.hass, this.config?.device)
 		];
 	}
-}, $ = "hoc-device-card", Tt = 6, Et = {
-	tag: $,
-	ctor: class extends q {
+}, Et = "hoc-device-card", Dt = 6, Ot = {
+	tag: Et,
+	ctor: class extends Z {
 		static {
 			this.requiredKeys = ["device"];
 		}
 		get platform() {}
 		defaultFields(e, t) {
-			return Object.keys(t).slice(0, Tt);
+			return Object.keys(t).slice(0, Dt);
+		}
+		static getStubConfig(e) {
+			let t = Object.values(e.entities).find((t) => t.device_id && e.states[t.entity_id]);
+			return t?.device_id ? { device: t.device_id } : {};
 		}
 		static getConfigElement() {
-			return document.createElement(`${$}-editor`);
+			return document.createElement(`${Et}-editor`);
 		}
 	},
-	editorTag: `${$}-editor`,
-	editorCtor: wt,
+	editorTag: `${Et}-editor`,
+	editorCtor: Tt,
 	name: "Device",
 	description: "Any device: choose which sensors and attributes to show, in colour."
-}, Dt = class extends Z {
-	schema() {
-		return [
-			J("github_pulse"),
-			{
-				name: "repositories",
-				selector: { device: {
-					integration: "github_pulse",
-					multiple: !0
-				} }
-			},
-			{
-				name: "show_when_clean",
-				selector: { boolean: {} }
-			}
-		];
-	}
-}, Ot = "hoc-github-attention-card", kt = /* @__PURE__ */ new Set(["failure", "error"]);
-function At(e, t, n) {
-	let r = t ? e.devices[t]?.config_entries : void 0, i = e.devices[n]?.config_entries;
-	return !r || !i || r.some((e) => i.includes(e));
-}
-function jt(e, t) {
-	let n = K(e, Q), r = t.device ?? n[0], i = t.repositories === void 0 || t.repositories === "all" || t.repositories.length === 0 ? null : new Set(t.repositories), a = !1, o = G(e, Q).filter((e) => !n.includes(e.id) && e.id !== r).filter((e) => i === null || i.has(e.id)).filter((t) => At(e, r, t.id)).filter((t) => {
-		let n = W(e, t.id, Q).ci_state?.state;
-		return ze(n) || (a = !0), n !== void 0 && kt.has(n);
-	}).map((e) => e.name), s = r ? W(e, r, Q) : {}, c = R(s.review_requests?.state), l = R(s.stale_pull_requests?.state);
-	return {
-		failingRepos: o,
-		reviewRequests: c ?? 0,
-		stalePullRequests: l ?? 0,
-		known: a || c !== null || l !== null
-	};
-}
-var Mt = {
-	tag: Ot,
-	ctor: class extends L {
-		static {
-			this.styles = [...L.styles, o`
-      .item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 2px 0;
-        color: var(--primary-text-color);
-      }
-      .item__label {
-        color: var(--secondary-text-color);
-      }
-    `];
-		}
-		static getConfigElement() {
-			return document.createElement(`${Ot}-editor`);
-		}
-		renderContent() {
-			let { hass: e, config: t } = this;
-			if (!e || !t) return O;
-			if (t.device && !e.devices[t.device]) return this.renderMessage("device_not_found", !0);
-			let n = jt(e, t);
-			return n.known ? n.failingRepos.length === 0 && n.reviewRequests === 0 && n.stalePullRequests === 0 ? t.show_when_clean === !1 ? O : this.renderMessage("all_clear") : E`<ha-card>
-      ${n.failingRepos.length > 0 ? E`<div class="item">
-              ${Ae("failure")}
-              <span class="item__label">${I(e, "failing_ci")}</span>
-              <span>${n.failingRepos.join(", ")}</span>
-            </div>` : O}
-      ${n.reviewRequests > 0 ? E`<div class="item">
-              <span class="item__label">${I(e, "review_requests")}</span>
-              <span>${n.reviewRequests}</span>
-            </div>` : O}
-      ${n.stalePullRequests > 0 ? E`<div class="item">
-              <span class="item__label">${I(e, "stale_pull_requests")}</span>
-              <span>${n.stalePullRequests}</span>
-            </div>` : O}
-    </ha-card>` : this.renderMessage("unavailable");
-		}
-	},
-	editorTag: `${Ot}-editor`,
-	editorCtor: Dt,
-	name: "GitHub attention",
-	description: "Only what needs attention: failing CI, review requests, stale pull requests."
-}, Nt = class extends Z {
-	constructor(...e) {
-		super(...e), this.fieldListNames = ["fields"];
-	}
-	schema() {
-		let e = this.config?.device ?? (this.hass ? rt(this.hass, "github_pulse") : void 0);
-		return [
-			J("github_pulse"),
-			Y(this.hass, [
-				"compact",
-				"standard",
-				"list"
-			]),
-			{
-				name: "name",
-				selector: { text: {} }
-			},
-			{
-				name: "link",
-				selector: { boolean: {} }
-			},
-			{
-				name: "show_status",
-				selector: { boolean: {} }
-			},
-			X(this.hass, e)
-		];
-	}
-}, Pt = "hoc-github-profile-card", Ft = [
-	{
-		key: "contributions_this_month",
-		trend: "commits_vs_last_month"
-	},
-	"current_streak",
-	"longest_streak",
-	"top_language"
-], It = {
-	tag: Pt,
-	ctor: class extends q {
-		get platform() {
-			return Q;
-		}
-		defaultFields() {
-			return Ft;
-		}
-		deviceId() {
-			return this.config?.device ?? (this.hass ? rt(this.hass, "github_pulse") : void 0);
-		}
-		static getConfigElement() {
-			return document.createElement(`${Pt}-editor`);
-		}
-	},
-	editorTag: `${Pt}-editor`,
-	editorCtor: Nt,
-	name: "GitHub profile",
-	description: "Your GitHub activity with colourful, selectable fields."
-}, Lt = class extends Z {
+}, kt = class extends Q {
 	constructor(...e) {
 		super(...e), this.fieldListNames = ["columns"];
 	}
 	columnOptions() {
 		if (!this.hass) return [];
-		let e = new Set(K(this.hass, "github_pulse")), t = /* @__PURE__ */ new Map();
-		for (let n of G(this.hass, "github_pulse")) if (!e.has(n.id)) for (let e of $e(this.hass, n.id)) t.set(e.value, e);
+		let e = new Set(X(this.hass, "github_pulse")), t = /* @__PURE__ */ new Map();
+		for (let n of Y(this.hass, "github_pulse")) if (!e.has(n.id)) for (let e of Je(this.hass, n.id)) t.set(e.value, e);
 		return [...t.values()];
 	}
 	schema() {
@@ -1716,7 +1587,7 @@ var Mt = {
 					multiple: !0
 				} }
 			},
-			ot(this.hass, e, "columns"),
+			rt(this.hass, e, "columns"),
 			{
 				name: "sort_by",
 				selector: { select: {
@@ -1724,11 +1595,15 @@ var Mt = {
 					custom_value: !0,
 					options: [{
 						value: "name",
-						label: this.hass ? Fe(this.hass, "name") : "Name"
+						label: this.hass ? B(this.hass, "name") : "Name"
 					}, ...e]
 				} }
 			},
-			at(this.hass, "order", ["asc", "desc"], "sort_order"),
+			tt(this.hass, "order", ["asc", "desc"], "sort_order"),
+			{
+				name: "hide_owner",
+				selector: { boolean: {} }
+			},
 			{
 				name: "max_height",
 				selector: { number: {
@@ -1739,7 +1614,7 @@ var Mt = {
 			}
 		];
 	}
-}, Rt = "hoc-github-repos-card", zt = [
+}, At = "hoc-github-repos-card", jt = [
 	"ci_state",
 	"stars",
 	{
@@ -1748,11 +1623,11 @@ var Mt = {
 	},
 	"latest_release"
 ];
-function Bt(e, t) {
+function Mt(e, t) {
 	return t === "name" ? e.name : e.views.get(t)?.raw ?? null;
 }
-function Vt(e, t, n, r) {
-	let i = Bt(e, n), a = Bt(t, n);
+function Nt(e, t, n, r) {
+	let i = Mt(e, n), a = Mt(t, n);
 	if (i === null && a === null) return e.name.localeCompare(t.name);
 	if (i === null) return 1;
 	if (a === null) return -1;
@@ -1760,13 +1635,13 @@ function Vt(e, t, n, r) {
 	return o = typeof i == "number" && typeof a == "number" ? i - a : typeof i == "number" ? -1 : typeof a == "number" ? 1 : i.localeCompare(a), o === 0 ? e.name.localeCompare(t.name) : o * r;
 }
 // src/registry.ts
-var Ht = [
-	pt,
+var Pt = [
+	mt,
 	{
-		tag: Rt,
-		ctor: class extends L {
+		tag: At,
+		ctor: class extends H {
 			static {
-				this.styles = [...L.styles, o`
+				this.styles = [...H.styles, o`
       ha-card {
         overflow: hidden;
       }
@@ -1817,50 +1692,59 @@ var Ht = [
     `];
 			}
 			static getConfigElement() {
-				return document.createElement(`${Rt}-editor`);
+				return document.createElement(`${At}-editor`);
 			}
 			rows(e) {
 				let { hass: t, config: n } = this;
 				if (!t || !n) return [];
-				let r = new Set(K(t, Q)), i = G(t, Q).filter((e) => !r.has(e.id)), a = n.repositories === void 0 || n.repositories === "all" || n.repositories.length === 0 ? null : new Set(n.repositories);
-				return i.filter((e) => a === null || a.has(e.id)).map((n) => {
-					let r = W(t, n.id, Q), i = H(t, r, e, n.name);
+				let r = new Set(X(t, $)), i = Y(t, $).filter((e) => !r.has(e.id)), a = n.repositories === void 0 || n.repositories === "all" || n.repositories.length === 0 ? null : new Set(n.repositories);
+				return i.filter((e) => a === null || a.has(e.id)).map((r) => {
+					let i = Qe(t, r.id, $), a = q(t, i, e, r.name);
 					return {
-						id: n.id,
-						name: n.name,
-						views: new Map(i.map((e) => [e.id, e]))
+						id: r.id,
+						name: n.hide_owner === !0 ? r.name.split("/").pop() ?? r.name : r.name,
+						views: new Map(a.map((e) => [e.id, e]))
 					};
 				});
 			}
 			renderCell(e, t) {
-				return e ? t.key === "ci_state" && !t.attribute ? E`<td>${Ae(e.stateObj.state)}</td>` : E`<td>
-      <span class="cell ${e.tone ? "cell--tone" : ""}" style="--c: ${e.color}"
-        >${e.value}${e.unit ? E`<span class="cell__unit">${e.unit}</span>` : O}${e.trend ? je(e.trend) : O}</span
+				return e ? t.key === "ci_state" && !t.attribute ? k`<td>${Ee(e.stateObj.state)}</td>` : k`<td>
+      <span class="cell ${e.tone || t.color ? "cell--tone" : ""}" style="--c: ${e.color}"
+        >${e.value}${e.unit ? k`<span class="cell__unit">${e.unit}</span>` : j}${e.trend ? De(e.trend) : j}</span
       >
-    </td>` : E`<td>—</td>`;
+    </td>` : k`<td>—</td>`;
 			}
 			renderContent() {
 				let { hass: e, config: t } = this;
-				if (!e || !t) return E``;
-				let n = (t.columns?.length ? t.columns : zt).map(Ge), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Vt(e, t, r, i));
+				if (!e || !t) return k``;
+				let n = (t.columns?.length ? t.columns : jt).map(Be), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Nt(e, t, r, i));
 				if (a.length === 0) return this.renderMessage("no_repositories");
 				let o = n.map((e) => {
-					let t = z(e), n = a.map((e) => e.views.get(t)?.label).find((e) => e !== void 0);
-					return e.name ?? n ?? B(e.key);
+					let t = W(e), n = a.map((e) => e.views.get(t)).find((e) => e !== void 0);
+					return {
+						text: e.name ?? n?.label ?? G(e.key),
+						icon: e.icon,
+						color: e.color ? n?.color : void 0
+					};
 				});
-				return E`<ha-card>
+				return k`<ha-card>
       <div class="scroll" style="max-height: ${t.max_height ?? 400}px">
         <table>
           <thead>
             <tr>
-              <th>${I(e, "repository")}</th>
-              ${o.map((e) => E`<th>${e}</th>`)}
+              <th>${V(e, "repository")}</th>
+              ${o.map((e) => k`<th>
+                    ${e.icon ? k`<ha-icon
+                            icon=${e.icon}
+                            style=${e.color ? `color: ${e.color}` : ""}
+                          ></ha-icon>` : j}${e.text}
+                  </th>`)}
             </tr>
           </thead>
           <tbody>
-            ${a.map((e) => E`<tr>
+            ${a.map((e) => k`<tr>
                   <td class="name">${e.name}</td>
-                  ${n.map((t) => this.renderCell(e.views.get(z(t)), t))}
+                  ${n.map((t) => this.renderCell(e.views.get(W(t)), t))}
                 </tr>`)}
           </tbody>
         </table>
@@ -1868,29 +1752,27 @@ var Ht = [
     </ha-card>`;
 			}
 		},
-		editorTag: `${Rt}-editor`,
-		editorCtor: Lt,
+		editorTag: `${At}-editor`,
+		editorCtor: kt,
 		name: "GitHub repositories",
 		description: "Several GitHub Pulse repositories as a sortable table with selectable columns."
 	},
-	It,
-	Mt,
-	Ct,
-	vt,
-	Et
+	wt,
+	yt,
+	Ot
 ];
-function Ut(e, t) {
+function Ft(e, t) {
 	customElements.get(e) || customElements.define(e, t);
 }
-function Wt(e = Ht) {
+function It(e = Pt) {
 	window.customCards ??= [];
-	for (let t of e) Ut(t.tag, t.ctor), t.editorTag && t.editorCtor && Ut(t.editorTag, t.editorCtor), window.customCards.some((e) => e.type === t.tag) || window.customCards.push({
+	for (let t of e) Ft(t.tag, t.ctor), t.editorTag && t.editorCtor && Ft(t.editorTag, t.editorCtor), window.customCards.some((e) => e.type === t.tag) || window.customCards.push({
 		type: t.tag,
 		name: t.name,
 		description: t.description,
-		preview: t.preview ?? !1
+		preview: t.preview ?? !0
 	});
 }
 // src/index.ts
-Wt();
-export { Wt as registerCards };
+It();
+export { It as registerCards };

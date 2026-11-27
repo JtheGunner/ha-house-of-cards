@@ -47,6 +47,7 @@ export class GithubReposEditor extends HocBaseEditor<GithubReposConfig> {
         },
       },
       choiceSelector(this.hass, "order", ["asc", "desc"], "sort_order"),
+      { name: "hide_owner", selector: { boolean: {} } },
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },
     ];
   }

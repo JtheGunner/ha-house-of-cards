@@ -188,4 +188,30 @@ describe("hoc-github-repos-card", () => {
     expect(names).toEqual(["bravo", "alpha"]);
     expect(headers).toEqual(["Repository", "Forks", "Release › Downloads"]);
   });
+
+  it("shows the repository name without the owner when hide_owner is on", async () => {
+    const repos = [{ id: "a", name: "JtheGunner/bullseye-eye", stars: "1" }];
+    const off = await mount(repos);
+    expect(off.root.querySelector("tbody .name")?.textContent?.trim()).toBe(
+      "JtheGunner/bullseye-eye",
+    );
+    const on = await mount(repos, { hide_owner: true });
+    expect(on.root.querySelector("tbody .name")?.textContent?.trim()).toBe("bullseye-eye");
+  });
+
+  it("keeps names without an owner as they are", async () => {
+    const { root } = await mount([{ id: "a", name: "plain", stars: "1" }], { hide_owner: true });
+    expect(root.querySelector("tbody .name")?.textContent?.trim()).toBe("plain");
+  });
+
+  it("overrides a column's label, icon and colour", async () => {
+    const { root } = await mount([{ id: "a", name: "o/a", stars: "5" }], {
+      columns: [{ key: "stars", name: "Fans", icon: "mdi:heart", color: "pink" }],
+    });
+    const header = root.querySelector("thead th:nth-child(2)");
+    expect(header?.textContent).toContain("Fans");
+    expect(header?.querySelector("ha-icon")?.getAttribute("icon")).toBe("mdi:heart");
+    expect(root.querySelector("tbody .cell")?.getAttribute("style")).toContain("var(--pink-color)");
+    expect(root.querySelector("tbody .cell")?.className).toContain("cell--tone");
+  });
 });

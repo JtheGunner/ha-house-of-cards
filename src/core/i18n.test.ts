@@ -3,13 +3,13 @@ import { EDITOR_OPTION_NAMES, editorLabel, t } from "./i18n";
 
 describe("t", () => {
   it("returns German for de", () => {
-    expect(t({ locale: { language: "de" } }, "all_clear")).toBe("Alles in Ordnung");
+    expect(t({ locale: { language: "de" } }, "device_not_found")).toBe("Gerät nicht gefunden");
   });
   it("falls back to English for an unknown language", () => {
-    expect(t({ locale: { language: "fr" } }, "all_clear")).toBe("All clear");
+    expect(t({ locale: { language: "fr" } }, "device_not_found")).toBe("Device not found");
   });
   it("uses the base language of a regional code", () => {
-    expect(t({ locale: { language: "de-CH" } }, "all_clear")).toBe("Alles in Ordnung");
+    expect(t({ locale: { language: "de-CH" } }, "device_not_found")).toBe("Gerät nicht gefunden");
   });
 });
 
