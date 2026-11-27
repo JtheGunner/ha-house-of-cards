@@ -10,7 +10,7 @@ export interface FixtureEntity {
 }
 
 export interface FixtureOptions {
-  devices?: { id: string; name: string }[];
+  devices?: { id: string; name: string; configuration_url?: string }[];
   entities?: FixtureEntity[];
   language?: string;
 }
@@ -25,6 +25,8 @@ export function fixtureHass(options: FixtureOptions = {}): HomeAssistant {
   };
   for (const device of options.devices ?? []) {
     hass.devices[device.id] = { id: device.id, name: device.name };
+    if (device.configuration_url)
+      hass.devices[device.id]!.configuration_url = device.configuration_url;
   }
   for (const entity of options.entities ?? []) {
     const entityId = `sensor.${entity.platform}_${entity.deviceId}_${entity.translationKey}`;

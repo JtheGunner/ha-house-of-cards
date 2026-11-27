@@ -1,6 +1,6 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import type { BaseConfig } from "./base-card";
-import { discoverFieldOptions } from "./fields";
+import { discoverFieldOptions, type FieldConfig, type FieldOption } from "./fields";
 import type { HomeAssistant } from "./types";
 
 export interface FormSchemaItem {
@@ -17,16 +17,52 @@ export function layoutSelector(options: string[], name = "layout"): FormSchemaIt
   return { name, selector: { select: { mode: "dropdown", options } } };
 }
 
+export function fieldsSelectorFromOptions(options: FieldOption[], name = "fields"): FormSchemaItem {
+  return {
+    name,
+    selector: {
+      object: {
+        multiple: true,
+        label_field: "key",
+        fields: {
+          key: {
+            label: "Sensor",
+            required: true,
+            selector: { select: { mode: "dropdown", custom_value: true, options } },
+          },
+          name: { label: "Name", selector: { text: {} } },
+          icon: { label: "Icon", selector: { icon: {} } },
+          color: { label: "Color", selector: { ui_color: {} } },
+        },
+      },
+    },
+  };
+}
+
 export function fieldsSelector(
   hass: HomeAssistant | undefined,
   deviceId: string | undefined,
   name = "fields",
 ): FormSchemaItem {
   const options = hass && deviceId ? discoverFieldOptions(hass, deviceId) : [];
-  return {
-    name,
-    selector: { select: { multiple: true, mode: "list", custom_value: true, options } },
-  };
+  return fieldsSelectorFromOptions(options, name);
+}
+
+function toFormEntry(item: FieldConfig): Record<string, unknown> {
+  if (typeof item === "string") return { key: item };
+  const { attribute, ...rest } = item;
+  return attribute ? { ...rest, key: `${item.key}:${attribute}` } : { ...rest };
+}
+
+function cleanEntries(value: unknown): Record<string, unknown>[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry) => {
+    if (typeof entry !== "object" || entry === null) return [];
+    const kept = Object.fromEntries(
+      Object.entries(entry).filter(([, v]) => v !== undefined && v !== null && v !== ""),
+    );
+    return typeof kept["key"] === "string" ? [kept] : [];
+  });
 }
 
 export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
@@ -42,15 +78,34 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     this.config = config;
   }
 
+  /** Names of options that hold a list of fields; they are edited as objects and dropped when empty. */
+  protected fieldListNames: string[] = [];
+
   protected abstract schema(): FormSchemaItem[];
+
+  private formData(): Record<string, unknown> {
+    const data: Record<string, unknown> = { ...(this.config as object) };
+    for (const name of this.fieldListNames) {
+      const list = data[name];
+      if (Array.isArray(list)) data[name] = (list as FieldConfig[]).map(toFormEntry);
+    }
+    return data;
+  }
 
   protected computeLabel = (item: FormSchemaItem): string => item.name.replace(/_/g, " ");
 
   protected valueChanged(event: CustomEvent<{ value: C }>): void {
     event.stopPropagation();
+    const config = { ...this.config, ...event.detail.value } as Record<string, unknown>;
+    for (const name of this.fieldListNames) {
+      if (!(name in config)) continue;
+      const entries = cleanEntries(config[name]);
+      if (entries.length > 0) config[name] = entries;
+      else delete config[name];
+    }
     this.dispatchEvent(
       new CustomEvent("config-changed", {
-        detail: { config: { ...this.config, ...event.detail.value } },
+        detail: { config },
         bubbles: true,
         composed: true,
       }),
@@ -61,7 +116,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     if (!this.hass || !this.config) return nothing;
     return html`<ha-form
       .hass=${this.hass}
-      .data=${this.config}
+      .data=${this.formData()}
       .schema=${this.schema()}
       .computeLabel=${this.computeLabel}
       @value-changed=${this.valueChanged}

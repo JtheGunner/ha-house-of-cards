@@ -158,7 +158,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
   protected renderContent(): TemplateResult {
     const { hass, config } = this;
     if (!hass || !config) return html``;
-    const specs = (config.columns ?? DEFAULT_COLUMNS).map(parseField);
+    const specs = (config.columns?.length ? config.columns : DEFAULT_COLUMNS).map(parseField);
     const column = config.sort_by ?? "name";
     const direction = config.sort_order === "desc" ? -1 : 1;
     const rows = this.rows(specs).sort((a, b) => compareRows(a, b, column, direction));

@@ -80,7 +80,13 @@ const INTERNAL_ATTRIBUTES = new Set([
 ]);
 
 export function parseField(item: FieldConfig): FieldSpec {
-  if (typeof item !== "string") return item;
+  if (typeof item !== "string") {
+    if (item.attribute === undefined && item.key.includes(":")) {
+      const [key = "", ...rest] = item.key.split(":");
+      return { ...item, key, attribute: rest.join(":") };
+    }
+    return item;
+  }
   const [key = "", ...rest] = item.split(":");
   return rest.length > 0 ? { key, attribute: rest.join(":") } : { key };
 }

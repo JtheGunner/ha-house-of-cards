@@ -25,16 +25,6 @@ const DEFAULT_FIELDS: Record<FieldsLayout, FieldConfig[]> = {
   compact: ["stars", "latest_release"],
   standard: STANDARD,
   list: STANDARD,
-  detailed: [
-    ...STANDARD,
-    "unique_visitors_14d",
-    "views_14d",
-    "actions_last_result",
-    "actions_runs_today",
-    "total_downloads",
-    "days_since_last_commit",
-    "days_since_last_release",
-  ],
 };
 
 export class GithubRepoCard extends HocFieldsCard<GithubRepoConfig> {

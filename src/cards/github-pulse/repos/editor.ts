@@ -1,9 +1,15 @@
 import { discoverFieldOptions, type FieldOption } from "../../../core/fields";
-import { HocBaseEditor, type FormSchemaItem } from "../../../core/editor";
+import {
+  fieldsSelectorFromOptions,
+  HocBaseEditor,
+  type FormSchemaItem,
+} from "../../../core/editor";
 import { findAccountDevices, listDevices } from "../../../core/resolver";
 import type { GithubReposConfig } from "./card";
 
 export class GithubReposEditor extends HocBaseEditor<GithubReposConfig> {
+  protected override fieldListNames = ["columns"];
+
   private columnOptions(): FieldOption[] {
     if (!this.hass) return [];
     const accounts = new Set(findAccountDevices(this.hass, "github_pulse"));
@@ -24,10 +30,7 @@ export class GithubReposEditor extends HocBaseEditor<GithubReposConfig> {
         name: "repositories",
         selector: { device: { integration: "github_pulse", multiple: true } },
       },
-      {
-        name: "columns",
-        selector: { select: { multiple: true, mode: "list", custom_value: true, options } },
-      },
+      fieldsSelectorFromOptions(options, "columns"),
       {
         name: "sort_by",
         selector: {

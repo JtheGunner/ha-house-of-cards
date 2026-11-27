@@ -33,8 +33,12 @@ async function mount(
   entities: FixtureEntity[],
   config: Record<string, unknown> = {},
   deviceId = "d1",
+  url?: string,
 ) {
-  const hass = fixtureHass({ devices: [{ id: "d1", name: "ha-github-pulse" }], entities });
+  const hass = fixtureHass({
+    devices: [{ id: "d1", name: "ha-github-pulse", configuration_url: url }],
+    entities,
+  });
   const card = document.createElement("hoc-github-repo-card") as GithubRepoCard;
   card.setConfig({ type: "custom:hoc-github-repo-card", device: deviceId, ...config } as never);
   card.hass = hass;
@@ -63,8 +67,17 @@ describe("hoc-github-repo-card", () => {
     expect(text).not.toContain("Visitors");
   });
 
-  it("detailed adds traffic, workflow and downloads when the sensors exist", async () => {
-    const { text } = await mount([...ALWAYS_ON, ...OPTIONAL], { layout: "detailed" });
+  it("shows extra sensors that are chosen as fields", async () => {
+    const { text } = await mount([...ALWAYS_ON, ...OPTIONAL], {
+      fields: [
+        "unique_visitors_14d",
+        "views_14d",
+        "actions_last_result",
+        "actions_runs_today",
+        "total_downloads",
+        "days_since_last_commit",
+      ],
+    });
     for (const label of [
       "Visitors",
       "Views",
@@ -80,7 +93,7 @@ describe("hoc-github-repo-card", () => {
   it("omits fields whose sensor is missing", async () => {
     const { text } = await mount(
       ALWAYS_ON.filter((e) => e.translationKey !== "forks"),
-      { layout: "detailed" },
+      { fields: ["forks", "unique_visitors_14d"] },
     );
     expect(text).not.toContain("Forks");
     expect(text).not.toContain("Visitors");
@@ -122,7 +135,7 @@ describe("hoc-github-repo-card", () => {
       sensor("latest_release", "unknown"),
       sensor("actions_last_result", "unavailable"),
     ];
-    const { root, text } = await mount(entities, { layout: "detailed" });
+    const { root, text } = await mount(entities);
     expect(root.querySelector(".badge")).toBeNull();
     expect(text).not.toMatch(/unknown|unavailable/);
     expect(text).not.toContain("Workflow");
@@ -165,5 +178,49 @@ describe("hoc-github-repo-card", () => {
     );
     const { root } = await mount(entities);
     expect(root.querySelector("ha-card")?.getAttribute("style")).toContain("--error-color");
+  });
+
+  it("falls back to the layout defaults when fields is empty", async () => {
+    const { text } = await mount(ALWAYS_ON, { fields: [] });
+    expect(text).toContain("Forks");
+    expect(text).toContain("Stars");
+  });
+
+  it("treats the removed detailed layout as standard", async () => {
+    const { text } = await mount(ALWAYS_ON, { layout: "detailed" });
+    expect(text).toContain("Forks");
+  });
+
+  it("shows a custom name instead of the device name", async () => {
+    const { text } = await mount(ALWAYS_ON, { name: "My project" });
+    expect(text).toContain("My project");
+    expect(text).not.toContain("ha-github-pulse");
+  });
+
+  it("links the name to the repository only when link is on", async () => {
+    const off = await mount(ALWAYS_ON, {}, "d1", "https://github.com/o/r");
+    expect(off.root.querySelector(".name a")).toBeNull();
+    const on = await mount(ALWAYS_ON, { link: true }, "d1", "https://github.com/o/r");
+    const anchor = on.root.querySelector(".name a");
+    expect(anchor?.getAttribute("href")).toBe("https://github.com/o/r");
+    expect(anchor?.getAttribute("rel")).toContain("noopener");
+  });
+
+  it("does not link to non-https urls or when the device has none", async () => {
+    const bad = await mount(ALWAYS_ON, { link: true }, "d1", "javascript:alert(1)");
+    expect(bad.root.querySelector(".name a")).toBeNull();
+    const none = await mount(ALWAYS_ON, { link: true });
+    expect(none.root.querySelector(".name a")).toBeNull();
+  });
+
+  it("hides the status dot and accent when show_status is off", async () => {
+    const entities = ALWAYS_ON.map((e) =>
+      e.translationKey === "ci_state" ? { ...e, state: "failure" } : e,
+    );
+    const { root } = await mount(entities, { show_status: false });
+    expect(root.querySelector(".dot")).toBeNull();
+    expect(root.querySelector("ha-card")?.getAttribute("style") ?? "").not.toContain(
+      "--error-color",
+    );
   });
 });
