@@ -1,6 +1,7 @@
 import { HocFieldsCard, type FieldsConfig, type FieldsLayout } from "../../../core/fields-card";
 import type { FieldConfig } from "../../../core/fields";
-import { findAccountDevices, listDevices } from "../../../core/resolver";
+import { isMissing } from "../../../core/format";
+import { findAccountDevices, listDevices, type ResolvedEntities } from "../../../core/resolver";
 import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
 import { GithubRepoEditor } from "./editor";
@@ -10,6 +11,8 @@ export const REPO_CARD_TAG = "hoc-github-repo-card";
 
 export interface GithubRepoConfig extends FieldsConfig {
   device: string;
+  /** Show the latest release version on the far side of the header. Off by default. */
+  show_release?: boolean;
 }
 
 const STANDARD: FieldConfig[] = [
@@ -36,6 +39,12 @@ export class GithubRepoCard extends HocFieldsCard<GithubRepoConfig> {
 
   protected override get dotKey(): string {
     return "ci_state";
+  }
+
+  protected override headerBadge(entities: ResolvedEntities): string | undefined {
+    if (this.config?.show_release !== true) return undefined;
+    const state = entities["latest_release"]?.state;
+    return state === undefined || isMissing(state) ? undefined : state;
   }
 
   protected defaultFields(layout: FieldsLayout): FieldConfig[] {

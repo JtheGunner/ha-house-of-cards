@@ -223,4 +223,25 @@ describe("hoc-github-repo-card", () => {
       "--error-color",
     );
   });
+
+  it("shows the release version next to the name only when show_release is on", async () => {
+    const off = await mount(ALWAYS_ON);
+    expect(off.root.querySelector(".header .release")).toBeNull();
+    const on = await mount(ALWAYS_ON, { show_release: true });
+    expect(on.root.querySelector(".header .release")?.textContent?.trim()).toBe("v1.4.0");
+  });
+
+  it("omits the release badge when the release sensor has no value", async () => {
+    const entities = ALWAYS_ON.map((e) =>
+      e.translationKey === "latest_release" ? { ...e, state: "unknown" } : e,
+    );
+    const { root } = await mount(entities, { show_release: true });
+    expect(root.querySelector(".header .release")).toBeNull();
+  });
+
+  it("puts name and badge on opposite sides of the header", async () => {
+    const { root } = await mount(ALWAYS_ON, { show_release: true });
+    const header = root.querySelector(".header");
+    expect([...(header?.children ?? [])].map((c) => c.className)).toEqual(["title", "release"]);
+  });
 });

@@ -55,10 +55,24 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
       .header {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 8px;
       }
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .release {
+        flex: none;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.85em;
+        color: var(--secondary-text-color);
+        background: var(--secondary-background-color);
+      }
       .name {
-        flex: 1;
         font-weight: 500;
         color: var(--primary-text-color);
       }
@@ -91,6 +105,9 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
   protected abstract get platform(): string | undefined;
 
   protected abstract defaultFields(layout: FieldsLayout, entities: ResolvedEntities): FieldConfig[];
+
+  /** Text for a badge on the far side of the header, or undefined for none. */
+  protected headerBadge?(entities: ResolvedEntities): string | undefined;
 
   /** Sensor that drives the dot in the header. */
   protected get dotKey(): string | undefined {
@@ -153,19 +170,24 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
     const alert = statusViews.some((view) => view.tone === "failure");
     const dotState = this.dotKey ? entities[this.dotKey]?.state : undefined;
 
+    const badge = this.headerBadge?.(entities);
+
     return html`<ha-card
       class=${alert ? "alert" : ""}
       style=${accent ? `--hoc-accent: ${accent}` : ""}
     >
       <div class="header">
-        ${showStatus && dotState !== undefined ? statusDot(dotState) : nothing}
-        <span class="name"
-          >${
-            linkTarget
-              ? html`<a href=${linkTarget} target="_blank" rel="noopener noreferrer">${name}</a>`
-              : name
-          }</span
-        >
+        <div class="title">
+          ${showStatus && dotState !== undefined ? statusDot(dotState) : nothing}
+          <span class="name"
+            >${
+              linkTarget
+                ? html`<a href=${linkTarget} target="_blank" rel="noopener noreferrer">${name}</a>`
+                : name
+            }</span
+          >
+        </div>
+        ${badge ? html`<span class="release">${badge}</span>` : nothing}
       </div>
       ${this.renderFields(views, layout)}
     </ha-card>`;
