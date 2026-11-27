@@ -72,10 +72,6 @@ export function fieldsSelectorFromOptions(
               }
             : {}),
         },
-                title_color: { label: label("title_color"), selector: { ui_color: {} } },
-              }
-            : {}),
-        },
       },
     },
   };

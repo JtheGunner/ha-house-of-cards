@@ -1225,16 +1225,16 @@ function it(e, t, n = "fields", r = !1) {
 					selector: { ui_color: {} }
 				},
 				...r ? {
+					title_color: {
+						label: i("title_color"),
+						selector: { ui_color: {} }
+					},
 					align: {
 						label: i("align"),
 						selector: { select: {
 							mode: "dropdown",
 							options: a
 						} }
-					},
-					title_color: {
-						label: i("title_color"),
-						selector: { ui_color: {} }
 					}
 				} : {}
 			}
