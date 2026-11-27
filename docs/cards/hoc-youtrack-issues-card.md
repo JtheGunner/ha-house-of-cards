@@ -34,7 +34,3 @@ colors:
 - **More issues.** When the query matches more issues than are shown, the last line says `+N more`. With `expandable` a click shows every issue the sensor lists and `Show less` folds them again. The integration limits how many issues a query sensor carries (its option _Issues in the attributes_). For the rest the card links to the same search in YouTrack.
 
 The issue ID links to the issue in YouTrack when the link is an `http` or `https` URL.
-
-## UI Lovelace Minimalist
-
-Place the card in a view like any custom card.
