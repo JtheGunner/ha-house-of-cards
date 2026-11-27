@@ -206,6 +206,7 @@ describe("hoc-github-repos-card", () => {
 
   it("overrides a column's label, icon and colour", async () => {
     const { root } = await mount([{ id: "a", name: "o/a", stars: "5" }], {
+      column_titles: "icon_text",
       columns: [{ key: "stars", name: "Fans", icon: "mdi:heart", color: "pink" }],
     });
     const header = root.querySelector("thead th:nth-child(2)");
@@ -213,5 +214,51 @@ describe("hoc-github-repos-card", () => {
     expect(header?.querySelector("ha-icon")?.getAttribute("icon")).toBe("mdi:heart");
     expect(root.querySelector("tbody .cell")?.getAttribute("style")).toContain("var(--pink-color)");
     expect(root.querySelector("tbody .cell")?.className).toContain("cell--tone");
+  });
+
+  it("shows column titles as text by default", async () => {
+    const { root } = await mount(REPOS);
+    expect(root.querySelector("thead th:nth-child(3)")?.textContent).toContain("Stars");
+    expect(root.querySelector("thead th ha-icon, thead th ha-state-icon")).toBeNull();
+  });
+
+  it("shows column titles as icon only, with the title as tooltip", async () => {
+    const { root } = await mount(REPOS, {
+      column_titles: "icon",
+      columns: [{ key: "stars", icon: "mdi:star" }],
+    });
+    const th = root.querySelector("thead th:nth-child(2)");
+    expect(th?.querySelector("ha-icon")?.getAttribute("icon")).toBe("mdi:star");
+    expect(th?.textContent?.trim()).toBe("");
+    expect(th?.getAttribute("title")).toBe("Stars");
+  });
+
+  it("shows column titles as icon and text, using the sensor icon without an override", async () => {
+    const { root } = await mount(REPOS, { column_titles: "icon_text", columns: ["stars"] });
+    const th = root.querySelector("thead th:nth-child(2)");
+    expect(th?.querySelector("ha-state-icon")).not.toBeNull();
+    expect(th?.textContent).toContain("Stars");
+  });
+
+  it("shows a green dot for repositories with commits this month and a grey one otherwise", async () => {
+    const { root } = await mount(
+      [
+        { id: "a", name: "active", commits: "4" },
+        { id: "b", name: "idle", commits: "0" },
+      ],
+      { show_activity: true },
+    );
+    const dots = [...root.querySelectorAll("tbody tr .name .dot")].map((d) => d.className);
+    expect(dots).toEqual(["dot dot--success", "dot dot--neutral"]);
+  });
+
+  it("shows no activity dots by default", async () => {
+    const { root } = await mount(REPOS);
+    expect(root.querySelector("tbody .name .dot")).toBeNull();
+  });
+
+  it("lists a repository once even when it is selected twice", async () => {
+    const { names } = await mount(REPOS, { repositories: ["r1", "r1", "r2"] });
+    expect(names).toEqual(["alpha", "bravo"]);
   });
 });

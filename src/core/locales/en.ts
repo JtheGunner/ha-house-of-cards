@@ -51,8 +51,13 @@ export const en = {
   layout_list: "List",
   order_asc: "Ascending",
   order_desc: "Descending",
-  editor_show_release: "Show release version",
+  editor_show_release: "Show release version in title",
   editor_hide_owner: "Hide owner",
+  titles_text: "Text",
+  titles_icon: "Icon",
+  titles_icon_text: "Icon and text",
+  editor_column_titles: "Column titles",
+  editor_show_activity: "Show activity dot",
 } as const;
 
 export type LocaleKey = keyof typeof en;

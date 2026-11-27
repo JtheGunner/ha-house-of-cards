@@ -515,10 +515,10 @@ function Te(e) {
 		default: return "neutral";
 	}
 }
-function Ee(e) {
+function z(e) {
 	return k`<span class="dot dot--${Te(e)}" aria-hidden="true"></span>`;
 }
-function De(e) {
+function Ee(e) {
 	let t = {
 		up: "▲",
 		down: "▼",
@@ -526,7 +526,7 @@ function De(e) {
 	}[e.direction], n = e.direction !== "flat" && e.percent !== null ? ` ${Math.round(Math.abs(e.percent))} %` : "";
 	return k`<span class="trend trend--${e.direction}">${t}${n}</span>`;
 }
-var Oe = o`
+var De = o`
   .dot {
     display: inline-block;
     width: 0.6em;
@@ -553,7 +553,7 @@ var Oe = o`
   .trend--down {
     color: var(--error-color);
   }
-`, ke = {
+`, Oe = {
 	device_not_found: "Gerät nicht gefunden",
 	no_repositories: "Keine Repositories",
 	unavailable: "Nicht verfügbar",
@@ -606,9 +606,14 @@ var Oe = o`
 	layout_list: "Liste",
 	order_asc: "Aufsteigend",
 	order_desc: "Absteigend",
-	editor_show_release: "Release-Version anzeigen",
-	editor_hide_owner: "Besitzer ausblenden"
-}, z = {
+	editor_show_release: "Release-Version im Titel anzeigen",
+	editor_hide_owner: "Besitzer ausblenden",
+	titles_text: "Text",
+	titles_icon: "Icon",
+	titles_icon_text: "Icon und Text",
+	editor_column_titles: "Spaltentitel",
+	editor_show_activity: "Aktivitätspunkt anzeigen"
+}, B = {
 	device_not_found: "Device not found",
 	no_repositories: "No repositories",
 	unavailable: "Unavailable",
@@ -661,23 +666,28 @@ var Oe = o`
 	layout_list: "List",
 	order_asc: "Ascending",
 	order_desc: "Descending",
-	editor_show_release: "Show release version",
-	editor_hide_owner: "Hide owner"
-}, Ae = {
-	en: z,
-	de: ke
+	editor_show_release: "Show release version in title",
+	editor_hide_owner: "Hide owner",
+	titles_text: "Text",
+	titles_icon: "Icon",
+	titles_icon_text: "Icon and text",
+	editor_column_titles: "Column titles",
+	editor_show_activity: "Show activity dot"
+}, ke = {
+	en: B,
+	de: Oe
 };
-function B(e, t) {
-	let n = `editor_${t}`, r = (Ae[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? z)[n] ?? z[n];
+function V(e, t) {
+	let n = `editor_${t}`, r = (ke[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? B)[n] ?? B[n];
 	if (r) return r;
 	let i = t.replace(/_/g, " ");
 	return i.charAt(0).toUpperCase() + i.slice(1);
 }
-function V(e, t) {
-	return (Ae[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? z)[t];
+function H(e, t) {
+	return (ke[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? B)[t];
 }
 // src/core/base-card.ts
-var H = class extends R {
+var U = class extends R {
 	static {
 		this.requiredKeys = [];
 	}
@@ -688,7 +698,7 @@ var H = class extends R {
 		};
 	}
 	static {
-		this.styles = [Oe, o`
+		this.styles = [De, o`
       ha-card {
         padding: 12px 16px;
       }
@@ -716,7 +726,7 @@ var H = class extends R {
 		};
 	}
 	renderMessage(e, t = !1) {
-		let n = this.hass ? V(this.hass, e) : e;
+		let n = this.hass ? H(this.hass, e) : e;
 		return k`<ha-card
       ><div class="message ${t ? "message--error" : ""}">${n}</div></ha-card
     >`;
@@ -724,12 +734,12 @@ var H = class extends R {
 	render() {
 		return !this.config || !this.hass ? j : this.renderContent();
 	}
-}, je = 1;
-function Me(e) {
+}, Ae = 1;
+function je(e) {
 	return e === null || !Number.isFinite(e) ? {
 		direction: "flat",
 		percent: null
-	} : Math.abs(e) <= je ? {
+	} : Math.abs(e) <= Ae ? {
 		direction: "flat",
 		percent: e
 	} : {
@@ -737,25 +747,25 @@ function Me(e) {
 		percent: e
 	};
 }
-var Ne = /* @__PURE__ */ new Set([
+var Me = /* @__PURE__ */ new Set([
 	"unknown",
 	"unavailable",
 	""
 ]);
-function Pe(e) {
-	return e === void 0 || Ne.has(e);
+function Ne(e) {
+	return e === void 0 || Me.has(e);
 }
-function U(e) {
+function W(e) {
 	if (e === void 0 || e.trim() === "") return null;
 	let t = Number(e);
 	return Number.isFinite(t) ? t : null;
 }
-function Fe(e) {
-	let t = U(e);
+function Pe(e) {
+	let t = W(e);
 	return t === null ? "—" : Math.abs(t) < 1e3 ? String(t) : `${Number((t / 1e3).toFixed(1))}k`;
 }
 // src/core/fields.ts
-var Ie = {
+var Fe = {
 	stars: "stars",
 	forks: "forks",
 	open_issues: "issues",
@@ -780,7 +790,7 @@ var Ie = {
 	issues_critical_open: "issues_critical_open",
 	issues_created_7d: "issues_created_7d",
 	issues_resolved_7d: "issues_resolved_7d"
-}, Le = [
+}, Ie = [
 	"blue",
 	"purple",
 	"teal",
@@ -789,11 +799,11 @@ var Ie = {
 	"green",
 	"indigo",
 	"amber"
-], Re = {
+], Le = {
 	success: "var(--success-color, var(--green-color))",
 	failure: "var(--error-color, var(--red-color))",
 	pending: "var(--warning-color, var(--amber-color))"
-}, ze = /* @__PURE__ */ new Set([
+}, Re = /* @__PURE__ */ new Set([
 	"friendly_name",
 	"unit_of_measurement",
 	"device_class",
@@ -806,7 +816,7 @@ var Ie = {
 	"restored",
 	"editable"
 ]);
-function Be(e) {
+function ze(e) {
 	if (typeof e != "string") {
 		if (e.attribute === void 0 && e.key.includes(":")) {
 			let [t = "", ...n] = e.key.split(":");
@@ -824,36 +834,36 @@ function Be(e) {
 		attribute: n.join(":")
 	} : { key: t };
 }
-function W(e) {
+function G(e) {
 	return e.attribute ? `${e.key}:${e.attribute}` : e.key;
 }
-function G(e) {
+function K(e) {
 	let t = e.replace(/_/g, " ");
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
-function Ve(e) {
+function Be(e) {
 	let t = 0;
 	for (let n of e) t = t * 31 + n.charCodeAt(0) >>> 0;
 	return t;
 }
-function He(e) {
+function Ve(e) {
 	return `var(--${e}-color)`;
 }
-function Ue(e, t) {
-	return e.color ? /^[a-z-]+$/.test(e.color) ? He(e.color) : e.color : t ? Re[t] : He(Le[Ve(e.key) % Le.length] ?? "blue");
+function He(e, t) {
+	return e.color ? /^[a-z-]+$/.test(e.color) ? Ve(e.color) : e.color : t ? Le[t] : Ve(Ie[Be(e.key) % Ie.length] ?? "blue");
 }
-function K(e, t, n, r) {
-	let i = Ie[t];
-	if (i) return V(e, i);
+function q(e, t, n, r) {
+	let i = Fe[t];
+	if (i) return H(e, i);
 	let a = n.attributes.friendly_name;
-	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || G(t);
+	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || K(t);
 }
-function We(e, t) {
+function Ue(e, t) {
 	if (t === "success") return "success";
 	if (t === "failure" || t === "error") return "failure";
 	if (t === "pending" || t === "queued") return "pending";
 	if (e.startsWith("has_") && t === "on") return "failure";
-	let n = U(t);
+	let n = W(t);
 	if (n !== null) {
 		if (/(overdue|critical|failing|stale)/.test(e)) return n > 0 ? "failure" : void 0;
 		if (/(_vs_|trend)/.test(e)) {
@@ -862,48 +872,48 @@ function We(e, t) {
 		}
 	}
 }
-function Ge(e) {
-	if (typeof e == "number") return Math.abs(e) >= 1e3 ? Fe(String(e)) : String(e);
+function We(e) {
+	if (typeof e == "number") return Math.abs(e) >= 1e3 ? Pe(String(e)) : String(e);
 	if (typeof e == "string") return e.trim() === "" ? void 0 : e;
 	if (typeof e == "boolean") return e ? "✓" : "–";
 	if (Array.isArray(e)) return String(e.length);
 }
-function Ke(e, t) {
-	let n = t.attributes.unit_of_measurement, r = typeof n == "string" && n !== "" ? n : void 0, i = U(t.state);
+function Ge(e, t) {
+	let n = t.attributes.unit_of_measurement, r = typeof n == "string" && n !== "" ? n : void 0, i = W(t.state);
 	return i === null ? { value: e.formatEntityState?.(t) ?? t.state } : r ? {
 		value: String(i),
 		unit: r
-	} : { value: Math.abs(i) >= 1e3 ? Fe(t.state) : String(i) };
+	} : { value: Math.abs(i) >= 1e3 ? Pe(t.state) : String(i) };
 }
-function q(e, t, n, r) {
+function J(e, t, n, r) {
 	return n.flatMap((n) => {
 		let i = t[n.key];
-		if (!i || Pe(i.state)) return [];
+		if (!i || Ne(i.state)) return [];
 		let a, o;
 		if (n.attribute) {
-			let e = i.attributes[n.attribute], t = Ge(e);
+			let e = i.attributes[n.attribute], t = We(e);
 			if (t === void 0) return [];
 			a = { value: t }, o = typeof e == "number" ? e : t;
-		} else a = Ke(e, i), o = U(i.state) ?? i.state;
-		let s = n.attribute ? void 0 : We(n.key, i.state), c = n.name ?? (n.attribute ? `${K(e, n.key, i, r)} › ${G(n.attribute)}` : K(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
-			id: W(n),
+		} else a = Ge(e, i), o = W(i.state) ?? i.state;
+		let s = n.attribute ? void 0 : Ue(n.key, i.state), c = n.name ?? (n.attribute ? `${q(e, n.key, i, r)} › ${K(n.attribute)}` : q(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
+			id: G(n),
 			label: c,
 			...a,
 			raw: o,
-			color: Ue(n, s),
+			color: He(n, s),
 			stateObj: i
 		};
-		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = Me(U(l))), [u];
+		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = je(W(l))), [u];
 	});
 }
-function qe(e) {
+function Ke(e) {
 	for (let t of [
 		"failure",
 		"pending",
 		"success"
-	]) if (e.some((e) => e.tone === t)) return Re[t];
+	]) if (e.some((e) => e.tone === t)) return Le[t];
 }
-function Je(e, t) {
+function qe(e, t) {
 	let n = e.devices[t]?.name ?? void 0, r = [], i = /* @__PURE__ */ new Set();
 	for (let a of Object.values(e.entities)) {
 		if (a.device_id !== t) continue;
@@ -912,14 +922,14 @@ function Je(e, t) {
 		let s = a.translation_key || a.entity_id;
 		if (i.has(s)) continue;
 		i.add(s);
-		let c = K(e, s, o, n);
+		let c = q(e, s, o, n);
 		r.push({
 			value: s,
 			label: c
 		});
-		for (let [e, t] of Object.entries(o.attributes)) ze.has(e) || Ge(t) === void 0 || Array.isArray(t) || r.push({
+		for (let [e, t] of Object.entries(o.attributes)) Re.has(e) || We(t) === void 0 || Array.isArray(t) || r.push({
 			value: `${s}:${e}`,
-			label: `${c} › ${G(e)}`
+			label: `${c} › ${K(e)}`
 		});
 	}
 	return r.sort((e, t) => {
@@ -928,26 +938,26 @@ function Je(e, t) {
 	});
 }
 // src/core/parts/field-tile.ts
-function Ye(e, t) {
+function Je(e, t) {
 	return t.icon ? k`<ha-icon icon=${t.icon}></ha-icon>` : t.attribute ? k`<ha-icon icon="mdi:information-outline"></ha-icon>` : k`<ha-state-icon .hass=${e} .stateObj=${t.stateObj}></ha-state-icon>`;
 }
-function J(e, t, n = "tile") {
+function Y(e, t, n = "tile") {
 	let r = k`<span class="field__value"
       >${t.value}${t.unit ? k` <span class="field__unit">${t.unit}</span>` : j}</span
-    >${t.trend ? De(t.trend) : j}`;
+    >${t.trend ? Ee(t.trend) : j}`;
 	return k`<div
     class="field field--${n} ${t.tone ? "field--tone" : ""}"
     style="--c: ${t.color}"
     title=${t.label}
   >
-    <span class="chip">${Ye(e, t)}</span>
+    <span class="chip">${Je(e, t)}</span>
     ${n === "inline" ? k`<span class="field__text">${r}</span>` : k`<span class="field__text">
             <span class="field__main">${r}</span>
             <span class="field__label">${t.label}</span>
           </span>`}
   </div>`;
 }
-var Xe = o`
+var Ye = o`
   .field {
     --c: var(--primary-color);
     display: flex;
@@ -1015,8 +1025,8 @@ var Xe = o`
   .field--row .field__main {
     order: 2;
   }
-`, Ze = "contributions_this_month";
-function Qe(e, t, n) {
+`, Xe = "contributions_this_month";
+function Ze(e, t, n) {
 	let r = {};
 	for (let i of Object.values(e.entities)) {
 		if (i.device_id !== t || n !== void 0 && i.platform !== n) continue;
@@ -1025,7 +1035,7 @@ function Qe(e, t, n) {
 	}
 	return r;
 }
-function Y(e, t) {
+function X(e, t) {
 	let n = /* @__PURE__ */ new Set();
 	for (let r of Object.values(e.entities)) r.platform === t && r.device_id && n.add(r.device_id);
 	return [...n].map((t) => {
@@ -1036,20 +1046,20 @@ function Y(e, t) {
 		};
 	}).sort((e, t) => e.name.localeCompare(t.name));
 }
-function X(e, t, n = Ze) {
+function Z(e, t, n = Xe) {
 	let r = /* @__PURE__ */ new Set();
 	for (let i of Object.values(e.entities)) i.platform === t && i.translation_key === n && i.device_id && r.add(i.device_id);
 	return [...r];
 }
 // src/core/fields-card.ts
-function $e(e) {
+function Qe(e) {
 	if (e !== void 0 && !(Array.isArray(e) && e.every((e) => typeof e == "string" || typeof e == "object" && !!e && typeof e.key == "string"))) throw Error("`fields` must be a list of sensor keys or objects with a `key`");
 }
-var Z = class extends H {
+var $e = class extends U {
 	static {
 		this.styles = [
-			...H.styles,
-			Xe,
+			...U.styles,
+			Ye,
 			o`
       ha-card {
         box-shadow: inset 0 3px 0 var(--hoc-accent, transparent);
@@ -1112,27 +1122,27 @@ var Z = class extends H {
 		return this.config?.device;
 	}
 	setConfig(e) {
-		$e(e.fields), super.setConfig(e);
+		Qe(e.fields), super.setConfig(e);
 	}
 	renderFields(e, t) {
 		let { hass: n } = this;
 		return !n || e.length === 0 ? j : t === "compact" ? k`<div class="inline-fields">
-        ${e.map((e) => J(n, e, "inline"))}
-      </div>` : t === "list" ? k`<div class="rows">${e.map((e) => J(n, e, "row"))}</div>` : k`<div class="grid">${e.map((e) => J(n, e, "tile"))}</div>`;
+        ${e.map((e) => Y(n, e, "inline"))}
+      </div>` : t === "list" ? k`<div class="rows">${e.map((e) => Y(n, e, "row"))}</div>` : k`<div class="grid">${e.map((e) => Y(n, e, "tile"))}</div>`;
 	}
 	renderContent() {
 		let { hass: e, config: t } = this;
 		if (!e || !t) return k``;
 		let n = this.deviceId(), r = n ? e.devices[n] : void 0;
 		if (!n || !r) return this.renderMessage("device_not_found", !0);
-		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = r.configuration_url, s = t.link === !0 && o?.startsWith("https://") ? o : void 0, c = t.show_status !== !1, l = Qe(e, n, this.platform), u = t.layout === "compact" || t.layout === "list" ? t.layout : "standard", d = q(e, l, (t.fields?.length ? t.fields : this.defaultFields(u, l)).map(Be), i), f = q(e, l, this.statusKeys.map((e) => ({ key: e })), i), p = c ? qe(f) : void 0, ee = f.some((e) => e.tone === "failure"), m = this.dotKey ? l[this.dotKey]?.state : void 0, h = this.headerBadge?.(l);
+		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = r.configuration_url, s = t.link === !0 && o?.startsWith("https://") ? o : void 0, c = t.show_status !== !1, l = Ze(e, n, this.platform), u = t.layout === "compact" || t.layout === "list" ? t.layout : "standard", d = J(e, l, (t.fields?.length ? t.fields : this.defaultFields(u, l)).map(ze), i), f = J(e, l, this.statusKeys.map((e) => ({ key: e })), i), p = c ? Ke(f) : void 0, ee = f.some((e) => e.tone === "failure"), m = this.dotKey ? l[this.dotKey]?.state : void 0, h = this.headerBadge?.(l);
 		return k`<ha-card
       class=${ee ? "alert" : ""}
       style=${p ? `--hoc-accent: ${p}` : ""}
     >
       <div class="header">
         <div class="title">
-          ${c && m !== void 0 ? Ee(m) : j}
+          ${c && m !== void 0 ? z(m) : j}
           <span class="name"
             >${s ? k`<a href=${s} target="_blank" rel="noopener noreferrer">${a}</a>` : a}</span
           >
@@ -1157,7 +1167,7 @@ function tt(e, t, n, r) {
 			mode: "dropdown",
 			options: n.map((n) => ({
 				value: n,
-				label: e ? V(e, `${t}_${n}`) : n
+				label: e ? H(e, `${t}_${n}`) : n
 			}))
 		} }
 	};
@@ -1166,7 +1176,7 @@ function nt(e, t, n = "layout") {
 	return tt(e, "layout", t, n);
 }
 function rt(e, t, n = "fields") {
-	let r = (t) => e ? B(e, t) : t;
+	let r = (t) => e ? V(e, t) : t;
 	return {
 		name: n,
 		selector: { object: {
@@ -1199,7 +1209,7 @@ function rt(e, t, n = "fields") {
 	};
 }
 function it(e, t, n = "fields") {
-	return rt(e, e && t ? Je(e, t) : [], n);
+	return rt(e, e && t ? qe(e, t) : [], n);
 }
 function at(e) {
 	if (typeof e == "string") return { key: e };
@@ -1218,7 +1228,7 @@ function ot(e) {
 }
 var Q = class extends R {
 	constructor(...e) {
-		super(...e), this.fieldListNames = [], this.computeLabel = (e) => this.hass ? B(this.hass, e.name) : e.name;
+		super(...e), this.fieldListNames = [], this.computeLabel = (e) => this.hass ? V(this.hass, e.name) : e.name;
 	}
 	static {
 		this.properties = {
@@ -1325,7 +1335,7 @@ var Q = class extends R {
 	list: dt
 }, pt = "contributions_this_month", mt = {
 	tag: ct,
-	ctor: class extends Z {
+	ctor: class extends $e {
 		static {
 			this.requiredKeys = ["device"];
 		}
@@ -1338,13 +1348,13 @@ var Q = class extends R {
 		headerBadge(e) {
 			if (this.config?.show_release !== !0) return;
 			let t = e.latest_release?.state;
-			return t === void 0 || Pe(t) ? void 0 : t;
+			return t === void 0 || Ne(t) ? void 0 : t;
 		}
 		defaultFields(e, t) {
 			return (pt in t ? ft : ut)[e];
 		}
 		static getStubConfig(e) {
-			let t = new Set(X(e, $)), n = Y(e, $), r = n.find((e) => !t.has(e.id)) ?? n[0];
+			let t = new Set(Z(e, $)), n = X(e, $), r = n.find((e) => !t.has(e.id)) ?? n[0];
 			return r ? { device: r.id } : {};
 		}
 		static getConfigElement() {
@@ -1391,12 +1401,12 @@ function vt(e) {
 }
 var yt = {
 	tag: gt,
-	ctor: class extends H {
+	ctor: class extends U {
 		static {
 			this.requiredKeys = ["entity"];
 		}
 		static {
-			this.styles = [...H.styles, o`
+			this.styles = [...U.styles, o`
       .issue {
         display: flex;
         gap: 8px;
@@ -1489,7 +1499,7 @@ var yt = {
 	"issues_resolved_7d"
 ], wt = {
 	tag: St,
-	ctor: class extends Z {
+	ctor: class extends $e {
 		static {
 			this.requiredKeys = ["device"];
 		}
@@ -1503,7 +1513,7 @@ var yt = {
 			return Ct;
 		}
 		static getStubConfig(e) {
-			let t = Y(e, xt)[0];
+			let t = X(e, xt)[0];
 			return t ? { device: t.id } : {};
 		}
 		static getConfigElement() {
@@ -1547,7 +1557,7 @@ var yt = {
 	}
 }, Et = "hoc-device-card", Dt = 6, Ot = {
 	tag: Et,
-	ctor: class extends Z {
+	ctor: class extends $e {
 		static {
 			this.requiredKeys = ["device"];
 		}
@@ -1571,10 +1581,17 @@ var yt = {
 	constructor(...e) {
 		super(...e), this.fieldListNames = ["columns"];
 	}
+	valueChanged(e) {
+		let { repositories: t } = e.detail.value;
+		Array.isArray(t) && (e.detail.value = {
+			...e.detail.value,
+			repositories: [...new Set(t)]
+		}), super.valueChanged(e);
+	}
 	columnOptions() {
 		if (!this.hass) return [];
-		let e = new Set(X(this.hass, "github_pulse")), t = /* @__PURE__ */ new Map();
-		for (let n of Y(this.hass, "github_pulse")) if (!e.has(n.id)) for (let e of Je(this.hass, n.id)) t.set(e.value, e);
+		let e = new Set(Z(this.hass, "github_pulse")), t = /* @__PURE__ */ new Map();
+		for (let n of X(this.hass, "github_pulse")) if (!e.has(n.id)) for (let e of qe(this.hass, n.id)) t.set(e.value, e);
 		return [...t.values()];
 	}
 	schema() {
@@ -1595,7 +1612,7 @@ var yt = {
 					custom_value: !0,
 					options: [{
 						value: "name",
-						label: this.hass ? B(this.hass, "name") : "Name"
+						label: this.hass ? V(this.hass, "name") : "Name"
 					}, ...e]
 				} }
 			},
@@ -1604,6 +1621,15 @@ var yt = {
 				name: "hide_owner",
 				selector: { boolean: {} }
 			},
+			{
+				name: "show_activity",
+				selector: { boolean: {} }
+			},
+			tt(this.hass, "titles", [
+				"text",
+				"icon",
+				"icon_text"
+			], "column_titles"),
 			{
 				name: "max_height",
 				selector: { number: {
@@ -1639,9 +1665,9 @@ var Pt = [
 	mt,
 	{
 		tag: At,
-		ctor: class extends H {
+		ctor: class extends U {
 			static {
-				this.styles = [...H.styles, o`
+				this.styles = [...U.styles, o`
       ha-card {
         overflow: hidden;
       }
@@ -1697,34 +1723,41 @@ var Pt = [
 			rows(e) {
 				let { hass: t, config: n } = this;
 				if (!t || !n) return [];
-				let r = new Set(X(t, $)), i = Y(t, $).filter((e) => !r.has(e.id)), a = n.repositories === void 0 || n.repositories === "all" || n.repositories.length === 0 ? null : new Set(n.repositories);
+				let r = new Set(Z(t, $)), i = X(t, $).filter((e) => !r.has(e.id)), a = n.repositories === void 0 || n.repositories === "all" || n.repositories.length === 0 ? null : new Set(n.repositories);
 				return i.filter((e) => a === null || a.has(e.id)).map((r) => {
-					let i = Qe(t, r.id, $), a = q(t, i, e, r.name);
+					let i = Ze(t, r.id, $), a = J(t, i, e, r.name);
 					return {
 						id: r.id,
+						commits: i.commits_this_month?.state,
 						name: n.hide_owner === !0 ? r.name.split("/").pop() ?? r.name : r.name,
 						views: new Map(a.map((e) => [e.id, e]))
 					};
 				});
 			}
+			activityDot(e) {
+				return z(Number(e.commits) > 0 ? "success" : void 0);
+			}
 			renderCell(e, t) {
-				return e ? t.key === "ci_state" && !t.attribute ? k`<td>${Ee(e.stateObj.state)}</td>` : k`<td>
+				return e ? t.key === "ci_state" && !t.attribute ? k`<td>${z(e.stateObj.state)}</td>` : k`<td>
       <span class="cell ${e.tone || t.color ? "cell--tone" : ""}" style="--c: ${e.color}"
-        >${e.value}${e.unit ? k`<span class="cell__unit">${e.unit}</span>` : j}${e.trend ? De(e.trend) : j}</span
+        >${e.value}${e.unit ? k`<span class="cell__unit">${e.unit}</span>` : j}${e.trend ? Ee(e.trend) : j}</span
       >
     </td>` : k`<td>—</td>`;
 			}
 			renderContent() {
 				let { hass: e, config: t } = this;
 				if (!e || !t) return k``;
-				let n = (t.columns?.length ? t.columns : jt).map(Be), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Nt(e, t, r, i));
+				let n = (t.columns?.length ? t.columns : jt).map(ze), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Nt(e, t, r, i));
 				if (a.length === 0) return this.renderMessage("no_repositories");
-				let o = n.map((e) => {
-					let t = W(e), n = a.map((e) => e.views.get(t)).find((e) => e !== void 0);
+				let o = t.column_titles ?? "text", s = n.map((t) => {
+					let n = G(t), r = a.map((e) => e.views.get(n)).find((e) => e !== void 0);
 					return {
-						text: e.name ?? n?.label ?? G(e.key),
-						icon: e.icon,
-						color: e.color ? n?.color : void 0
+						text: t.name ?? r?.label ?? K(t.key),
+						icon: r ? Je(e, t.icon ? {
+							...r,
+							icon: t.icon
+						} : r) : j,
+						color: t.color ? r?.color : void 0
 					};
 				});
 				return k`<ha-card>
@@ -1732,19 +1765,21 @@ var Pt = [
         <table>
           <thead>
             <tr>
-              <th>${V(e, "repository")}</th>
-              ${o.map((e) => k`<th>
-                    ${e.icon ? k`<ha-icon
-                            icon=${e.icon}
-                            style=${e.color ? `color: ${e.color}` : ""}
-                          ></ha-icon>` : j}${e.text}
+              <th>${H(e, "repository")}</th>
+              ${s.map((e) => k`<th
+                    title=${e.text}
+                    style=${e.color ? `color: ${e.color}` : ""}
+                  >
+                    ${o === "text" ? j : e.icon}${o === "icon" ? j : e.text}
                   </th>`)}
             </tr>
           </thead>
           <tbody>
             ${a.map((e) => k`<tr>
-                  <td class="name">${e.name}</td>
-                  ${n.map((t) => this.renderCell(e.views.get(W(t)), t))}
+                  <td class="name">
+                    ${t.show_activity ? this.activityDot(e) : j}${e.name}
+                  </td>
+                  ${n.map((t) => this.renderCell(e.views.get(G(t)), t))}
                 </tr>`)}
           </tbody>
         </table>

@@ -53,6 +53,11 @@ export const de: Record<LocaleKey, string> = {
   layout_list: "Liste",
   order_asc: "Aufsteigend",
   order_desc: "Absteigend",
-  editor_show_release: "Release-Version anzeigen",
+  editor_show_release: "Release-Version im Titel anzeigen",
   editor_hide_owner: "Besitzer ausblenden",
+  titles_text: "Text",
+  titles_icon: "Icon",
+  titles_icon_text: "Icon und Text",
+  editor_column_titles: "Spaltentitel",
+  editor_show_activity: "Aktivitätspunkt anzeigen",
 };

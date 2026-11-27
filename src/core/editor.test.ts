@@ -152,6 +152,15 @@ describe("editor labels", () => {
   });
 });
 
+describe("release option label", () => {
+  it("says the version is shown in the title", () => {
+    expect(editorLabel(fixtureHass({ language: "de" }), "show_release")).toBe(
+      "Release-Version im Titel anzeigen",
+    );
+    expect(editorLabel(fixtureHass(), "show_release")).toBe("Show release version in title");
+  });
+});
+
 describe("choice labels", () => {
   it("translates layout and order values", () => {
     const de = fixtureHass({ language: "de" });

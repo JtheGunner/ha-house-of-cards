@@ -11,6 +11,7 @@ import {
 } from "../../../core/fields";
 import { t } from "../../../core/i18n";
 import { statusDot, trendArrow } from "../../../core/parts";
+import { fieldIcon } from "../../../core/parts/field-tile";
 import { findAccountDevices, listDevices, resolveDeviceEntities } from "../../../core/resolver";
 import type { CardDefinition } from "../../../registry";
 import { PLATFORM } from "../github/card";
@@ -34,11 +35,16 @@ export interface GithubReposConfig extends BaseConfig {
   max_height?: number;
   /** Show `repo` instead of `owner/repo`. Off by default. */
   hide_owner?: boolean;
+  /** What the column titles show. Defaults to `text`. */
+  column_titles?: "text" | "icon" | "icon_text";
+  /** A dot before each name: green when the repository had commits this month, grey otherwise. */
+  show_activity?: boolean;
 }
 
 interface Row {
   id: string;
   name: string;
+  commits: string | undefined;
   views: Map<string, FieldView>;
 }
 
@@ -137,6 +143,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         const views = buildFieldViews(hass, entities, specs, device.name);
         return {
           id: device.id,
+          commits: entities["commits_this_month"]?.state,
           name:
             config.hide_owner === true
               ? (device.name.split("/").pop() ?? device.name)
@@ -144,6 +151,11 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
           views: new Map(views.map((view) => [view.id, view])),
         };
       });
+  }
+
+  private activityDot(row: Row): TemplateResult {
+    const commits = Number(row.commits);
+    return statusDot(commits > 0 ? "success" : undefined);
   }
 
   private renderCell(view: FieldView | undefined, spec: FieldSpec): TemplateResult {
@@ -169,6 +181,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
     const rows = this.rows(specs).sort((a, b) => compareRows(a, b, column, direction));
     if (rows.length === 0) return this.renderMessage("no_repositories");
 
+    const titles = config.column_titles ?? "text";
     const headers = specs.map((spec) => {
       const id = fieldId(spec);
       const view = rows
@@ -176,7 +189,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         .find((candidate) => candidate !== undefined);
       return {
         text: spec.name ?? view?.label ?? humanize(spec.key),
-        icon: spec.icon,
+        icon: view ? fieldIcon(hass, spec.icon ? { ...view, icon: spec.icon } : view) : nothing,
         color: spec.color ? view?.color : undefined,
       };
     });
@@ -189,15 +202,13 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
               <th>${t(hass, "repository")}</th>
               ${headers.map(
                 (header) =>
-                  html`<th>
-                    ${
-                      header.icon
-                        ? html`<ha-icon
-                            icon=${header.icon}
-                            style=${header.color ? `color: ${header.color}` : ""}
-                          ></ha-icon>`
-                        : nothing
-                    }${header.text}
+                  html`<th
+                    title=${header.text}
+                    style=${header.color ? `color: ${header.color}` : ""}
+                  >
+                    ${titles === "text" ? nothing : header.icon}${
+                      titles === "icon" ? nothing : header.text
+                    }
                   </th>`,
               )}
             </tr>
@@ -206,7 +217,9 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
             ${rows.map(
               (row) =>
                 html`<tr>
-                  <td class="name">${row.name}</td>
+                  <td class="name">
+                    ${config.show_activity ? this.activityDot(row) : nothing}${row.name}
+                  </td>
                   ${specs.map((spec) => this.renderCell(row.views.get(fieldId(spec)), spec))}
                 </tr>`,
             )}
