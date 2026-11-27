@@ -1,5 +1,7 @@
 # YouTrack project card
 
+<!-- drift: src/cards/youtrack/project/card.ts -->
+
 Issue counts of one project of the [YouTrack](https://github.com/JtheGunner/ha-youtrack) integration.
 
 ```yaml

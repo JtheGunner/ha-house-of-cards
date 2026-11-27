@@ -1,0 +1,16 @@
+# Documentation files to check.
+docs:
+  - "README.md"
+  - "docs/adding-a-card.md"
+  - "docs/cards/*.md"
+
+# Paths whose changes never cause drift. A present key replaces the built-in defaults.
+ignore:
+  - "**/*.test.ts"
+  - "test/**"
+  - "dist/**"
+  - "package-lock.json"
+  - "**/node_modules/**"
+  - "CHANGELOG.md"
+  - "LICENSE"
+  - "CONTRIBUTING.md"

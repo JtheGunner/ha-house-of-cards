@@ -1,5 +1,7 @@
 # GitHub profile card
 
+<!-- drift: src/cards/github-pulse/profile/card.ts -->
+
 Your GitHub activity: contributions this month, the change versus last month, streaks and top language.
 
 ```yaml

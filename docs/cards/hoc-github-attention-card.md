@@ -1,5 +1,7 @@
 # GitHub attention card
 
+<!-- drift: src/cards/github-pulse/attention/card.ts -->
+
 Shows only what needs attention: repositories with failing CI, open review requests and stale pull requests. When nothing needs attention it collapses to one quiet line.
 
 ```yaml
