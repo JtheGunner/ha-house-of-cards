@@ -602,6 +602,7 @@ var Fe = o`
 	editor_columns: "Spalten",
 	editor_name: "Name",
 	editor_show_title: "Titel anzeigen",
+	editor_title: "Titel",
 	editor_device_title: "Titel der Namensspalte",
 	editor_show_status: "Status anzeigen",
 	editor_sort_by: "Sortieren nach",
@@ -691,6 +692,7 @@ var Fe = o`
 	editor_columns: "Columns",
 	editor_name: "Name",
 	editor_show_title: "Show title",
+	editor_title: "Title",
 	editor_device_title: "Title of the name column",
 	editor_show_status: "Show status",
 	editor_sort_by: "Sort by",
@@ -1319,7 +1321,7 @@ function Dt(e, t) {
 }
 var Ot = class extends N {
 	constructor(...e) {
-		super(...e), this.fieldListNames = [], this.ruleListNames = [], this.linkNames = [], this.noneNames = [], this.onByDefaultNames = [], this.singleFieldNames = [], this.computeLabel = (e) => this.hass ? I(this.hass, e.name) : e.name;
+		super(...e), this.fieldListNames = [], this.ruleListNames = [], this.linkNames = [], this.noneNames = [], this.onByDefaultNames = [], this.singleFieldNames = [], this.labelNames = {}, this.computeLabel = (e) => this.hass ? I(this.hass, this.labelNames[e.name] ?? e.name) : e.name;
 	}
 	static {
 		this.properties = {
@@ -2173,7 +2175,7 @@ var tn = class extends Ot {
 	description: "Any device: choose which sensors and attributes to show, in colour. GitHub Pulse and YouTrack devices come with defaults."
 }, an = class extends Ot {
 	constructor(...e) {
-		super(...e), this.fieldListNames = ["columns"], this.ruleListNames = ["status"], this.linkNames = ["link"], this.noneNames = ["platform"];
+		super(...e), this.fieldListNames = ["columns"], this.ruleListNames = ["status"], this.linkNames = ["link"], this.labelNames = { name: "title" }, this.noneNames = ["platform"];
 	}
 	valueChanged(e) {
 		let { devices: t } = e.detail.value;
@@ -2198,6 +2200,10 @@ var tn = class extends Ot {
 		return [
 			{
 				name: "name",
+				selector: { text: {} }
+			},
+			{
+				name: "device_title",
 				selector: { text: {} }
 			},
 			{
@@ -2245,10 +2251,6 @@ var tn = class extends Ot {
 				"icon",
 				"icon_text"
 			], "column_titles"),
-			{
-				name: "device_title",
-				selector: { text: {} }
-			},
 			{
 				name: "max_height",
 				selector: { number: {

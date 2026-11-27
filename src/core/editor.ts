@@ -278,8 +278,11 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     return data;
   }
 
+  /** Labels that differ from the shared one, as `option name` to `label name`. */
+  protected labelNames: Record<string, string> = {};
+
   protected computeLabel = (item: FormSchemaItem): string =>
-    this.hass ? editorLabel(this.hass, item.name) : item.name;
+    this.hass ? editorLabel(this.hass, this.labelNames[item.name] ?? item.name) : item.name;
 
   protected valueChanged(event: CustomEvent<{ value: C }>): void {
     event.stopPropagation();

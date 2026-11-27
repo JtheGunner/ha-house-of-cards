@@ -42,6 +42,7 @@ describe("hoc-devices-card-editor", () => {
     await editor.updateComplete;
     const form = editor.shadowRoot?.querySelector("ha-form") as unknown as {
       schema: { name: string; selector: Record<string, unknown> }[];
+      computeLabel: (item: { name: string; selector: Record<string, unknown> }) => string;
     } & HTMLElement;
     return { form, received };
   }
@@ -60,6 +61,9 @@ describe("hoc-devices-card-editor", () => {
     const names = form.schema.map((item) => item.name);
     expect(names).toContain("name");
     expect(names).toContain("device_title");
+    expect(names.indexOf("device_title")).toBe(names.indexOf("name") + 1);
+    const labelOf = (name: string) => form.computeLabel({ name, selector: {} });
+    expect(labelOf("name")).toBe("Titel");
   });
 
   it("stores no platform when none is chosen", async () => {

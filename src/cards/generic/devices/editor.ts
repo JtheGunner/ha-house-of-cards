@@ -16,6 +16,7 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
   protected override fieldListNames = ["columns"];
   protected override ruleListNames = ["status"];
   protected override linkNames = ["link"];
+  protected override labelNames = { name: "title" };
   protected override noneNames = ["platform"];
 
   /** The same device twice would tie two entries together, so duplicates are dropped. */
@@ -55,6 +56,7 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
     ];
     return [
       { name: "name", selector: { text: {} } },
+      { name: "device_title", selector: { text: {} } },
       { name: "platform", selector: { select: { mode: "dropdown", options: platformOptions } } },
       {
         name: "devices",
@@ -82,7 +84,6 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
       { name: "show_status", selector: { boolean: {} } },
       ...(config?.show_status ? [statusSelector(hass, options)] : []),
       choiceSelector(hass, "titles", ["text", "icon", "icon_text"], "column_titles"),
-      { name: "device_title", selector: { text: {} } },
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },
     ];
   }
