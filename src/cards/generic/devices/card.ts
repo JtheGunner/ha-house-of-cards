@@ -1,4 +1,12 @@
 import { css, html, nothing, type TemplateResult } from "lit";
+import {
+  GestureTracker,
+  isActionActive,
+  resolveActionEntity,
+  runAction,
+  type ActionContext,
+  type CardAction,
+} from "../../../core/actions";
 import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
 import {
   buildFieldViews,
@@ -17,7 +25,7 @@ import { fieldIcon } from "../../../core/parts/field-tile";
 import { headerStyles } from "../../../core/parts/header";
 import { fontSecondary } from "../../../core/parts/typography";
 import { listPlatforms, PRESETS, presetOfDevice, selectDevices } from "../../../core/presets";
-import { resolveDeviceEntities } from "../../../core/resolver";
+import { resolveDeviceEntities, type ResolvedEntities } from "../../../core/resolver";
 import { evaluateStatus, type StatusRule } from "../../../core/status";
 import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
@@ -50,17 +58,39 @@ export interface DevicesConfig extends BaseConfig {
   status?: StatusRule[];
   /** Link each name: `device` for the device's page or `sensor:attribute` for a URL in an attribute. */
   link?: boolean | string;
+  /** Runs when a name is tapped; replaces the link. `more-info` or `fire-dom-event` (a `browser_mod` popup). */
+  tap_action?: CardAction;
+  /** Runs when a name is held for half a second. */
+  hold_action?: CardAction;
 }
 
 interface Row {
   id: string;
   url: string | undefined;
+  /** Whether a tap and a hold on the name run an action. */
+  tapActive: boolean;
+  holdActive: boolean;
   name: string;
   statusColor: string | undefined;
   views: Map<string, FieldView>;
 }
 
+interface ActionTarget {
+  entities: ResolvedEntities;
+  defaultKey: string | undefined;
+  deviceId: string;
+  deviceName: string;
+}
+
 type Alignment = "left" | "center" | "right";
+
+function actionContext(action: CardAction | undefined, target: ActionTarget): ActionContext {
+  return {
+    entityId: resolveActionEntity(action, target.entities, target.defaultKey),
+    deviceId: target.deviceId,
+    deviceName: target.deviceName,
+  };
+}
 
 /** An explicit `align` wins; otherwise a column of only numbers aligns right and anything else left. */
 function columnAlignment(spec: FieldSpec, rows: Row[]): Alignment {
@@ -143,6 +173,18 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
       .name__text a:hover {
         text-decoration: underline;
       }
+      .action {
+        cursor: pointer;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+      .action:hover {
+        text-decoration: underline;
+      }
+      .action:focus-visible {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+      }
       .name__content .dot {
         flex: none;
       }
@@ -176,6 +218,50 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
     return first ? { platform: first } : {};
   }
 
+  /** The latest action target of every row; gestures read it when they fire, not when they start. */
+  private readonly targets = new Map<string, ActionTarget>();
+  /** One tracker per device, kept across renders so a hold survives a state update. */
+  private readonly trackers = new Map<string, GestureTracker>();
+
+  private run(deviceId: string, action: CardAction | undefined): void {
+    const target = this.targets.get(deviceId);
+    if (target) runAction(this, action, actionContext(action, target));
+  }
+
+  private tracker(deviceId: string): GestureTracker {
+    let tracker = this.trackers.get(deviceId);
+    if (!tracker) {
+      tracker = new GestureTracker(
+        () => this.run(deviceId, this.config?.tap_action),
+        () => this.run(deviceId, this.config?.hold_action),
+      );
+      this.trackers.set(deviceId, tracker);
+    }
+    return tracker;
+  }
+
+  private renderName(row: Row): TemplateResult | string {
+    const link = row.url
+      ? html`<a href=${row.url} target="_blank" rel="noopener noreferrer">${row.name}</a>`
+      : row.name;
+    if (!row.tapActive && !row.holdActive) return link;
+    const tracker = this.tracker(row.id);
+    // Only a tap action makes the name a button; with just a hold action it stays a link or plain text.
+    return html`<span
+      class=${row.tapActive ? "action" : "action action--hold"}
+      role=${row.tapActive ? "button" : nothing}
+      tabindex=${row.tapActive ? "0" : nothing}
+      @pointerdown=${tracker.onPointerDown}
+      @pointerup=${tracker.onPointerUp}
+      @pointerleave=${tracker.onPointerLeave}
+      @pointercancel=${tracker.onPointerCancel}
+      @click=${tracker.onClick}
+      @keydown=${row.tapActive ? tracker.onKeyDown : nothing}
+      @contextmenu=${tracker.onContextMenu}
+      >${link}</span
+    >`;
+  }
+
   private rows(specs: FieldSpec[]): Row[] {
     const { hass, config } = this;
     if (!hass || !config) return [];
@@ -185,9 +271,25 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
       const views = buildFieldViews(hass, entities, specs, device.name);
       const rules = config.status?.length ? config.status : (preset?.rowStatus ?? []);
       const status = evaluateStatus(rules, entities);
+      const target: ActionTarget = {
+        entities,
+        defaultKey: specs[0]?.key,
+        deviceId: device.id,
+        deviceName: device.name,
+      };
+      const tapActive = isActionActive(config.tap_action, actionContext(config.tap_action, target));
+      const holdActive = isActionActive(
+        config.hold_action,
+        actionContext(config.hold_action, target),
+      );
+      this.targets.set(device.id, target);
       return {
         id: device.id,
-        url: resolveLink(config.link, undefined, hass.devices[device.id], entities),
+        url: tapActive
+          ? undefined
+          : resolveLink(config.link, undefined, hass.devices[device.id], entities),
+        tapActive,
+        holdActive,
         statusColor: status.color,
         name:
           config.shorten_names === true
@@ -300,13 +402,7 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
                     <span class="name__content"
                       >${config.show_status ? colorDot(row.statusColor) : nothing}<span
                         class="name__text"
-                        >${
-                          row.url
-                            ? html`<a href=${row.url} target="_blank" rel="noopener noreferrer"
-                                >${row.name}</a
-                              >`
-                            : row.name
-                        }</span
+                        >${this.renderName(row)}</span
                       ></span
                     >
                   </td>

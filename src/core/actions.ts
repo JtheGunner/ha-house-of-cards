@@ -102,6 +102,13 @@ export class GestureTracker {
     this.pressed = false;
   };
 
+  /** Leaving the target ends a pending hold; a hold that already ran keeps swallowing its click. */
+  readonly onPointerLeave = (): void => {
+    if (this.timer === undefined) return;
+    this.clearTimer();
+    this.pressed = false;
+  };
+
   readonly onPointerCancel = (): void => {
     this.clearTimer();
     this.pressed = false;

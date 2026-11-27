@@ -167,6 +167,21 @@ describe("GestureTracker", () => {
     expect(onTap).not.toHaveBeenCalled();
   });
 
+  it("cancels a pending hold when the pointer leaves, but keeps a finished hold", () => {
+    tracker.onPointerDown();
+    tracker.onPointerLeave();
+    vi.advanceTimersByTime(600);
+    expect(onHold).not.toHaveBeenCalled();
+
+    tracker.onPointerDown();
+    vi.advanceTimersByTime(500);
+    tracker.onPointerUp();
+    tracker.onPointerLeave();
+    tracker.onClick(new MouseEvent("click", { cancelable: true }));
+    expect(onHold).toHaveBeenCalledTimes(1);
+    expect(onTap).not.toHaveBeenCalled();
+  });
+
   it("taps the next click after a cancelled hold", () => {
     tracker.onPointerDown();
     vi.advanceTimersByTime(500);
