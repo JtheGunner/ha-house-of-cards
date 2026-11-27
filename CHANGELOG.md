@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+
+- `show_title: false` hides the title of the device card and the issues card. A `badge` stays; the visual editor then hides the title name and link options.
+
 ## [0.3.0] - 2026-11-27
 
 ### Added

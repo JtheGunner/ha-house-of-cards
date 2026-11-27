@@ -18,6 +18,7 @@ export class DeviceCardEditor extends HocBaseEditor<DeviceCardConfig> {
   protected override singleFieldNames = ["badge"];
   protected override ruleListNames = ["status"];
   protected override linkNames = ["link"];
+  protected override onByDefaultNames = ["show_title", "show_status"];
 
   /** The fields of the chosen layout that the card would show, so they can be edited in place. */
   protected override defaultFields(name: string): FieldConfig[] | undefined {
@@ -40,14 +41,18 @@ export class DeviceCardEditor extends HocBaseEditor<DeviceCardConfig> {
     const device = this.config?.device;
     const hass = this.hass;
     const options = hass && device ? discoverFieldOptions(hass, device) : [];
+    const titleShown = this.config?.show_title !== false;
     const { hasDevicePage, attributeUrls } = linkSources(hass, device ? [device] : []);
     return [
       { name: "device", required: true, selector: { device: {} } },
       layoutSelector(hass, ["compact", "standard", "list"]),
-      { name: "name", selector: { text: {} } },
+      { name: "show_title", selector: { boolean: {} } },
+      ...(titleShown ? [{ name: "name", selector: { text: {} } }] : []),
       badgeSelector(hass, options),
-      linkSelector(hass, hasDevicePage, attributeUrls),
-      ...(this.config?.link ? [] : [{ name: "link_url", selector: { text: { type: "url" } } }]),
+      ...(titleShown ? [linkSelector(hass, hasDevicePage, attributeUrls)] : []),
+      ...(titleShown && !this.config?.link
+        ? [{ name: "link_url", selector: { text: { type: "url" } } }]
+        : []),
       { name: "show_status", selector: { boolean: {} } },
       ...(this.config?.show_status !== false ? [statusSelector(hass, options)] : []),
       fieldsSelector(hass, device),

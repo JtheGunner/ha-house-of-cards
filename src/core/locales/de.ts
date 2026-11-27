@@ -43,6 +43,7 @@ export const de: Record<LocaleKey, string> = {
   editor_fields: "Felder",
   editor_columns: "Spalten",
   editor_name: "Name",
+  editor_show_title: "Titel anzeigen",
   editor_show_status: "Status anzeigen",
   editor_sort_by: "Sortieren nach",
   editor_sort_order: "Reihenfolge",

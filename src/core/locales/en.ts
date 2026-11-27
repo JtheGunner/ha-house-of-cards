@@ -41,6 +41,7 @@ export const en = {
   editor_fields: "Fields",
   editor_columns: "Columns",
   editor_name: "Name",
+  editor_show_title: "Show title",
   editor_show_status: "Show status",
   editor_sort_by: "Sort by",
   editor_sort_order: "Sort order",

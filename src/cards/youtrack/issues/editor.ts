@@ -5,6 +5,7 @@ import type { YoutrackIssuesConfig } from "./card";
 
 export class YoutrackIssuesEditor extends HocBaseEditor<YoutrackIssuesConfig> {
   protected override singleFieldNames = ["badge"];
+  protected override onByDefaultNames = ["show_title", "expandable"];
 
   /** Only sensors that carry a list of issues make sense here. */
   private querySensors(): string[] {
@@ -42,7 +43,8 @@ export class YoutrackIssuesEditor extends HocBaseEditor<YoutrackIssuesConfig> {
         required: true,
         selector: { entity: { domain: "sensor", include_entities: this.querySensors() } },
       },
-      { name: "name", selector: { text: {} } },
+      { name: "show_title", selector: { boolean: {} } },
+      ...(this.config?.show_title !== false ? [{ name: "name", selector: { text: {} } }] : []),
       badgeSelector(this.hass, this.badgeOptions()),
       { name: "max_items", selector: { number: { min: 1, max: 50, mode: "box" } } },
       { name: "expandable", selector: { boolean: {} } },
