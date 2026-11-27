@@ -54,7 +54,7 @@ Default columns:
 
 ## Actions
 
-`tap_action` and `hold_action` open a popup from the name of a row. They work like the actions of Home Assistant cards and apply to every row.
+`tap_action` and `hold_action` open a popup from the name of a row. They work like the actions of Home Assistant cards and apply to every row. They act on the device names in the table, not on the card's own `name` header.
 
 | `action`         | What it does                                                                                                                                                 |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
