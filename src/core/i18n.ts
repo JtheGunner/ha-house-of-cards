@@ -18,6 +18,8 @@ export const EDITOR_OPTION_NAMES = [
   "device_title",
   "link",
   "link_url",
+  "tap_action",
+  "hold_action",
   "badge",
   "expandable",
   "show_status",

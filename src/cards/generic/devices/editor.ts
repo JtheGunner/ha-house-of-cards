@@ -1,5 +1,6 @@
 import { discoverFieldOptions, type FieldOption } from "../../../core/fields";
 import {
+  actionSelector,
   choiceSelector,
   fieldsSelectorFromOptions,
   HocBaseEditor,
@@ -16,10 +17,12 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
   protected override fieldListNames = ["columns"];
   protected override ruleListNames = ["status"];
   protected override linkNames = ["link"];
+  protected override actionNames = ["tap_action", "hold_action"];
   protected override pairs: [string, string][] = [
     ["name", "device_title"],
     ["sort_by", "sort_order"],
     ["link", "shorten_names"],
+    ["tap_action", "hold_action"],
   ];
   protected override labelNames = { name: "title" };
   protected override noneNames = ["platform"];
@@ -92,6 +95,8 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
       ...(hasPathNames || config?.shorten_names
         ? [{ name: "shorten_names", selector: { boolean: {} } }]
         : []),
+      actionSelector(hass, "tap_action", config?.tap_action),
+      actionSelector(hass, "hold_action", config?.hold_action),
       { name: "show_status", selector: { boolean: {} } },
       ...(config?.show_status ? [statusSelector(hass, options)] : []),
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },

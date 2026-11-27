@@ -1,4 +1,5 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
+import type { CardAction } from "./actions";
 import type { BaseConfig } from "./base-card";
 import { editorLabel, t, type LocaleKey } from "./i18n";
 import { isHttps } from "./format";
@@ -172,6 +173,26 @@ export function linkSelector(
   return { name: "link", selector: { select: { mode: "dropdown", options } } };
 }
 
+/**
+ * The kind of a tap or hold action as a dropdown. `fire-dom-event` is configured in YAML, so it is
+ * only listed while the action already is one.
+ */
+export function actionSelector(
+  hass: HomeAssistant | undefined,
+  name: string,
+  current: CardAction | undefined,
+): FormSchemaItem {
+  const kinds: [string, LocaleKey][] = [
+    ["none", "action_none"],
+    ["more-info", "action_more_info"],
+    ...(current?.action === "fire-dom-event"
+      ? ([["fire-dom-event", "action_fire_dom_event"]] as [string, LocaleKey][])
+      : []),
+  ];
+  const options = kinds.map(([value, key]) => ({ value, label: hass ? t(hass, key) : value }));
+  return { name, selector: { select: { mode: "dropdown", options } } };
+}
+
 /** Rules of a card's status, edited as objects like the field lists. */
 export function statusSelector(
   hass: HomeAssistant | undefined,
@@ -254,6 +275,9 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
   /** Names of link options shown as a dropdown; `none` is stored as no value. */
   protected linkNames: string[] = [];
 
+  /** Names of tap and hold actions; the form edits their kind, the config keeps the whole object. */
+  protected actionNames: string[] = [];
+
   /** Names of dropdowns with a `none` entry that is stored as no value. */
   protected noneNames: string[] = [];
   /** Options shown side by side: the second sits right of the first when both are present. */
@@ -295,6 +319,10 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       if (data[name] === true) data[name] = "device";
       else if (data[name] === undefined || data[name] === false) data[name] = "none";
     }
+    for (const name of this.actionNames) {
+      const action = data[name] as CardAction | undefined;
+      data[name] = typeof action?.action === "string" ? action.action : "none";
+    }
     for (const name of this.noneNames) data[name] ??= "none";
     for (const name of this.onByDefaultNames) data[name] ??= true;
     return data;
@@ -329,6 +357,13 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       if (config[name] === "none" || config[name] === false) delete config[name];
     }
     for (const name of this.noneNames) if (config[name] === "none") delete config[name];
+    for (const name of this.actionNames) {
+      const chosen = config[name];
+      if (typeof chosen !== "string") continue;
+      const before = previous[name] as CardAction | undefined;
+      if (chosen === "none") delete config[name];
+      else config[name] = before?.action === chosen ? before : { action: chosen };
+    }
     for (const name of this.ruleListNames) {
       if (!(name in config)) continue;
       const entries = cleanEntries(config[name], "field");

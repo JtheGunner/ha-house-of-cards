@@ -75,6 +75,7 @@ describe("hoc-devices-card-editor", () => {
       ["name", "device_title"],
       ["sort_by", "sort_order"],
       ["link", "shorten_names"],
+      ["tap_action", "hold_action"],
     ]);
   });
 
@@ -88,7 +89,7 @@ describe("hoc-devices-card-editor", () => {
   it("keeps an option alone when its partner is not offered", async () => {
     const { form } = await mountPlain({ platform: "github_pulse" });
     const rows = form.schema.filter((item) => item.schema).length;
-    expect(rows).toBe(2);
+    expect(rows).toBe(3);
     expect(flat(form).map((item) => item.name)).toContain("link");
   });
 
@@ -138,5 +139,75 @@ describe("hoc-devices-card-editor", () => {
       select: { options: { value: string }[] };
     };
     expect(link.select.options.map((o) => o.value)).toEqual(["none", "device"]);
+  });
+
+  describe("actions", () => {
+    const optionsOf = (form: { schema: SchemaEntry[] }, name: string): string[] =>
+      (
+        flat(form).find((item) => item.name === name)?.selector as {
+          select: { options: { value: string }[] };
+        }
+      ).select.options.map((o) => o.value);
+
+    const dataOf = (form: HTMLElement): Record<string, unknown> =>
+      (form as unknown as { data: Record<string, unknown> }).data;
+
+    it("offers none and more-info for both gestures", async () => {
+      const { form } = await mountPlain({ platform: "github_pulse" });
+      expect(optionsOf(form, "tap_action")).toEqual(["none", "more-info"]);
+      expect(optionsOf(form, "hold_action")).toEqual(["none", "more-info"]);
+      expect(form.computeLabel({ name: "tap_action", selector: {} })).toBe("Tap action");
+      expect(form.computeLabel({ name: "hold_action", selector: {} })).toBe("Hold action");
+    });
+
+    it("shows an action object as its kind and none when unset", async () => {
+      const { form } = await mountPlain({
+        platform: "github_pulse",
+        tap_action: { action: "more-info", entity: "stars" },
+      });
+      expect(dataOf(form)["tap_action"]).toBe("more-info");
+      expect(dataOf(form)["hold_action"]).toBe("none");
+    });
+
+    it("keeps the entity of an unchanged action and stores a new kind as an object", async () => {
+      const { form, received } = await mountPlain({
+        platform: "github_pulse",
+        tap_action: { action: "more-info", entity: "stars" },
+      });
+      form.dispatchEvent(
+        new CustomEvent("value-changed", {
+          detail: { value: { tap_action: "more-info", hold_action: "more-info" } },
+        }),
+      );
+      expect(received[0]?.["tap_action"]).toEqual({ action: "more-info", entity: "stars" });
+      expect(received[0]?.["hold_action"]).toEqual({ action: "more-info" });
+    });
+
+    it("removes an action that is set to none", async () => {
+      const { form, received } = await mountPlain({
+        platform: "github_pulse",
+        tap_action: { action: "more-info" },
+      });
+      form.dispatchEvent(
+        new CustomEvent("value-changed", { detail: { value: { tap_action: "none" } } }),
+      );
+      expect(received[0]).not.toHaveProperty("tap_action");
+    });
+
+    it("leaves a YAML fire-dom-event action untouched by other edits", async () => {
+      const hold = {
+        action: "fire-dom-event",
+        browser_mod: { service: "browser_mod.popup", data: { title: "{{ device_name }}" } },
+      };
+      const { form, received } = await mountPlain({ platform: "github_pulse", hold_action: hold });
+      expect(optionsOf(form, "hold_action")).toEqual(["none", "more-info", "fire-dom-event"]);
+      form.dispatchEvent(
+        new CustomEvent("value-changed", {
+          detail: { value: { hold_action: "fire-dom-event", max_height: 300 } },
+        }),
+      );
+      expect(received[0]?.["hold_action"]).toEqual(hold);
+      expect(received[0]?.["max_height"]).toBe(300);
+    });
   });
 });
