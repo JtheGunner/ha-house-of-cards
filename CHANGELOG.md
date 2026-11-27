@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-27
+
+### Added
+
+- HACS validation workflow (`hacs/action`, category `plugin`) for pull requests, pushes to `main` and a daily run.
+- `homeassistant` in `hacs.json`: the minimum Home Assistant version is 2026.9.0.
+
 ## [0.3.0] - 2026-11-27
 
 ### Added
@@ -80,7 +87,8 @@ All notable changes to this project are documented here. The format follows [Kee
 - Visual editors for all cards, English and German labels, and theme-variable styling for the classic dashboard and UI Lovelace Minimalist.
 - Warn-only documentation drift check for pull requests.
 
-[Unreleased]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.0...v0.2.1
