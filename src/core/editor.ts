@@ -1,6 +1,7 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import type { BaseConfig } from "./base-card";
 import { editorLabel, t, type LocaleKey } from "./i18n";
+import { STATUS_OPERATORS, STATUS_STATES } from "./status";
 import { discoverFieldOptions, type FieldConfig, type FieldOption } from "./fields";
 import type { HomeAssistant } from "./types";
 
@@ -86,20 +87,102 @@ export function fieldsSelector(
   return fieldsSelectorFromOptions(hass, options, name);
 }
 
+/** The badge in the title: one sensor or attribute and an optional colour. */
+export function badgeSelector(
+  hass: HomeAssistant | undefined,
+  options: FieldOption[],
+): FormSchemaItem {
+  const label = (key: string) => (hass ? editorLabel(hass, key) : key);
+  return {
+    name: "badge",
+    selector: {
+      object: {
+        label_field: "key",
+        fields: {
+          key: {
+            label: label("sensor"),
+            required: true,
+            selector: { select: { mode: "dropdown", options } },
+          },
+          color: { label: label("color"), selector: { ui_color: {} } },
+        },
+      },
+    },
+  };
+}
+
+/** What the title links to: nothing, the device page or a URL held in an attribute. */
+export function linkSelector(
+  hass: HomeAssistant | undefined,
+  hasDevicePage: boolean,
+  attributeUrls: FieldOption[],
+): FormSchemaItem {
+  const text = (key: LocaleKey) => (hass ? t(hass, key) : key);
+  const options = [
+    { value: "none", label: text("link_none") },
+    ...(hasDevicePage ? [{ value: "device", label: text("link_device") }] : []),
+    ...attributeUrls,
+  ];
+  return { name: "link", selector: { select: { mode: "dropdown", options } } };
+}
+
+/** Rules of a card's status, edited as objects like the field lists. */
+export function statusSelector(
+  hass: HomeAssistant | undefined,
+  options: FieldOption[],
+): FormSchemaItem {
+  const label = (key: string) => (hass ? editorLabel(hass, key) : key);
+  const states = STATUS_STATES.map((value) => ({
+    value,
+    label: hass ? t(hass, `state_${value}` as LocaleKey) : value,
+  }));
+  return {
+    name: "status",
+    selector: {
+      object: {
+        multiple: true,
+        label_field: "field",
+        fields: {
+          field: {
+            label: label("field"),
+            required: true,
+            selector: { select: { mode: "dropdown", custom_value: true, options } },
+          },
+          operator: {
+            label: label("operator"),
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: STATUS_OPERATORS.map((value) => ({ value, label: value })),
+              },
+            },
+          },
+          value: { label: label("value"), selector: { text: {} } },
+          state: {
+            label: label("state"),
+            required: true,
+            selector: { select: { mode: "dropdown", options: states } },
+          },
+        },
+      },
+    },
+  };
+}
+
 function toFormEntry(item: FieldConfig): Record<string, unknown> {
   if (typeof item === "string") return { key: item };
   const { attribute, ...rest } = item;
   return attribute ? { ...rest, key: `${item.key}:${attribute}` } : { ...rest };
 }
 
-function cleanEntries(value: unknown): Record<string, unknown>[] {
+function cleanEntries(value: unknown, requiredKey: string): Record<string, unknown>[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((entry) => {
     if (typeof entry !== "object" || entry === null) return [];
     const kept = Object.fromEntries(
       Object.entries(entry).filter(([, v]) => v !== undefined && v !== null && v !== ""),
     );
-    return typeof kept["key"] === "string" ? [kept] : [];
+    return typeof kept[requiredKey] === "string" ? [kept] : [];
   });
 }
 
@@ -119,13 +202,45 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
   /** Names of options that hold a list of fields; they are edited as objects and dropped when empty. */
   protected fieldListNames: string[] = [];
 
+  /** Names of options that hold status rules; entries without a `field` are dropped. */
+  protected ruleListNames: string[] = [];
+
+  /** Names of link options shown as a dropdown; `none` is stored as no value. */
+  protected linkNames: string[] = [];
+
+  /** Names of options that hold one field (a string or an object with a `key`). */
+  protected singleFieldNames: string[] = [];
+
+  /** Fields a list option shows while it is empty; `undefined` leaves it empty. */
+  protected defaultFields?(name: string): FieldConfig[] | undefined;
+
+  /** Lets an editor adjust the config before it is sent, for example to drop options that no longer apply. */
+  protected finalizeConfig(config: Record<string, unknown>): void {
+    void config;
+  }
+
   protected abstract schema(): FormSchemaItem[];
 
   private formData(): Record<string, unknown> {
     const data: Record<string, unknown> = { ...(this.config as object) };
     for (const name of this.fieldListNames) {
       const list = data[name];
-      if (Array.isArray(list)) data[name] = (list as FieldConfig[]).map(toFormEntry);
+      if (Array.isArray(list) && list.length > 0) {
+        data[name] = (list as FieldConfig[]).map(toFormEntry);
+      } else {
+        const defaults = this.defaultFields?.(name);
+        if (defaults?.length) data[name] = defaults.map(toFormEntry);
+      }
+    }
+    for (const name of this.singleFieldNames) {
+      const single = data[name];
+      if (typeof single === "string" || (typeof single === "object" && single !== null)) {
+        data[name] = toFormEntry(single as FieldConfig);
+      }
+    }
+    for (const name of this.linkNames) {
+      if (data[name] === true) data[name] = "device";
+      else if (data[name] === undefined || data[name] === false) data[name] = "none";
     }
     return data;
   }
@@ -135,13 +250,33 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
 
   protected valueChanged(event: CustomEvent<{ value: C }>): void {
     event.stopPropagation();
+    const previous = this.config as Record<string, unknown>;
     const config = { ...this.config, ...event.detail.value } as Record<string, unknown>;
     for (const name of this.fieldListNames) {
       if (!(name in config)) continue;
-      const entries = cleanEntries(config[name]);
+      const entries = cleanEntries(config[name], "key");
+      const wasEmpty = !Array.isArray(previous[name]) || previous[name].length === 0;
+      const shown = wasEmpty ? (this.defaultFields?.(name) ?? []).map(toFormEntry) : [];
+      const untouched = shown.length > 0 && JSON.stringify(entries) === JSON.stringify(shown);
+      if (entries.length > 0 && !untouched) config[name] = entries;
+      else delete config[name];
+    }
+    for (const name of this.singleFieldNames) {
+      if (!(name in config)) continue;
+      const [entry] = cleanEntries([config[name]], "key");
+      if (entry) config[name] = entry;
+      else delete config[name];
+    }
+    for (const name of this.linkNames) {
+      if (config[name] === "none" || config[name] === false) delete config[name];
+    }
+    for (const name of this.ruleListNames) {
+      if (!(name in config)) continue;
+      const entries = cleanEntries(config[name], "field");
       if (entries.length > 0) config[name] = entries;
       else delete config[name];
     }
+    this.finalizeConfig(config);
     this.dispatchEvent(
       new CustomEvent("config-changed", {
         detail: { config },

@@ -1,17 +1,67 @@
-import { HocBaseEditor, fieldsSelector, layoutSelector } from "../../../core/editor";
+import {
+  badgeSelector,
+  fieldsSelector,
+  HocBaseEditor,
+  layoutSelector,
+  linkSelector,
+  statusSelector,
+} from "../../../core/editor";
+import { discoverFieldOptions, parseField, type FieldConfig } from "../../../core/fields";
+import { layoutOf } from "../../../core/fields-card";
+import { defaultFieldsFor, presetOfDevice } from "../../../core/presets";
+import { resolveDeviceEntities } from "../../../core/resolver";
+import { isHttps } from "../../../core/format";
 import type { DeviceCardConfig } from "./card";
 
 export class DeviceCardEditor extends HocBaseEditor<DeviceCardConfig> {
   protected override fieldListNames = ["fields"];
+  protected override singleFieldNames = ["badge"];
+  protected override ruleListNames = ["status"];
+  protected override linkNames = ["link"];
+
+  /** The fields of the chosen layout that the card would show, so they can be edited in place. */
+  protected override defaultFields(name: string): FieldConfig[] | undefined {
+    const { hass, config } = this;
+    const device = config?.device;
+    if (name !== "fields" || !hass || !device) return undefined;
+    const preset = presetOfDevice(hass, device);
+    const entities = resolveDeviceEntities(hass, device, preset?.platform);
+    return defaultFieldsFor(preset, layoutOf(config.layout), entities).filter(
+      (field) => parseField(field).key in entities,
+    );
+  }
+
+  /** The link source wins over the URL, so the URL is dropped once a source is chosen. */
+  protected override finalizeConfig(config: Record<string, unknown>): void {
+    if (config["link"]) delete config["link_url"];
+  }
 
   protected schema() {
+    const device = this.config?.device;
+    const hass = this.hass;
+    const options = hass && device ? discoverFieldOptions(hass, device) : [];
+    const hasDevicePage = hass && device ? isHttps(hass.devices[device]?.configuration_url) : false;
+    const attributeUrls = options.filter((option) => {
+      const [key, attribute] = option.value.split(":");
+      if (!hass || !key || !attribute) return false;
+      return Object.values(hass.entities).some((entry) => {
+        if (entry.device_id !== device || (entry.translation_key || entry.entity_id) !== key) {
+          return false;
+        }
+        const value = hass.states[entry.entity_id]?.attributes[attribute];
+        return typeof value === "string" && isHttps(value);
+      });
+    });
     return [
       { name: "device", required: true, selector: { device: {} } },
-      layoutSelector(this.hass, ["compact", "standard", "list"]),
+      layoutSelector(hass, ["compact", "standard", "list"]),
       { name: "name", selector: { text: {} } },
-      { name: "link", selector: { boolean: {} } },
+      badgeSelector(hass, options),
+      linkSelector(hass, hasDevicePage, attributeUrls),
+      ...(this.config?.link ? [] : [{ name: "link_url", selector: { text: { type: "url" } } }]),
       { name: "show_status", selector: { boolean: {} } },
-      fieldsSelector(this.hass, this.config?.device),
+      ...(this.config?.show_status !== false ? [statusSelector(hass, options)] : []),
+      fieldsSelector(hass, device),
     ];
   }
 }

@@ -160,12 +160,14 @@ describe("editor labels", () => {
   });
 });
 
-describe("release option label", () => {
-  it("says the version is shown in the title", () => {
-    expect(editorLabel(fixtureHass({ language: "de" }), "show_release")).toBe(
-      "Release-Version im Titel anzeigen",
-    );
-    expect(editorLabel(fixtureHass(), "show_release")).toBe("Show release version in title");
+describe("title option labels", () => {
+  it("labels the badge and link options in both languages", () => {
+    const de = fixtureHass({ language: "de" });
+    const en = fixtureHass();
+    expect(editorLabel(de, "badge")).toBe("Badge im Titel");
+    expect(editorLabel(en, "badge")).toBe("Badge in title");
+    expect(editorLabel(de, "link_url")).toBe("Link-URL");
+    expect(editorLabel(en, "link")).toBe("Link name to");
   });
 });
 

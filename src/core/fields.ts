@@ -64,7 +64,7 @@ const KNOWN_LABELS: Record<string, LocaleKey> = {
 };
 
 const PALETTE = ["blue", "purple", "teal", "orange", "pink", "green", "indigo", "amber"];
-const TONE_COLORS: Record<Tone, string> = {
+export const TONE_COLORS: Record<Tone, string> = {
   success: "var(--success-color, var(--green-color))",
   failure: "var(--error-color, var(--red-color))",
   pending: "var(--warning-color, var(--amber-color))",

@@ -31,13 +31,11 @@ One bundle with cards for [GitHub Pulse](https://github.com/JtheGunner/ha-github
 
 ## 🃏 Cards
 
-|    | Card | Integration | Purpose |
-|----|------|-------------|---------|
-| 📦 | [`hoc-github-card`](docs/cards/hoc-github-card.md) | GitHub Pulse | One repository or your profile, layouts `compact`, `standard`, `list` |
-| 📋 | [`hoc-github-repos-card`](docs/cards/hoc-github-repos-card.md) | GitHub Pulse | Several repositories as a sortable table |
-| 🧩 | [`hoc-device-card`](docs/cards/hoc-device-card.md) | any | Any device: pick the sensors and attributes to show |
-| 🗂️ | [`hoc-youtrack-project-card`](docs/cards/hoc-youtrack-project-card.md) | YouTrack | Issue counts of one project |
-| 📝 | [`hoc-youtrack-issues-card`](docs/cards/hoc-youtrack-issues-card.md) | YouTrack | Issues of a query sensor |
+|     | Card                                                                 | Integration  | Purpose                                                                                         |
+| --- | -------------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------- |
+| 📋  | [`hoc-github-repos-card`](docs/cards/hoc-github-repos-card.md)       | GitHub Pulse | Several repositories as a sortable table                                                        |
+| 🧩  | [`hoc-device-card`](docs/cards/hoc-device-card.md)                   | any          | Any device, with ready-made defaults for GitHub repositories and profiles and YouTrack projects |
+| 📝  | [`hoc-youtrack-issues-card`](docs/cards/hoc-youtrack-issues-card.md) | YouTrack     | Issues of a query sensor                                                                        |
 
 > [!TIP]
 > Every card shows its values as coloured icon tiles, and you choose which sensors and attributes to show with `fields`; see the [device card](docs/cards/hoc-device-card.md#fields).

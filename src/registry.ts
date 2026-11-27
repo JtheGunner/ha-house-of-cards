@@ -1,6 +1,4 @@
-import { githubCardDefinition } from "./cards/github-pulse/github/card";
 import { issuesCardDefinition } from "./cards/youtrack/issues/card";
-import { projectCardDefinition } from "./cards/youtrack/project/card";
 import { deviceCardDefinition } from "./cards/generic/device/card";
 import { reposCardDefinition } from "./cards/github-pulse/repos/card";
 
@@ -29,9 +27,7 @@ declare global {
 
 /** Every card of the bundle. New cards add one entry here. */
 export const cards: CardDefinition[] = [
-  githubCardDefinition,
   reposCardDefinition,
-  projectCardDefinition,
   issuesCardDefinition,
   deviceCardDefinition,
 ];

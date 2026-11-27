@@ -29,7 +29,7 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 	let t = "";
 	for (let n of e.cssRules) t += n.cssText;
 	return a(t);
-})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: f, getOwnPropertySymbols: p, getPrototypeOf: ee } = Object, m = globalThis, h = m.trustedTypes, te = h ? h.emptyScript : "", ne = m.reactiveElementPolyfillSupport, g = (e, t) => e, _ = {
+})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: f, getOwnPropertySymbols: ee, getPrototypeOf: p } = Object, m = globalThis, h = m.trustedTypes, te = h ? h.emptyScript : "", ne = m.reactiveElementPolyfillSupport, g = (e, t) => e, _ = {
 	toAttribute(e, t) {
 		switch (t) {
 			case Boolean:
@@ -104,13 +104,13 @@ var v = class extends HTMLElement {
 	}
 	static _$Ei() {
 		if (this.hasOwnProperty(g("elementProperties"))) return;
-		let e = ee(this);
+		let e = p(this);
 		e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
 	}
 	static finalize() {
 		if (this.hasOwnProperty(g("finalized"))) return;
 		if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(g("properties"))) {
-			let e = this.properties, t = [...f(e), ...p(e)];
+			let e = this.properties, t = [...f(e), ...ee(e)];
 			for (let n of t) this.createProperty(n, e[n]);
 		}
 		let e = this[Symbol.metadata];
@@ -519,6 +519,9 @@ function z(e) {
 	return k`<span class="dot dot--${Te(e)}" aria-hidden="true"></span>`;
 }
 function Ee(e) {
+	return e ? k`<span class="dot" style="background: ${e}" aria-hidden="true"></span>` : k`<span class="dot dot--neutral" aria-hidden="true"></span>`;
+}
+function De(e) {
 	let t = {
 		up: "▲",
 		down: "▼",
@@ -526,7 +529,7 @@ function Ee(e) {
 	}[e.direction], n = e.direction !== "flat" && e.percent !== null ? ` ${Math.round(Math.abs(e.percent))} %` : "";
 	return k`<span class="trend trend--${e.direction}">${t}${n}</span>`;
 }
-var De = o`
+var Oe = o`
   .dot {
     display: inline-block;
     width: 0.6em;
@@ -553,7 +556,7 @@ var De = o`
   .trend--down {
     color: var(--error-color);
   }
-`, Oe = {
+`, ke = {
 	device_not_found: "Gerät nicht gefunden",
 	no_repositories: "Keine Repositories",
 	unavailable: "Nicht verfügbar",
@@ -589,7 +592,6 @@ var De = o`
 	editor_fields: "Felder",
 	editor_columns: "Spalten",
 	editor_name: "Name",
-	editor_link: "Name als Link",
 	editor_show_status: "Status anzeigen",
 	editor_repositories: "Repositories",
 	editor_sort_by: "Sortieren nach",
@@ -606,7 +608,6 @@ var De = o`
 	layout_list: "Liste",
 	order_asc: "Aufsteigend",
 	order_desc: "Absteigend",
-	editor_show_release: "Release-Version im Titel anzeigen",
 	editor_hide_owner: "Besitzer ausblenden",
 	titles_text: "Text",
 	titles_icon: "Icon",
@@ -617,7 +618,21 @@ var De = o`
 	align_center: "Zentriert",
 	align_right: "Rechts",
 	editor_align: "Ausrichtung",
-	editor_title_color: "Titelfarbe"
+	editor_title_color: "Titelfarbe",
+	editor_link: "Name verlinken mit",
+	editor_link_url: "Link-URL",
+	editor_badge: "Badge im Titel",
+	link_none: "Kein Link",
+	link_device: "Geräteseite",
+	editor_status: "Status-Regeln",
+	editor_field: "Sensor",
+	editor_operator: "Bedingung",
+	editor_value: "Wert",
+	editor_state: "Status",
+	state_success: "In Ordnung",
+	state_pending: "Warnung",
+	state_failure: "Fehler",
+	state_none: "Kein Status"
 }, B = {
 	device_not_found: "Device not found",
 	no_repositories: "No repositories",
@@ -654,7 +669,6 @@ var De = o`
 	editor_fields: "Fields",
 	editor_columns: "Columns",
 	editor_name: "Name",
-	editor_link: "Link name to page",
 	editor_show_status: "Show status",
 	editor_repositories: "Repositories",
 	editor_sort_by: "Sort by",
@@ -671,7 +685,6 @@ var De = o`
 	layout_list: "List",
 	order_asc: "Ascending",
 	order_desc: "Descending",
-	editor_show_release: "Show release version in title",
 	editor_hide_owner: "Hide owner",
 	titles_text: "Text",
 	titles_icon: "Icon",
@@ -682,19 +695,33 @@ var De = o`
 	align_center: "Centre",
 	align_right: "Right",
 	editor_align: "Alignment",
-	editor_title_color: "Title colour"
-}, ke = {
+	editor_title_color: "Title colour",
+	editor_link: "Link name to",
+	editor_link_url: "Link URL",
+	editor_badge: "Badge in title",
+	link_none: "No link",
+	link_device: "Device page",
+	editor_status: "Status rules",
+	editor_field: "Sensor",
+	editor_operator: "Condition",
+	editor_value: "Value",
+	editor_state: "Status",
+	state_success: "OK",
+	state_pending: "Warning",
+	state_failure: "Error",
+	state_none: "No status"
+}, Ae = {
 	en: B,
-	de: Oe
+	de: ke
 };
 function V(e, t) {
-	let n = `editor_${t}`, r = (ke[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? B)[n] ?? B[n];
+	let n = `editor_${t}`, r = (Ae[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? B)[n] ?? B[n];
 	if (r) return r;
 	let i = t.replace(/_/g, " ");
 	return i.charAt(0).toUpperCase() + i.slice(1);
 }
 function H(e, t) {
-	return (ke[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? B)[t];
+	return (Ae[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? B)[t];
 }
 // src/core/base-card.ts
 var U = class extends R {
@@ -708,7 +735,7 @@ var U = class extends R {
 		};
 	}
 	static {
-		this.styles = [De, o`
+		this.styles = [Oe, o`
       ha-card {
         padding: 12px 16px;
       }
@@ -744,12 +771,12 @@ var U = class extends R {
 	render() {
 		return !this.config || !this.hass ? j : this.renderContent();
 	}
-}, Ae = 1;
-function je(e) {
+}, je = 1;
+function Me(e) {
 	return e === null || !Number.isFinite(e) ? {
 		direction: "flat",
 		percent: null
-	} : Math.abs(e) <= Ae ? {
+	} : Math.abs(e) <= je ? {
 		direction: "flat",
 		percent: e
 	} : {
@@ -757,25 +784,33 @@ function je(e) {
 		percent: e
 	};
 }
-var Me = /* @__PURE__ */ new Set([
+var Ne = /* @__PURE__ */ new Set([
 	"unknown",
 	"unavailable",
 	""
 ]);
-function Ne(e) {
-	return e === void 0 || Me.has(e);
+function Pe(e) {
+	return e === void 0 || Ne.has(e);
 }
 function W(e) {
 	if (e === void 0 || e.trim() === "") return null;
 	let t = Number(e);
 	return Number.isFinite(t) ? t : null;
 }
-function Pe(e) {
+function Fe(e) {
 	let t = W(e);
 	return t === null ? "—" : Math.abs(t) < 1e3 ? String(t) : `${Number((t / 1e3).toFixed(1))}k`;
 }
+function G(e) {
+	if (typeof e != "string" || !e.startsWith("https://")) return !1;
+	try {
+		return new URL(e).protocol === "https:";
+	} catch {
+		return !1;
+	}
+}
 // src/core/fields.ts
-var Fe = {
+var Ie = {
 	stars: "stars",
 	forks: "forks",
 	open_issues: "issues",
@@ -800,7 +835,7 @@ var Fe = {
 	issues_critical_open: "issues_critical_open",
 	issues_created_7d: "issues_created_7d",
 	issues_resolved_7d: "issues_resolved_7d"
-}, Ie = [
+}, Le = [
 	"blue",
 	"purple",
 	"teal",
@@ -809,7 +844,7 @@ var Fe = {
 	"green",
 	"indigo",
 	"amber"
-], Le = {
+], K = {
 	success: "var(--success-color, var(--green-color))",
 	failure: "var(--error-color, var(--red-color))",
 	pending: "var(--warning-color, var(--amber-color))"
@@ -826,7 +861,7 @@ var Fe = {
 	"restored",
 	"editable"
 ]);
-function ze(e) {
+function q(e) {
 	if (typeof e != "string") {
 		if (e.attribute === void 0 && e.key.includes(":")) {
 			let [t = "", ...n] = e.key.split(":");
@@ -844,34 +879,34 @@ function ze(e) {
 		attribute: n.join(":")
 	} : { key: t };
 }
-function G(e) {
+function J(e) {
 	return e.attribute ? `${e.key}:${e.attribute}` : e.key;
 }
-function K(e) {
+function Y(e) {
 	let t = e.replace(/_/g, " ");
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
-function Be(e) {
+function ze(e) {
 	let t = 0;
 	for (let n of e) t = t * 31 + n.charCodeAt(0) >>> 0;
 	return t;
 }
-function q(e) {
+function Be(e) {
 	return `var(--${e}-color)`;
 }
 function Ve(e) {
-	return /^[a-z-]+$/.test(e) ? q(e) : e;
+	return /^[a-z-]+$/.test(e) ? Be(e) : e;
 }
 function He(e, t) {
-	return e.color ? /^[a-z-]+$/.test(e.color) ? q(e.color) : e.color : t ? Le[t] : q(Ie[Be(e.key) % Ie.length] ?? "blue");
+	return e.color ? /^[a-z-]+$/.test(e.color) ? Be(e.color) : e.color : t ? K[t] : Be(Le[ze(e.key) % Le.length] ?? "blue");
 }
-function J(e, t, n, r) {
-	let i = Fe[t];
+function Ue(e, t, n, r) {
+	let i = Ie[t];
 	if (i) return H(e, i);
 	let a = n.attributes.friendly_name;
-	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || K(t);
+	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || Y(t);
 }
-function Ue(e, t) {
+function We(e, t) {
 	if (t === "success") return "success";
 	if (t === "failure" || t === "error") return "failure";
 	if (t === "pending" || t === "queued") return "pending";
@@ -885,48 +920,48 @@ function Ue(e, t) {
 		}
 	}
 }
-function We(e) {
-	if (typeof e == "number") return Math.abs(e) >= 1e3 ? Pe(String(e)) : String(e);
+function Ge(e) {
+	if (typeof e == "number") return Math.abs(e) >= 1e3 ? Fe(String(e)) : String(e);
 	if (typeof e == "string") return e.trim() === "" ? void 0 : e;
 	if (typeof e == "boolean") return e ? "✓" : "–";
 	if (Array.isArray(e)) return String(e.length);
 }
-function Ge(e, t) {
+function Ke(e, t) {
 	let n = t.attributes.unit_of_measurement, r = typeof n == "string" && n !== "" ? n : void 0, i = W(t.state);
 	return i === null ? { value: e.formatEntityState?.(t) ?? t.state } : r ? {
 		value: String(i),
 		unit: r
-	} : { value: Math.abs(i) >= 1e3 ? Pe(t.state) : String(i) };
+	} : { value: Math.abs(i) >= 1e3 ? Fe(t.state) : String(i) };
 }
-function Y(e, t, n, r) {
+function X(e, t, n, r) {
 	return n.flatMap((n) => {
 		let i = t[n.key];
-		if (!i || Ne(i.state)) return [];
+		if (!i || Pe(i.state)) return [];
 		let a, o;
 		if (n.attribute) {
-			let e = i.attributes[n.attribute], t = We(e);
+			let e = i.attributes[n.attribute], t = Ge(e);
 			if (t === void 0) return [];
 			a = { value: t }, o = typeof e == "number" ? e : t;
-		} else a = Ge(e, i), o = W(i.state) ?? i.state;
-		let s = n.attribute ? void 0 : Ue(n.key, i.state), c = n.name ?? (n.attribute ? `${J(e, n.key, i, r)} › ${K(n.attribute)}` : J(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
-			id: G(n),
+		} else a = Ke(e, i), o = W(i.state) ?? i.state;
+		let s = n.attribute ? void 0 : We(n.key, i.state), c = n.name ?? (n.attribute ? `${Ue(e, n.key, i, r)} › ${Y(n.attribute)}` : Ue(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
+			id: J(n),
 			label: c,
 			...a,
 			raw: o,
 			color: He(n, s),
 			stateObj: i
 		};
-		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = je(W(l))), [u];
+		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = Me(W(l))), [u];
 	});
 }
-function Ke(e) {
+function qe(e) {
 	for (let t of [
 		"failure",
 		"pending",
 		"success"
-	]) if (e.some((e) => e.tone === t)) return Le[t];
+	]) if (e.some((e) => e.tone === t)) return K[t];
 }
-function qe(e, t) {
+function Je(e, t) {
 	let n = e.devices[t]?.name ?? void 0, r = [], i = /* @__PURE__ */ new Set();
 	for (let a of Object.values(e.entities)) {
 		if (a.device_id !== t) continue;
@@ -935,14 +970,14 @@ function qe(e, t) {
 		let s = a.translation_key || a.entity_id;
 		if (i.has(s)) continue;
 		i.add(s);
-		let c = J(e, s, o, n);
+		let c = Ue(e, s, o, n);
 		r.push({
 			value: s,
 			label: c
 		});
-		for (let [e, t] of Object.entries(o.attributes)) Re.has(e) || We(t) === void 0 || Array.isArray(t) || r.push({
+		for (let [e, t] of Object.entries(o.attributes)) Re.has(e) || Ge(t) === void 0 || Array.isArray(t) || r.push({
 			value: `${s}:${e}`,
-			label: `${c} › ${K(e)}`
+			label: `${c} › ${Y(e)}`
 		});
 	}
 	return r.sort((e, t) => {
@@ -950,229 +985,62 @@ function qe(e, t) {
 		return n === r ? e.value.localeCompare(t.value) : n.localeCompare(r);
 	});
 }
-// src/core/parts/field-tile.ts
-function Je(e, t) {
-	return t.icon ? k`<ha-icon icon=${t.icon}></ha-icon>` : t.attribute ? k`<ha-icon icon="mdi:information-outline"></ha-icon>` : k`<ha-state-icon .hass=${e} .stateObj=${t.stateObj}></ha-state-icon>`;
-}
-function X(e, t, n = "tile") {
-	let r = k`<span class="field__value"
-      >${t.value}${t.unit ? k` <span class="field__unit">${t.unit}</span>` : j}</span
-    >${t.trend ? Ee(t.trend) : j}`;
-	return k`<div
-    class="field field--${n} ${t.tone ? "field--tone" : ""}"
-    style="--c: ${t.color}"
-    title=${t.label}
-  >
-    <span class="chip">${Je(e, t)}</span>
-    ${n === "inline" ? k`<span class="field__text">${r}</span>` : k`<span class="field__text">
-            <span class="field__main">${r}</span>
-            <span class="field__label">${t.label}</span>
-          </span>`}
-  </div>`;
-}
-var Ye = o`
-  .field {
-    --c: var(--primary-color);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-  }
-  .chip {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    color: var(--c);
-    background: color-mix(in srgb, var(--c) 16%, transparent);
-    --mdc-icon-size: 20px;
-  }
-  .field__text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-  .field__main {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-  }
-  .field__value {
-    font-size: 1.15em;
-    font-weight: 600;
-    line-height: 1.2;
-    color: var(--primary-text-color);
-  }
-  .field--tone .field__value {
-    color: var(--c);
-  }
-  .field__unit {
-    font-size: 0.7em;
-    font-weight: 400;
-    color: var(--secondary-text-color);
-  }
-  .field__label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 0.8em;
-    color: var(--secondary-text-color);
-  }
-  .field--inline .chip {
-    width: 28px;
-    height: 28px;
-    --mdc-icon-size: 16px;
-  }
-  .field--row {
-    padding: 4px 0;
-  }
-  .field--row .field__text {
-    flex: 1;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .field--row .field__main {
-    order: 2;
-  }
-`, Xe = "contributions_this_month";
-function Ze(e, t, n) {
-	let r = {};
-	for (let i of Object.values(e.entities)) {
-		if (i.device_id !== t || n !== void 0 && i.platform !== n) continue;
-		let a = e.states[i.entity_id];
-		a && (r[i.translation_key || i.entity_id] = a);
-	}
-	return r;
-}
-function Z(e, t) {
-	let n = /* @__PURE__ */ new Set();
-	for (let r of Object.values(e.entities)) r.platform === t && r.device_id && n.add(r.device_id);
-	return [...n].map((t) => {
-		let n = e.devices[t];
+// src/core/status.ts
+var Ye = [
+	"=",
+	"!=",
+	">",
+	">=",
+	"<",
+	"<=",
+	"contains"
+], Xe = [
+	"success",
+	"pending",
+	"failure",
+	"none"
+], Ze = /* @__PURE__ */ new Set([
+	"success",
+	"pending",
+	"failure"
+]);
+function Qe(e) {
+	let t = e.trim();
+	if (t === "" || t.toLowerCase() === "none" || /[;{}"<>]/.test(t)) return {};
+	let n = t.toLowerCase();
+	if (Ze.has(n)) {
+		let e = n;
 		return {
-			id: t,
-			name: n?.name_by_user ?? n?.name ?? t
+			tone: e,
+			color: K[e]
 		};
-	}).sort((e, t) => e.name.localeCompare(t.name));
+	}
+	return { color: Ve(t) };
 }
-function Qe(e, t, n = Xe) {
-	let r = /* @__PURE__ */ new Set();
-	for (let i of Object.values(e.entities)) i.platform === t && i.translation_key === n && i.device_id && r.add(i.device_id);
-	return [...r];
+function $e(e, t) {
+	let n = q(t), r = e[n.key];
+	if (r && !Pe(r.state)) return n.attribute ? r.attributes[n.attribute] : r.state;
 }
-// src/core/fields-card.ts
-function $e(e) {
-	if (e !== void 0 && !(Array.isArray(e) && e.every((e) => typeof e == "string" || typeof e == "object" && !!e && typeof e.key == "string"))) throw Error("`fields` must be a list of sensor keys or objects with a `key`");
+function et(e, t, n) {
+	if (e == null) return !1;
+	let r = String(e).toLowerCase(), i = String(n ?? "").toLowerCase();
+	if (t === "contains") return r.includes(i);
+	let a = W(String(e)), o = W(String(n));
+	if (a !== null && o !== null) switch (t) {
+		case "=": return a === o;
+		case "!=": return a !== o;
+		case ">": return a > o;
+		case ">=": return a >= o;
+		case "<": return a < o;
+		case "<=": return a <= o;
+	}
+	return t === "=" ? r === i : t === "!=" && r !== i;
 }
-var et = class extends U {
-	static {
-		this.styles = [
-			...U.styles,
-			Ye,
-			o`
-      ha-card {
-        box-shadow: inset 0 3px 0 var(--hoc-accent, transparent);
-        overflow: hidden;
-      }
-      .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-      }
-      .title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        min-width: 0;
-      }
-      .release {
-        flex: none;
-        padding: 2px 10px;
-        border-radius: 999px;
-        font-size: 0.85em;
-        color: var(--secondary-text-color);
-        background: var(--secondary-background-color);
-      }
-      .name {
-        font-weight: 500;
-        color: var(--primary-text-color);
-      }
-      .name a {
-        color: inherit;
-        text-decoration: none;
-      }
-      .name a:hover {
-        text-decoration: underline;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 14px 12px;
-        margin-top: 14px;
-      }
-      .inline-fields {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px 14px;
-        margin-top: 8px;
-      }
-      .rows {
-        margin-top: 8px;
-      }
-    `
-		];
-	}
-	get dotKey() {}
-	get statusKeys() {
-		return this.dotKey ? [this.dotKey] : [];
-	}
-	deviceId() {
-		return this.config?.device;
-	}
-	setConfig(e) {
-		$e(e.fields), super.setConfig(e);
-	}
-	renderFields(e, t) {
-		let { hass: n } = this;
-		return !n || e.length === 0 ? j : t === "compact" ? k`<div class="inline-fields">
-        ${e.map((e) => X(n, e, "inline"))}
-      </div>` : t === "list" ? k`<div class="rows">${e.map((e) => X(n, e, "row"))}</div>` : k`<div class="grid">${e.map((e) => X(n, e, "tile"))}</div>`;
-	}
-	renderContent() {
-		let { hass: e, config: t } = this;
-		if (!e || !t) return k``;
-		let n = this.deviceId(), r = n ? e.devices[n] : void 0;
-		if (!n || !r) return this.renderMessage("device_not_found", !0);
-		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = r.configuration_url, s = t.link === !0 && o?.startsWith("https://") ? o : void 0, c = t.show_status !== !1, l = Ze(e, n, this.platform), u = t.layout === "compact" || t.layout === "list" ? t.layout : "standard", d = Y(e, l, (t.fields?.length ? t.fields : this.defaultFields(u, l)).map(ze), i), f = Y(e, l, this.statusKeys.map((e) => ({ key: e })), i), p = c ? Ke(f) : void 0, ee = f.some((e) => e.tone === "failure"), m = this.dotKey ? l[this.dotKey]?.state : void 0, h = this.headerBadge?.(l);
-		return k`<ha-card
-      class=${ee ? "alert" : ""}
-      style=${p ? `--hoc-accent: ${p}` : ""}
-    >
-      <div class="header">
-        <div class="title">
-          ${c && m !== void 0 ? z(m) : j}
-          <span class="name"
-            >${s ? k`<a href=${s} target="_blank" rel="noopener noreferrer">${a}</a>` : a}</span
-          >
-        </div>
-        ${h ? k`<span class="release">${h}</span>` : j}
-      </div>
-      ${this.renderFields(d, u)}
-    </ha-card>`;
-	}
-};
+function tt(e, t) {
+	for (let n of e) if (et($e(t, n.field), n.operator ?? "=", n.value)) return Qe(n.state);
+	return {};
+}
 // src/core/editor.ts
-function tt(e, t = "device") {
-	return {
-		name: t,
-		selector: { device: { integration: e } }
-	};
-}
 function nt(e, t, n, r) {
 	return {
 		name: r,
@@ -1242,9 +1110,98 @@ function it(e, t, n = "fields", r = !1) {
 	};
 }
 function at(e, t, n = "fields") {
-	return it(e, e && t ? qe(e, t) : [], n);
+	return it(e, e && t ? Je(e, t) : [], n);
 }
-function ot(e) {
+function ot(e, t) {
+	let n = (t) => e ? V(e, t) : t;
+	return {
+		name: "badge",
+		selector: { object: {
+			label_field: "key",
+			fields: {
+				key: {
+					label: n("sensor"),
+					required: !0,
+					selector: { select: {
+						mode: "dropdown",
+						options: t
+					} }
+				},
+				color: {
+					label: n("color"),
+					selector: { ui_color: {} }
+				}
+			}
+		} }
+	};
+}
+function st(e, t, n) {
+	let r = (t) => e ? H(e, t) : t;
+	return {
+		name: "link",
+		selector: { select: {
+			mode: "dropdown",
+			options: [
+				{
+					value: "none",
+					label: r("link_none")
+				},
+				...t ? [{
+					value: "device",
+					label: r("link_device")
+				}] : [],
+				...n
+			]
+		} }
+	};
+}
+function ct(e, t) {
+	let n = (t) => e ? V(e, t) : t, r = Xe.map((t) => ({
+		value: t,
+		label: e ? H(e, `state_${t}`) : t
+	}));
+	return {
+		name: "status",
+		selector: { object: {
+			multiple: !0,
+			label_field: "field",
+			fields: {
+				field: {
+					label: n("field"),
+					required: !0,
+					selector: { select: {
+						mode: "dropdown",
+						custom_value: !0,
+						options: t
+					} }
+				},
+				operator: {
+					label: n("operator"),
+					selector: { select: {
+						mode: "dropdown",
+						options: Ye.map((e) => ({
+							value: e,
+							label: e
+						}))
+					} }
+				},
+				value: {
+					label: n("value"),
+					selector: { text: {} }
+				},
+				state: {
+					label: n("state"),
+					required: !0,
+					selector: { select: {
+						mode: "dropdown",
+						options: r
+					} }
+				}
+			}
+		} }
+	};
+}
+function Z(e) {
 	if (typeof e == "string") return { key: e };
 	let { attribute: t, ...n } = e;
 	return t ? {
@@ -1252,16 +1209,16 @@ function ot(e) {
 		key: `${e.key}:${t}`
 	} : { ...n };
 }
-function st(e) {
+function lt(e, t) {
 	return Array.isArray(e) ? e.flatMap((e) => {
 		if (typeof e != "object" || !e) return [];
-		let t = Object.fromEntries(Object.entries(e).filter(([, e]) => e != null && e !== ""));
-		return typeof t.key == "string" ? [t] : [];
+		let n = Object.fromEntries(Object.entries(e).filter(([, e]) => e != null && e !== ""));
+		return typeof n[t] == "string" ? [n] : [];
 	}) : [];
 }
-var Q = class extends R {
+var ut = class extends R {
 	constructor(...e) {
-		super(...e), this.fieldListNames = [], this.computeLabel = (e) => this.hass ? V(this.hass, e.name) : e.name;
+		super(...e), this.fieldListNames = [], this.ruleListNames = [], this.linkNames = [], this.singleFieldNames = [], this.computeLabel = (e) => this.hass ? V(this.hass, e.name) : e.name;
 	}
 	static {
 		this.properties = {
@@ -1272,27 +1229,48 @@ var Q = class extends R {
 	setConfig(e) {
 		this.config = e;
 	}
+	finalizeConfig(e) {}
 	formData() {
 		let e = { ...this.config };
 		for (let t of this.fieldListNames) {
 			let n = e[t];
-			Array.isArray(n) && (e[t] = n.map(ot));
+			if (Array.isArray(n) && n.length > 0) e[t] = n.map(Z);
+			else {
+				let n = this.defaultFields?.(t);
+				n?.length && (e[t] = n.map(Z));
+			}
 		}
+		for (let t of this.singleFieldNames) {
+			let n = e[t];
+			(typeof n == "string" || typeof n == "object" && n) && (e[t] = Z(n));
+		}
+		for (let t of this.linkNames) e[t] === !0 ? e[t] = "device" : (e[t] === void 0 || e[t] === !1) && (e[t] = "none");
 		return e;
 	}
 	valueChanged(e) {
 		e.stopPropagation();
-		let t = {
+		let t = this.config, n = {
 			...this.config,
 			...e.detail.value
 		};
 		for (let e of this.fieldListNames) {
-			if (!(e in t)) continue;
-			let n = st(t[e]);
-			n.length > 0 ? t[e] = n : delete t[e];
+			if (!(e in n)) continue;
+			let r = lt(n[e], "key"), i = !Array.isArray(t[e]) || t[e].length === 0 ? (this.defaultFields?.(e) ?? []).map(Z) : [], a = i.length > 0 && JSON.stringify(r) === JSON.stringify(i);
+			r.length > 0 && !a ? n[e] = r : delete n[e];
 		}
-		this.dispatchEvent(new CustomEvent("config-changed", {
-			detail: { config: t },
+		for (let e of this.singleFieldNames) {
+			if (!(e in n)) continue;
+			let [t] = lt([n[e]], "key");
+			t ? n[e] = t : delete n[e];
+		}
+		for (let e of this.linkNames) (n[e] === "none" || n[e] === !1) && delete n[e];
+		for (let e of this.ruleListNames) {
+			if (!(e in n)) continue;
+			let t = lt(n[e], "field");
+			t.length > 0 ? n[e] = t : delete n[e];
+		}
+		this.finalizeConfig(n), this.dispatchEvent(new CustomEvent("config-changed", {
+			detail: { config: n },
 			bubbles: !0,
 			composed: !0
 		}));
@@ -1306,99 +1284,7 @@ var Q = class extends R {
       @value-changed=${this.valueChanged}
     ></ha-form>`;
 	}
-}, ct = class extends Q {
-	constructor(...e) {
-		super(...e), this.fieldListNames = ["fields"];
-	}
-	schema() {
-		return [
-			{
-				...tt("github_pulse"),
-				required: !0
-			},
-			rt(this.hass, [
-				"compact",
-				"standard",
-				"list"
-			]),
-			{
-				name: "name",
-				selector: { text: {} }
-			},
-			{
-				name: "link",
-				selector: { boolean: {} }
-			},
-			{
-				name: "show_release",
-				selector: { boolean: {} }
-			},
-			{
-				name: "show_status",
-				selector: { boolean: {} }
-			},
-			at(this.hass, this.config?.device)
-		];
-	}
-}, $ = "github_pulse", lt = "hoc-github-card", ut = [
-	"stars",
-	"forks",
-	"open_issues",
-	"open_pull_requests",
-	{
-		key: "commits_this_month",
-		trend: "commits_vs_last_month"
-	},
-	"latest_release"
-], dt = {
-	compact: ["stars", "latest_release"],
-	standard: ut,
-	list: ut
-}, ft = [
-	{
-		key: "contributions_this_month",
-		trend: "commits_vs_last_month"
-	},
-	"current_streak",
-	"longest_streak",
-	"top_language"
-], pt = {
-	compact: ["contributions_this_month", "current_streak"],
-	standard: ft,
-	list: ft
-}, mt = "contributions_this_month", ht = {
-	tag: lt,
-	ctor: class extends et {
-		static {
-			this.requiredKeys = ["device"];
-		}
-		get platform() {
-			return $;
-		}
-		get dotKey() {
-			return "ci_state";
-		}
-		headerBadge(e) {
-			if (this.config?.show_release !== !0) return;
-			let t = e.latest_release?.state;
-			return t === void 0 || Ne(t) ? void 0 : t;
-		}
-		defaultFields(e, t) {
-			return (mt in t ? pt : dt)[e];
-		}
-		static getStubConfig(e) {
-			let t = new Set(Qe(e, $)), n = Z(e, $), r = n.find((e) => !t.has(e.id)) ?? n[0];
-			return r ? { device: r.id } : {};
-		}
-		static getConfigElement() {
-			return document.createElement(`${lt}-editor`);
-		}
-	},
-	editorTag: `${lt}-editor`,
-	editorCtor: ct,
-	name: "GitHub repository or profile",
-	description: "A GitHub Pulse repository or your GitHub profile, with colourful, selectable fields."
-}, gt = class extends Q {
+}, dt = class extends ut {
 	schema() {
 		return [{
 			name: "entity",
@@ -1416,8 +1302,8 @@ var Q = class extends R {
 			} }
 		}];
 	}
-}, _t = "hoc-youtrack-issues-card", vt = 5;
-function yt(e) {
+}, ft = "hoc-youtrack-issues-card", pt = 5;
+function mt(e) {
 	let t = e.issues;
 	return Array.isArray(t) ? t.flatMap((e) => {
 		if (typeof e != "object" || !e) return [];
@@ -1432,8 +1318,8 @@ function yt(e) {
 		}];
 	}) : [];
 }
-var bt = {
-	tag: _t,
+var ht = {
+	tag: ft,
 	ctor: class extends U {
 		static {
 			this.requiredKeys = ["entity"];
@@ -1467,14 +1353,14 @@ var bt = {
 			return t ? { entity: t.entity_id } : {};
 		}
 		static getConfigElement() {
-			return document.createElement(`${_t}-editor`);
+			return document.createElement(`${ft}-editor`);
 		}
 		renderContent() {
 			let { hass: e, config: t } = this;
 			if (!e || !t) return k``;
 			let n = e.states[t.entity];
 			if (!n) return this.renderMessage("entity_not_found", !0);
-			let r = yt(n.attributes).slice(0, t.max_items ?? vt);
+			let r = mt(n.attributes).slice(0, t.max_items ?? pt);
 			return r.length === 0 ? this.renderMessage("no_issues") : k`<ha-card>
       ${r.map((e) => k`<div class="issue">
             ${e.url ? k`<a
@@ -1490,85 +1376,367 @@ var bt = {
     </ha-card>`;
 		}
 	},
-	editorTag: `${_t}-editor`,
-	editorCtor: gt,
+	editorTag: `${ft}-editor`,
+	editorCtor: dt,
 	name: "YouTrack issues",
 	description: "The first issues of a YouTrack query sensor."
-}, xt = class extends Q {
-	constructor(...e) {
-		super(...e), this.fieldListNames = ["fields"];
+};
+// src/core/parts/field-tile.ts
+function gt(e, t) {
+	return t.icon ? k`<ha-icon icon=${t.icon}></ha-icon>` : t.attribute ? k`<ha-icon icon="mdi:information-outline"></ha-icon>` : k`<ha-state-icon .hass=${e} .stateObj=${t.stateObj}></ha-state-icon>`;
+}
+function _t(e, t, n = "tile") {
+	let r = k`<span class="field__value"
+      >${t.value}${t.unit ? k` <span class="field__unit">${t.unit}</span>` : j}</span
+    >${t.trend ? De(t.trend) : j}`;
+	return k`<div
+    class="field field--${n} ${t.tone ? "field--tone" : ""}"
+    style="--c: ${t.color}"
+    title=${t.label}
+  >
+    <span class="chip">${gt(e, t)}</span>
+    ${n === "inline" ? k`<span class="field__text">${r}</span>` : k`<span class="field__text">
+            <span class="field__main">${r}</span>
+            <span class="field__label">${t.label}</span>
+          </span>`}
+  </div>`;
+}
+var vt = o`
+  .field {
+    --c: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .chip {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 16%, transparent);
+    --mdc-icon-size: 20px;
+  }
+  .field__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .field__main {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .field__value {
+    font-size: 1.15em;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--primary-text-color);
+  }
+  .field--tone .field__value {
+    color: var(--c);
+  }
+  .field__unit {
+    font-size: 0.7em;
+    font-weight: 400;
+    color: var(--secondary-text-color);
+  }
+  .field__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.8em;
+    color: var(--secondary-text-color);
+  }
+  .field--inline .chip {
+    width: 28px;
+    height: 28px;
+    --mdc-icon-size: 16px;
+  }
+  .field--row {
+    padding: 4px 0;
+  }
+  .field--row .field__text {
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .field--row .field__main {
+    order: 2;
+  }
+`;
+// src/core/link.ts
+function yt(e, t, n, r) {
+	for (let i of [e, t]) {
+		let e = bt(i, n, r);
+		if (e) return e;
 	}
-	schema() {
-		return [
-			{
-				...tt("youtrack"),
-				required: !0
-			},
-			rt(this.hass, [
-				"compact",
-				"standard",
-				"list"
-			]),
-			{
-				name: "name",
-				selector: { text: {} }
-			},
-			{
-				name: "link",
-				selector: { boolean: {} }
-			},
-			{
-				name: "show_status",
-				selector: { boolean: {} }
-			},
-			at(this.hass, this.config?.device)
+}
+function bt(e, t, n) {
+	if (e === !0 || e === "device") {
+		let e = t?.configuration_url;
+		return G(e) ? e : void 0;
+	}
+	if (typeof e != "string") return;
+	let r = e.trim();
+	if (r.startsWith("https://")) return G(r) ? r : void 0;
+	let i = q(r);
+	if (!i.attribute) return;
+	let a = n[i.key]?.attributes[i.attribute];
+	return typeof a == "string" && G(a) ? a : void 0;
+}
+// src/core/resolver.ts
+var xt = "contributions_this_month";
+function St(e, t, n) {
+	let r = {};
+	for (let i of Object.values(e.entities)) {
+		if (i.device_id !== t || n !== void 0 && i.platform !== n) continue;
+		let a = e.states[i.entity_id];
+		a && (r[i.translation_key || i.entity_id] = a);
+	}
+	return r;
+}
+function Ct(e, t) {
+	let n = /* @__PURE__ */ new Set();
+	for (let r of Object.values(e.entities)) r.platform === t && r.device_id && n.add(r.device_id);
+	return [...n].map((t) => {
+		let n = e.devices[t];
+		return {
+			id: t,
+			name: n?.name_by_user ?? n?.name ?? t
+		};
+	}).sort((e, t) => e.name.localeCompare(t.name));
+}
+function wt(e, t, n = xt) {
+	let r = /* @__PURE__ */ new Set();
+	for (let i of Object.values(e.entities)) i.platform === t && i.translation_key === n && i.device_id && r.add(i.device_id);
+	return [...r];
+}
+// src/core/fields-card.ts
+function Tt(e) {
+	return e === "compact" || e === "list" ? e : "standard";
+}
+function Et(e) {
+	if (e !== void 0 && !(Array.isArray(e) && e.every((e) => typeof e == "string" || typeof e == "object" && !!e && typeof e.key == "string"))) throw Error("`fields` must be a list of sensor keys or objects with a `key`");
+}
+var Dt = class extends U {
+	static {
+		this.styles = [
+			...U.styles,
+			vt,
+			o`
+      ha-card {
+        box-shadow: inset 0 3px 0 var(--hoc-accent, transparent);
+        overflow: hidden;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .badge {
+        flex: none;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.85em;
+        color: var(--secondary-text-color);
+        background: var(--secondary-background-color);
+      }
+      .badge--colored {
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 16%, transparent);
+      }
+      .name {
+        font-weight: 500;
+        color: var(--primary-text-color);
+      }
+      .name a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .name a:hover {
+        text-decoration: underline;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 14px 12px;
+        margin-top: 14px;
+      }
+      .inline-fields {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+        margin-top: 8px;
+      }
+      .rows {
+        margin-top: 8px;
+      }
+    `
 		];
 	}
-}, St = "youtrack", Ct = "hoc-youtrack-project-card", wt = [
+	customStatus(e) {
+		let t = this.config?.status;
+		return t?.length ? tt(t, e) : void 0;
+	}
+	get dotKey() {}
+	get statusKeys() {
+		return this.dotKey ? [this.dotKey] : [];
+	}
+	deviceId() {
+		return this.config?.device;
+	}
+	setConfig(e) {
+		Et(e.fields), super.setConfig(e);
+	}
+	renderBadge(e, t) {
+		let { hass: n, config: r } = this;
+		if (!n || !r?.badge) return j;
+		let i = q(r.badge), [a] = X(n, e, [i], t);
+		if (!a) return j;
+		let o = i.color ? Ve(i.color) : a.tone ? a.color : void 0;
+		return k`<span
+      class="badge ${o ? "badge--colored" : ""}"
+      style=${o ? `--c: ${o}` : ""}
+      title=${a.label}
+      >${a.value}${a.unit ? ` ${a.unit}` : ""}</span
+    >`;
+	}
+	renderFields(e, t) {
+		let { hass: n } = this;
+		return !n || e.length === 0 ? j : t === "compact" ? k`<div class="inline-fields">
+        ${e.map((e) => _t(n, e, "inline"))}
+      </div>` : t === "list" ? k`<div class="rows">${e.map((e) => _t(n, e, "row"))}</div>` : k`<div class="grid">${e.map((e) => _t(n, e, "tile"))}</div>`;
+	}
+	renderContent() {
+		let { hass: e, config: t } = this;
+		if (!e || !t) return k``;
+		let n = this.deviceId(), r = n ? e.devices[n] : void 0;
+		if (!n || !r) return this.renderMessage("device_not_found", !0);
+		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = t.show_status !== !1, s = St(e, n, this.platform), c = Tt(t.layout), l = X(e, s, (t.fields?.length ? t.fields : this.defaultFields(c, s)).map(q), i), u = X(e, s, this.statusKeys.map((e) => ({ key: e })), i), d = o ? this.customStatus(s) : void 0, f = d ? d.color : o ? qe(u) : void 0, ee = d ? d.tone === "failure" : u.some((e) => e.tone === "failure"), p = yt(t.link, t.link_url, r, s), m = this.dotKey ? s[this.dotKey]?.state : void 0, h = o ? d ? Ee(d.color) : m === void 0 ? j : z(m) : j, te = this.renderBadge(s, i);
+		return k`<ha-card
+      class=${ee ? "alert" : ""}
+      style=${f ? `--hoc-accent: ${f}` : ""}
+    >
+      <div class="header">
+        <div class="title">
+          ${h}
+          <span class="name"
+            >${p ? k`<a href=${p} target="_blank" rel="noopener noreferrer">${a}</a>` : a}</span
+          >
+        </div>
+        ${te}
+      </div>
+      ${this.renderFields(l, c)}
+    </ha-card>`;
+	}
+}, Q = "github_pulse", Ot = "youtrack", kt = [
+	"stars",
+	"forks",
+	"open_issues",
+	"open_pull_requests",
+	{
+		key: "commits_this_month",
+		trend: "commits_vs_last_month"
+	},
+	"latest_release"
+], At = [
+	{
+		key: "contributions_this_month",
+		trend: "commits_vs_last_month"
+	},
+	"current_streak",
+	"longest_streak",
+	"top_language"
+], jt = [
 	"issues_open",
 	"issues_overdue",
 	"issues_critical_open",
 	"issues_created_7d",
 	"issues_resolved_7d"
-], Tt = {
-	tag: Ct,
-	ctor: class extends et {
-		static {
-			this.requiredKeys = ["device"];
-		}
-		get platform() {
-			return St;
-		}
-		get statusKeys() {
-			return ["has_overdue", "has_critical_open"];
-		}
-		defaultFields() {
-			return wt;
-		}
-		static getStubConfig(e) {
-			let t = Z(e, St)[0];
-			return t ? { device: t.id } : {};
-		}
-		static getConfigElement() {
-			return document.createElement(`${Ct}-editor`);
-		}
+], Mt = {
+	[Q]: {
+		platform: Q,
+		layouts: {
+			compact: ["stars", "latest_release"],
+			standard: kt,
+			list: kt
+		},
+		variant: {
+			marker: "contributions_this_month",
+			layouts: {
+				compact: ["contributions_this_month", "current_streak"],
+				standard: At,
+				list: At
+			}
+		},
+		dotKey: "ci_state"
 	},
-	editorTag: `${Ct}-editor`,
-	editorCtor: xt,
-	name: "YouTrack project",
-	description: "A YouTrack project with colourful, selectable fields."
-}, Et = class extends Q {
+	[Ot]: {
+		platform: Ot,
+		layouts: {
+			compact: jt,
+			standard: jt,
+			list: jt
+		},
+		statusKeys: ["has_overdue", "has_critical_open"]
+	}
+};
+function Nt(e, t) {
+	for (let n of Object.values(e.entities)) {
+		if (n.device_id !== t) continue;
+		let e = Mt[n.platform];
+		if (e) return e;
+	}
+}
+var Pt = 6;
+function Ft(e, t, n) {
+	if (!e) return Object.keys(n).slice(0, Pt);
+	let r = e.variant;
+	return (r && r.marker in n ? r.layouts : e.layouts)[t];
+}
+// src/cards/generic/device/editor.ts
+var It = class extends ut {
 	constructor(...e) {
-		super(...e), this.fieldListNames = ["fields"];
+		super(...e), this.fieldListNames = ["fields"], this.singleFieldNames = ["badge"], this.ruleListNames = ["status"], this.linkNames = ["link"];
+	}
+	defaultFields(e) {
+		let { hass: t, config: n } = this, r = n?.device;
+		if (e !== "fields" || !t || !r) return;
+		let i = Nt(t, r), a = St(t, r, i?.platform);
+		return Ft(i, Tt(n.layout), a).filter((e) => q(e).key in a);
+	}
+	finalizeConfig(e) {
+		e.link && delete e.link_url;
 	}
 	schema() {
+		let e = this.config?.device, t = this.hass, n = t && e ? Je(t, e) : [], r = t && e ? G(t.devices[e]?.configuration_url) : !1, i = n.filter((n) => {
+			let [r, i] = n.value.split(":");
+			return !t || !r || !i ? !1 : Object.values(t.entities).some((n) => {
+				if (n.device_id !== e || (n.translation_key || n.entity_id) !== r) return !1;
+				let a = t.states[n.entity_id]?.attributes[i];
+				return typeof a == "string" && G(a);
+			});
+		});
 		return [
 			{
 				name: "device",
 				required: !0,
 				selector: { device: {} }
 			},
-			rt(this.hass, [
+			rt(t, [
 				"compact",
 				"standard",
 				"list"
@@ -1577,40 +1745,56 @@ var bt = {
 				name: "name",
 				selector: { text: {} }
 			},
-			{
-				name: "link",
-				selector: { boolean: {} }
-			},
+			ot(t, n),
+			st(t, r, i),
+			...this.config?.link ? [] : [{
+				name: "link_url",
+				selector: { text: { type: "url" } }
+			}],
 			{
 				name: "show_status",
 				selector: { boolean: {} }
 			},
-			at(this.hass, this.config?.device)
+			...this.config?.show_status === !1 ? [] : [ct(t, n)],
+			at(t, e)
 		];
 	}
-}, Dt = "hoc-device-card", Ot = 6, kt = {
-	tag: Dt,
-	ctor: class extends et {
+}, Lt = "hoc-device-card", Rt = {
+	tag: Lt,
+	ctor: class extends Dt {
 		static {
 			this.requiredKeys = ["device"];
 		}
-		get platform() {}
+		preset() {
+			let e = this.config?.device;
+			return this.hass && e ? Nt(this.hass, e) : void 0;
+		}
+		get platform() {
+			return this.preset()?.platform;
+		}
+		get dotKey() {
+			return this.preset()?.dotKey;
+		}
+		get statusKeys() {
+			let e = this.preset();
+			return [...e?.dotKey ? [e.dotKey] : [], ...e?.statusKeys ?? []];
+		}
 		defaultFields(e, t) {
-			return Object.keys(t).slice(0, Ot);
+			return Ft(this.preset(), e, t);
 		}
 		static getStubConfig(e) {
 			let t = Object.values(e.entities).find((t) => t.device_id && e.states[t.entity_id]);
 			return t?.device_id ? { device: t.device_id } : {};
 		}
 		static getConfigElement() {
-			return document.createElement(`${Dt}-editor`);
+			return document.createElement(`${Lt}-editor`);
 		}
 	},
-	editorTag: `${Dt}-editor`,
-	editorCtor: Et,
+	editorTag: `${Lt}-editor`,
+	editorCtor: It,
 	name: "Device",
-	description: "Any device: choose which sensors and attributes to show, in colour."
-}, At = class extends Q {
+	description: "Any device: choose which sensors and attributes to show, in colour. GitHub Pulse and YouTrack devices come with defaults."
+}, zt = class extends ut {
 	constructor(...e) {
 		super(...e), this.fieldListNames = ["columns"];
 	}
@@ -1623,8 +1807,8 @@ var bt = {
 	}
 	columnOptions() {
 		if (!this.hass) return [];
-		let e = new Set(Qe(this.hass, "github_pulse")), t = /* @__PURE__ */ new Map();
-		for (let n of Z(this.hass, "github_pulse")) if (!e.has(n.id)) for (let e of qe(this.hass, n.id)) t.set(e.value, e);
+		let e = new Set(wt(this.hass, "github_pulse")), t = /* @__PURE__ */ new Map();
+		for (let n of Ct(this.hass, "github_pulse")) if (!e.has(n.id)) for (let e of Je(this.hass, n.id)) t.set(e.value, e);
 		return [...t.values()];
 	}
 	schema() {
@@ -1677,7 +1861,7 @@ var bt = {
 			}
 		];
 	}
-}, jt = "hoc-github-repos-card", Mt = [
+}, $ = "hoc-github-repos-card", Bt = [
 	"ci_state",
 	"stars",
 	{
@@ -1686,17 +1870,17 @@ var bt = {
 	},
 	"latest_release"
 ];
-function Nt(e, t) {
+function Vt(e, t) {
 	if (e.align) return e.align;
 	if (e.key === "ci_state" && !e.attribute) return "left";
-	let n = t.flatMap((t) => t.views.get(G(e)) ?? []);
+	let n = t.flatMap((t) => t.views.get(J(e)) ?? []);
 	return n.length > 0 && n.every((e) => typeof e.raw == "number") ? "right" : "left";
 }
-function Pt(e, t) {
+function Ht(e, t) {
 	return t === "name" ? e.name : e.views.get(t)?.raw ?? null;
 }
-function Ft(e, t, n, r) {
-	let i = Pt(e, n), a = Pt(t, n);
+function Ut(e, t, n, r) {
+	let i = Ht(e, n), a = Ht(t, n);
 	if (i === null && a === null) return e.name.localeCompare(t.name);
 	if (i === null) return 1;
 	if (a === null) return -1;
@@ -1704,10 +1888,9 @@ function Ft(e, t, n, r) {
 	return o = typeof i == "number" && typeof a == "number" ? i - a : typeof i == "number" ? -1 : typeof a == "number" ? 1 : i.localeCompare(a), o === 0 ? e.name.localeCompare(t.name) : o * r;
 }
 // src/registry.ts
-var It = [
-	ht,
+var Wt = [
 	{
-		tag: jt,
+		tag: $,
 		ctor: class extends U {
 			static {
 				this.styles = [...U.styles, o`
@@ -1776,14 +1959,14 @@ var It = [
     `];
 			}
 			static getConfigElement() {
-				return document.createElement(`${jt}-editor`);
+				return document.createElement(`${$}-editor`);
 			}
 			rows(e) {
 				let { hass: t, config: n } = this;
 				if (!t || !n) return [];
-				let r = new Set(Qe(t, $)), i = Z(t, $).filter((e) => !r.has(e.id)), a = n.repositories === void 0 || n.repositories === "all" || n.repositories.length === 0 ? null : new Set(n.repositories);
+				let r = new Set(wt(t, Q)), i = Ct(t, Q).filter((e) => !r.has(e.id)), a = n.repositories === void 0 || n.repositories === "all" || n.repositories.length === 0 ? null : new Set(n.repositories);
 				return i.filter((e) => a === null || a.has(e.id)).map((r) => {
-					let i = Ze(t, r.id, $), a = Y(t, i, e, r.name);
+					let i = St(t, r.id, Q), a = X(t, i, e, r.name);
 					return {
 						id: r.id,
 						url: n.link === !0 && t.devices[r.id]?.configuration_url?.startsWith("https://") ? t.devices[r.id]?.configuration_url ?? void 0 : void 0,
@@ -1800,20 +1983,20 @@ var It = [
 				let r = `text-align: ${n}`;
 				return e ? t.key === "ci_state" && !t.attribute ? k`<td style=${r}>${z(e.stateObj.state)}</td>` : k`<td style=${r}>
       <span class="cell ${e.tone || t.color ? "cell--tone" : ""}" style="--c: ${e.color}"
-        >${e.value}${e.unit ? k`<span class="cell__unit">${e.unit}</span>` : j}${e.trend ? Ee(e.trend) : j}</span
+        >${e.value}${e.unit ? k`<span class="cell__unit">${e.unit}</span>` : j}${e.trend ? De(e.trend) : j}</span
       >
     </td>` : k`<td style=${r}>—</td>`;
 			}
 			renderContent() {
 				let { hass: e, config: t } = this;
 				if (!e || !t) return k``;
-				let n = (t.columns?.length ? t.columns : Mt).map(ze), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Ft(e, t, r, i));
+				let n = (t.columns?.length ? t.columns : Bt).map(q), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Ut(e, t, r, i));
 				if (a.length === 0) return this.renderMessage("no_repositories");
-				let o = t.column_titles ?? "text", s = n.map((e) => Nt(e, a)), c = n.map((t) => {
-					let n = G(t), r = a.map((e) => e.views.get(n)).find((e) => e !== void 0);
+				let o = t.column_titles ?? "text", s = n.map((e) => Vt(e, a)), c = n.map((t) => {
+					let n = J(t), r = a.map((e) => e.views.get(n)).find((e) => e !== void 0);
 					return {
-						text: t.name ?? r?.label ?? K(t.key),
-						icon: r ? Je(e, t.icon ? {
+						text: t.name ?? r?.label ?? Y(t.key),
+						icon: r ? gt(e, t.icon ? {
 							...r,
 							icon: t.icon
 						} : r) : j,
@@ -1846,7 +2029,7 @@ var It = [
                       ></span
                     >
                   </td>
-                  ${n.map((t, n) => this.renderCell(e.views.get(G(t)), t, s[n] ?? "left"))}
+                  ${n.map((t, n) => this.renderCell(e.views.get(J(t)), t, s[n] ?? "left"))}
                 </tr>`)}
           </tbody>
         </table>
@@ -1854,21 +2037,20 @@ var It = [
     </ha-card>`;
 			}
 		},
-		editorTag: `${jt}-editor`,
-		editorCtor: At,
+		editorTag: `${$}-editor`,
+		editorCtor: zt,
 		name: "GitHub repositories",
 		description: "Several GitHub Pulse repositories as a sortable table with selectable columns."
 	},
-	Tt,
-	bt,
-	kt
+	ht,
+	Rt
 ];
-function Lt(e, t) {
+function Gt(e, t) {
 	customElements.get(e) || customElements.define(e, t);
 }
-function Rt(e = It) {
+function Kt(e = Wt) {
 	window.customCards ??= [];
-	for (let t of e) Lt(t.tag, t.ctor), t.editorTag && t.editorCtor && Lt(t.editorTag, t.editorCtor), window.customCards.some((e) => e.type === t.tag) || window.customCards.push({
+	for (let t of e) Gt(t.tag, t.ctor), t.editorTag && t.editorCtor && Gt(t.editorTag, t.editorCtor), window.customCards.some((e) => e.type === t.tag) || window.customCards.push({
 		type: t.tag,
 		name: t.name,
 		description: t.description,
@@ -1876,5 +2058,5 @@ function Rt(e = It) {
 	});
 }
 // src/index.ts
-Rt();
-export { Rt as registerCards };
+Kt();
+export { Kt as registerCards };

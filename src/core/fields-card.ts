@@ -3,15 +3,23 @@ import { HocBaseCard, type BaseConfig } from "./base-card";
 import {
   accentColor,
   buildFieldViews,
+  colorValue,
   parseField,
   type FieldConfig,
   type FieldView,
 } from "./fields";
 import { fieldStyles, fieldTile } from "./parts/field-tile";
-import { statusDot } from "./parts";
+import { resolveLink } from "./link";
+import { colorDot, statusDot } from "./parts";
 import { resolveDeviceEntities, type ResolvedEntities } from "./resolver";
+import { evaluateStatus, type Status, type StatusRule } from "./status";
 
 export type FieldsLayout = "compact" | "standard" | "list";
+
+/** Unknown layouts, such as the removed `detailed`, render as `standard`. */
+export function layoutOf(layout: unknown): FieldsLayout {
+  return layout === "compact" || layout === "list" ? layout : "standard";
+}
 
 export interface FieldsConfig extends BaseConfig {
   device?: string;
@@ -19,10 +27,16 @@ export interface FieldsConfig extends BaseConfig {
   layout?: FieldsLayout;
   /** Replaces the device name in the header. */
   name?: string;
-  /** Link the name to the device's configuration URL (https only). Off by default. */
-  link?: boolean;
+  /** Link the title: `device` for the device's page, `sensor:attribute` for a URL in an attribute. */
+  link?: boolean | string;
+  /** Link the title to this https URL while `link` gives no target. */
+  link_url?: string;
+  /** A value shown as a coloured badge next to the title: a sensor, `sensor:attribute` or an object. */
+  badge?: FieldConfig;
   /** Show the status dot and the accent edge. On by default. */
   show_status?: boolean;
+  /** Rules that decide the status; the first match wins. Replaces the integration's default. */
+  status?: StatusRule[];
 }
 
 function assertFields(fields: unknown): void {
@@ -64,13 +78,17 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
         gap: 8px;
         min-width: 0;
       }
-      .release {
+      .badge {
         flex: none;
         padding: 2px 10px;
         border-radius: 999px;
         font-size: 0.85em;
         color: var(--secondary-text-color);
         background: var(--secondary-background-color);
+      }
+      .badge--colored {
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 16%, transparent);
       }
       .name {
         font-weight: 500;
@@ -101,13 +119,16 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
     `,
   ];
 
+  /** The status the card defines itself, or undefined to use the integration's default. */
+  private customStatus(entities: ResolvedEntities): Status | undefined {
+    const rules = this.config?.status;
+    return rules?.length ? evaluateStatus(rules, entities) : undefined;
+  }
+
   /** The integration whose entities this card reads; none means every entity of the device. */
   protected abstract get platform(): string | undefined;
 
   protected abstract defaultFields(layout: FieldsLayout, entities: ResolvedEntities): FieldConfig[];
-
-  /** Text for a badge on the far side of the header, or undefined for none. */
-  protected headerBadge?(entities: ResolvedEntities): string | undefined;
 
   /** Sensor that drives the dot in the header. */
   protected get dotKey(): string | undefined {
@@ -126,6 +147,25 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
   override setConfig(config: C): void {
     assertFields(config.fields);
     super.setConfig(config);
+  }
+
+  /** The badge on the far side of the header: the chosen value, optionally coloured. */
+  private renderBadge(
+    entities: ResolvedEntities,
+    deviceName: string,
+  ): TemplateResult | typeof nothing {
+    const { hass, config } = this;
+    if (!hass || !config?.badge) return nothing;
+    const spec = parseField(config.badge);
+    const [view] = buildFieldViews(hass, entities, [spec], deviceName);
+    if (!view) return nothing;
+    const color = spec.color ? colorValue(spec.color) : view.tone ? view.color : undefined;
+    return html`<span
+      class="badge ${color ? "badge--colored" : ""}"
+      style=${color ? `--c: ${color}` : ""}
+      title=${view.label}
+      >${view.value}${view.unit ? ` ${view.unit}` : ""}</span
+    >`;
   }
 
   private renderFields(views: FieldView[], layout: FieldsLayout): TemplateResult | typeof nothing {
@@ -151,12 +191,9 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
 
     const deviceName = device.name_by_user ?? device.name ?? deviceId;
     const name = config.name?.trim() || deviceName;
-    const url = device.configuration_url;
-    const linkTarget = config.link === true && url?.startsWith("https://") ? url : undefined;
     const showStatus = config.show_status !== false;
     const entities = resolveDeviceEntities(hass, deviceId, this.platform);
-    const layout: FieldsLayout =
-      config.layout === "compact" || config.layout === "list" ? config.layout : "standard";
+    const layout = layoutOf(config.layout);
     const chosen = config.fields?.length ? config.fields : this.defaultFields(layout, entities);
     const views = buildFieldViews(hass, entities, chosen.map(parseField), deviceName);
 
@@ -166,11 +203,22 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
       this.statusKeys.map((key) => ({ key })),
       deviceName,
     );
-    const accent = showStatus ? accentColor(statusViews) : undefined;
-    const alert = statusViews.some((view) => view.tone === "failure");
+    const custom = showStatus ? this.customStatus(entities) : undefined;
+    const accent = custom ? custom.color : showStatus ? accentColor(statusViews) : undefined;
+    const alert = custom
+      ? custom.tone === "failure"
+      : statusViews.some((view) => view.tone === "failure");
+    const linkTarget = resolveLink(config.link, config.link_url, device, entities);
     const dotState = this.dotKey ? entities[this.dotKey]?.state : undefined;
+    const dot = !showStatus
+      ? nothing
+      : custom
+        ? colorDot(custom.color)
+        : dotState !== undefined
+          ? statusDot(dotState)
+          : nothing;
 
-    const badge = this.headerBadge?.(entities);
+    const badge = this.renderBadge(entities, deviceName);
 
     return html`<ha-card
       class=${alert ? "alert" : ""}
@@ -178,7 +226,7 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
     >
       <div class="header">
         <div class="title">
-          ${showStatus && dotState !== undefined ? statusDot(dotState) : nothing}
+          ${dot}
           <span class="name"
             >${
               linkTarget
@@ -187,7 +235,7 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
             }</span
           >
         </div>
-        ${badge ? html`<span class="release">${badge}</span>` : nothing}
+        ${badge}
       </div>
       ${this.renderFields(views, layout)}
     </ha-card>`;
