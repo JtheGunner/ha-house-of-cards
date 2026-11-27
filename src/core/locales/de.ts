@@ -15,6 +15,8 @@ export const de: Record<LocaleKey, string> = {
   failing_ci: "CI fehlgeschlagen",
   review_requests: "Review-Anfragen",
   stale_pull_requests: "Veraltete Pull Requests",
+  repository: "Repository",
+  vs_last_month: "ggü. Vormonat",
   visitors: "Besucher",
   views: "Aufrufe",
   workflow: "Workflow",

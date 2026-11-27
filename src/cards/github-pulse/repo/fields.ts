@@ -37,7 +37,7 @@ const DEFINITIONS: Record<FieldKey, { label: LocaleKey; kind: Kind }> = {
   open_issues: { label: "issues", kind: "count" },
   open_pull_requests: { label: "pull_requests", kind: "count" },
   commits_this_month: { label: "commits_this_month", kind: "count" },
-  commits_vs_last_month: { label: "commits_this_month", kind: "text" },
+  commits_vs_last_month: { label: "vs_last_month", kind: "text" },
   ci_state: { label: "ci", kind: "text" },
   latest_release: { label: "release", kind: "text" },
   days_since_last_commit: { label: "days_since_commit", kind: "days" },

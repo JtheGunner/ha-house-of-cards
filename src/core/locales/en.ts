@@ -13,6 +13,8 @@ export const en = {
   failing_ci: "Failing CI",
   review_requests: "Review requests",
   stale_pull_requests: "Stale pull requests",
+  repository: "Repository",
+  vs_last_month: "vs last month",
   visitors: "Visitors",
   views: "Views",
   workflow: "Workflow",
