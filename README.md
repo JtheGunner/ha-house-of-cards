@@ -59,6 +59,12 @@ Commit the rebuilt `dist/`; CI fails if it is stale. Pull requests also get a wa
 
 ---
 
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
+---
+
 ## 📜 License
 
 MIT, see [LICENSE](LICENSE).
