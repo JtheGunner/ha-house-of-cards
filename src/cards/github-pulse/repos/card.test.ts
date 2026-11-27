@@ -13,6 +13,7 @@ interface Repo {
   ci?: string;
   commits?: string;
   release?: string;
+  url?: string;
 }
 
 function repoEntities(repo: Repo): FixtureEntity[] {
@@ -34,7 +35,7 @@ async function mount(repos: Repo[], config: Record<string, unknown> = {}) {
   const hass = fixtureHass({
     devices: [
       { id: "account", name: "GitHub octocat" },
-      ...repos.map((repo) => ({ id: repo.id, name: repo.name })),
+      ...repos.map((repo) => ({ id: repo.id, name: repo.name, configuration_url: repo.url })),
     ],
     entities: [
       { platform: P, deviceId: "account", translationKey: "contributions_this_month", state: "9" },
@@ -187,5 +188,160 @@ describe("hoc-github-repos-card", () => {
     const headers = [...root.querySelectorAll("thead th")].map((th) => th.textContent?.trim());
     expect(names).toEqual(["bravo", "alpha"]);
     expect(headers).toEqual(["Repository", "Forks", "Release › Downloads"]);
+  });
+
+  it("shows the repository name without the owner when hide_owner is on", async () => {
+    const repos = [{ id: "a", name: "JtheGunner/bullseye-eye", stars: "1" }];
+    const off = await mount(repos);
+    expect(off.root.querySelector("tbody .name")?.textContent?.trim()).toBe(
+      "JtheGunner/bullseye-eye",
+    );
+    const on = await mount(repos, { hide_owner: true });
+    expect(on.root.querySelector("tbody .name")?.textContent?.trim()).toBe("bullseye-eye");
+  });
+
+  it("keeps names without an owner as they are", async () => {
+    const { root } = await mount([{ id: "a", name: "plain", stars: "1" }], { hide_owner: true });
+    expect(root.querySelector("tbody .name")?.textContent?.trim()).toBe("plain");
+  });
+
+  it("overrides a column's label, icon and colour", async () => {
+    const { root } = await mount([{ id: "a", name: "o/a", stars: "5" }], {
+      column_titles: "icon_text",
+      columns: [{ key: "stars", name: "Fans", icon: "mdi:heart", color: "pink" }],
+    });
+    const header = root.querySelector("thead th:nth-child(2)");
+    expect(header?.textContent).toContain("Fans");
+    expect(header?.querySelector("ha-icon")?.getAttribute("icon")).toBe("mdi:heart");
+    expect(root.querySelector("tbody .cell")?.getAttribute("style")).toContain("var(--pink-color)");
+    expect(root.querySelector("tbody .cell")?.className).toContain("cell--tone");
+  });
+
+  it("shows column titles as text by default", async () => {
+    const { root } = await mount(REPOS);
+    expect(root.querySelector("thead th:nth-child(3)")?.textContent).toContain("Stars");
+    expect(root.querySelector("thead th ha-icon, thead th ha-state-icon")).toBeNull();
+  });
+
+  it("shows column titles as icon only, with the title as tooltip", async () => {
+    const { root } = await mount(REPOS, {
+      column_titles: "icon",
+      columns: [{ key: "stars", icon: "mdi:star" }],
+    });
+    const th = root.querySelector("thead th:nth-child(2)");
+    expect(th?.querySelector("ha-icon")?.getAttribute("icon")).toBe("mdi:star");
+    expect(th?.textContent?.trim()).toBe("");
+    expect(th?.getAttribute("title")).toBe("Stars");
+  });
+
+  it("shows column titles as icon and text, using the sensor icon without an override", async () => {
+    const { root } = await mount(REPOS, { column_titles: "icon_text", columns: ["stars"] });
+    const th = root.querySelector("thead th:nth-child(2)");
+    expect(th?.querySelector("ha-state-icon")).not.toBeNull();
+    expect(th?.textContent).toContain("Stars");
+  });
+
+  it("shows a green dot for repositories with commits this month and a grey one otherwise", async () => {
+    const { root } = await mount(
+      [
+        { id: "a", name: "active", commits: "4" },
+        { id: "b", name: "idle", commits: "0" },
+      ],
+      { show_activity: true },
+    );
+    const dots = [...root.querySelectorAll("tbody tr .name .dot")].map((d) => d.className);
+    expect(dots).toEqual(["dot dot--success", "dot dot--neutral"]);
+  });
+
+  it("shows no activity dots by default", async () => {
+    const { root } = await mount(REPOS);
+    expect(root.querySelector("tbody .name .dot")).toBeNull();
+  });
+
+  it("lists a repository once even when it is selected twice", async () => {
+    const { names } = await mount(REPOS, { repositories: ["r1", "r1", "r2"] });
+    expect(names).toEqual(["alpha", "bravo"]);
+  });
+
+  it("keeps the activity dot apart from the name text", async () => {
+    const { root } = await mount([{ id: "a", name: "o/a", commits: "4" }], { show_activity: true });
+    const cell = root.querySelector("tbody .name");
+    expect(cell?.querySelector(".name__content .dot")).not.toBeNull();
+    expect(cell?.querySelector(".name__content .name__text")?.textContent?.trim()).toBe("o/a");
+  });
+
+  it("aligns number columns right and text columns left by default, in header and cells", async () => {
+    const { root } = await mount(REPOS, { columns: ["stars", "latest_release"] });
+    const align = (selector: string) =>
+      (root.querySelector(selector) as HTMLElement).style.textAlign;
+    expect(align("thead th:nth-child(2)")).toBe("right");
+    expect(align("tbody tr td:nth-child(2)")).toBe("right");
+    expect(align("thead th:nth-child(3)")).toBe("left");
+    expect(align("tbody tr td:nth-child(3)")).toBe("left");
+  });
+
+  it("lets a column set its own alignment", async () => {
+    const { root } = await mount(REPOS, { columns: [{ key: "stars", align: "center" }] });
+    expect((root.querySelector("tbody td:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "center",
+    );
+    expect((root.querySelector("thead th:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "center",
+    );
+  });
+
+  it("aligns icon-only titles like the column content", async () => {
+    const { root } = await mount(REPOS, { column_titles: "icon", columns: ["stars"] });
+    expect((root.querySelector("thead th:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "right",
+    );
+    expect((root.querySelector("tbody td:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "right",
+    );
+  });
+
+  it("treats a column with any non-numeric value as text", async () => {
+    const mixed = [
+      { id: "a", name: "a", stars: "5" },
+      { id: "b", name: "b", stars: "n/a" },
+    ];
+    const { root } = await mount(mixed, { columns: ["stars"] });
+    expect((root.querySelector("tbody td:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "left",
+    );
+  });
+
+  it("colours a column title with title_color, independent of the value colour", async () => {
+    const { root } = await mount(REPOS, {
+      columns: [
+        { key: "stars", title_color: "purple" },
+        { key: "commits_this_month", color: "pink" },
+        { key: "latest_release", title_color: "#ff0000" },
+      ],
+    });
+    const style = (n: number) =>
+      root.querySelector(`thead th:nth-child(${n})`)?.getAttribute("style");
+    expect(style(2)).toContain("color: var(--purple-color)");
+    expect(style(3)).not.toContain("color:");
+    expect(style(4)).toContain("color: #ff0000");
+    expect(root.querySelector("tbody td:nth-child(2) .cell")?.className).not.toContain(
+      "cell--tone",
+    );
+  });
+
+  it("links the repository name only when link is on and the url is https", async () => {
+    const repos = [
+      { id: "a", name: "o/a", url: "https://github.com/o/a" },
+      { id: "b", name: "o/b", url: "javascript:alert(1)" },
+      { id: "c", name: "o/c" },
+    ];
+    const off = await mount(repos);
+    expect(off.root.querySelector("tbody .name a")).toBeNull();
+    const on = await mount(repos, { link: true });
+    const anchors = [...on.root.querySelectorAll("tbody .name a")];
+    expect(anchors).toHaveLength(1);
+    expect(anchors[0]?.getAttribute("href")).toBe("https://github.com/o/a");
+    expect(anchors[0]?.getAttribute("rel")).toContain("noopener");
+    expect(anchors[0]?.textContent?.trim()).toBe("o/a");
   });
 });

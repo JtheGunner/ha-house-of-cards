@@ -1,6 +1,7 @@
 import { HocFieldsCard, type FieldsConfig } from "../../../core/fields-card";
 import type { FieldConfig } from "../../../core/fields";
 import type { ResolvedEntities } from "../../../core/resolver";
+import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
 import { DeviceCardEditor } from "./editor";
 
@@ -21,6 +22,13 @@ export class DeviceCard extends HocFieldsCard<DeviceCardConfig> {
 
   protected defaultFields(_layout: unknown, entities: ResolvedEntities): FieldConfig[] {
     return Object.keys(entities).slice(0, DEFAULT_FIELD_COUNT);
+  }
+
+  static getStubConfig(hass: HomeAssistant): Partial<DeviceCardConfig> {
+    const entry = Object.values(hass.entities).find(
+      (candidate) => candidate.device_id && hass.states[candidate.entity_id],
+    );
+    return entry?.device_id ? { device: entry.device_id } : {};
   }
 
   static getConfigElement(): HTMLElement {

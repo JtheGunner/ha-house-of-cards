@@ -26,7 +26,7 @@ describe("registerCards", () => {
       type: "hoc-registry-dummy-card",
       name: "Dummy",
       description: "Test card",
-      preview: false,
+      preview: true,
     });
   });
   it("registers an editor element when given", () => {
@@ -47,14 +47,16 @@ describe("registerCards", () => {
 describe("cards", () => {
   it("contains every GitHub card with a unique tag", () => {
     const tags = cards.map((card) => card.tag);
-    expect(tags).toEqual(
-      expect.arrayContaining([
-        "hoc-github-repo-card",
-        "hoc-github-repos-card",
-        "hoc-github-profile-card",
-        "hoc-github-attention-card",
-      ]),
-    );
+    expect(tags).toEqual(expect.arrayContaining(["hoc-github-card", "hoc-github-repos-card"]));
+    expect(tags).not.toContain("hoc-github-profile-card");
+    expect(tags).not.toContain("hoc-github-attention-card");
     expect(new Set(tags).size).toBe(tags.length);
+  });
+
+  it("offers a live preview in the card picker for every card", () => {
+    registerCards(cards);
+    for (const card of cards) {
+      expect(window.customCards?.find((entry) => entry.type === card.tag)?.preview).toBe(true);
+    }
   });
 });

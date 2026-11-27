@@ -5,7 +5,7 @@ import { trendArrow } from "./index";
 
 export type FieldDisplay = "tile" | "inline" | "row";
 
-function fieldIcon(hass: HomeAssistant, view: FieldView): TemplateResult {
+export function fieldIcon(hass: HomeAssistant, view: FieldView): TemplateResult {
   if (view.icon) return html`<ha-icon icon=${view.icon}></ha-icon>`;
   if (view.attribute) return html`<ha-icon icon="mdi:information-outline"></ha-icon>`;
   return html`<ha-state-icon .hass=${hass} .stateObj=${view.stateObj}></ha-state-icon>`;

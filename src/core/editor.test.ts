@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { editorLabel } from "./i18n";
 import { fixtureHass } from "../../test/fixtures/hass";
 import type { BaseConfig } from "./base-card";
 import {
@@ -101,6 +102,13 @@ describe("field list editing", () => {
     expect(Object.keys(fields)).toEqual(["key", "name", "icon", "color"]);
   });
 
+  it("keeps the colour fields next to each other in table columns", () => {
+    const schema = fieldsSelectorFromOptions(undefined, [], "columns", true);
+    const fields = (schema.selector as { object: { fields: Record<string, unknown> } }).object
+      .fields;
+    expect(Object.keys(fields)).toEqual(["key", "name", "icon", "color", "title_color", "align"]);
+  });
+
   it("shows string entries as objects in the form", async () => {
     const { form } = await mountEditor({
       fields: ["stars", "latest_release:url", { key: "forks", name: "F" }],
@@ -149,6 +157,15 @@ describe("editor labels", () => {
       }
     ).object.fields;
     expect(Object.values(fields).map((f) => f.label)).toEqual(["Sensor", "Name", "Icon", "Farbe"]);
+  });
+});
+
+describe("release option label", () => {
+  it("says the version is shown in the title", () => {
+    expect(editorLabel(fixtureHass({ language: "de" }), "show_release")).toBe(
+      "Release-Version im Titel anzeigen",
+    );
+    expect(editorLabel(fixtureHass(), "show_release")).toBe("Show release version in title");
   });
 });
 

@@ -6,7 +6,29 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
-- `show_release` on the repository card: shows the latest release version on the far side of the header. Off by default.
+- `show_release` on the GitHub card: shows the latest release version on the far side of the header. Off by default.
+- Per-column `title_color` in the repositories table colours the column title; `color` tints the values.
+- Per-column `align` in the repositories table. By default number columns align right, text columns left; the column title follows.
+- `link` on the repositories table: repository names link to GitHub. Off by default.
+- `column_titles` on the repositories table: titles as text, icon or icon and text.
+- `show_activity` on the repositories table: a green or grey dot before each name, by commits this month.
+- `hide_owner` on the repositories table: show `repo` instead of `owner/repo`.
+- Columns of the repositories table take `icon` and `color` besides `name`.
+
+### Changed
+
+- **Breaking:** `hoc-github-repo-card` is now `hoc-github-card` and also shows your GitHub profile when you pick the account device. Update `type:` in existing dashboards.
+- Every card offers a live preview in the card picker.
+
+### Fixed
+
+- Selecting a repository twice in the repositories table no longer ties two entries together; duplicates are dropped.
+
+- The activity dot keeps its distance from the name and no longer wraps onto its own line.
+
+### Removed
+
+- **Breaking:** `hoc-github-profile-card` (use `hoc-github-card` with the account device) and `hoc-github-attention-card`.
 
 ## [0.2.2] - 2026-11-27
 

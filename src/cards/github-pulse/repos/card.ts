@@ -2,6 +2,7 @@ import { css, html, nothing, type TemplateResult } from "lit";
 import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
 import {
   buildFieldViews,
+  colorValue,
   fieldId,
   humanize,
   parseField,
@@ -11,9 +12,10 @@ import {
 } from "../../../core/fields";
 import { t } from "../../../core/i18n";
 import { statusDot, trendArrow } from "../../../core/parts";
+import { fieldIcon } from "../../../core/parts/field-tile";
 import { findAccountDevices, listDevices, resolveDeviceEntities } from "../../../core/resolver";
 import type { CardDefinition } from "../../../registry";
-import { PLATFORM } from "../repo/card";
+import { PLATFORM } from "../github/card";
 import { GithubReposEditor } from "./editor";
 
 export const REPOS_CARD_TAG = "hoc-github-repos-card";
@@ -32,12 +34,34 @@ export interface GithubReposConfig extends BaseConfig {
   sort_by?: string;
   sort_order?: "asc" | "desc";
   max_height?: number;
+  /** Show `repo` instead of `owner/repo`. Off by default. */
+  hide_owner?: boolean;
+  /** What the column titles show. Defaults to `text`. */
+  column_titles?: "text" | "icon" | "icon_text";
+  /** A dot before each name: green when the repository had commits this month, grey otherwise. */
+  show_activity?: boolean;
+  /** Link each repository name to its GitHub page (https only). Off by default. */
+  link?: boolean;
 }
 
 interface Row {
   id: string;
+  url: string | undefined;
   name: string;
+  commits: string | undefined;
   views: Map<string, FieldView>;
+}
+
+type Alignment = "left" | "center" | "right";
+
+/** An explicit `align` wins; otherwise a column of only numbers aligns right and anything else left. */
+function columnAlignment(spec: FieldSpec, rows: Row[]): Alignment {
+  if (spec.align) return spec.align;
+  if (spec.key === "ci_state" && !spec.attribute) return "left";
+  const values = rows.flatMap((row) => row.views.get(fieldId(spec)) ?? []);
+  return values.length > 0 && values.every((view) => typeof view.raw === "number")
+    ? "right"
+    : "left";
 }
 
 function sortValue(row: Row, column: string): number | string | null {
@@ -95,6 +119,21 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         font-weight: 500;
         color: var(--primary-text-color);
       }
+      .name__content {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .name__text a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .name__text a:hover {
+        text-decoration: underline;
+      }
+      .name__content .dot {
+        flex: none;
+      }
       .cell {
         display: inline-flex;
         align-items: center;
@@ -135,19 +174,38 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         const views = buildFieldViews(hass, entities, specs, device.name);
         return {
           id: device.id,
-          name: device.name,
+          url:
+            config.link === true &&
+            hass.devices[device.id]?.configuration_url?.startsWith("https://")
+              ? (hass.devices[device.id]?.configuration_url ?? undefined)
+              : undefined,
+          commits: entities["commits_this_month"]?.state,
+          name:
+            config.hide_owner === true
+              ? (device.name.split("/").pop() ?? device.name)
+              : device.name,
           views: new Map(views.map((view) => [view.id, view])),
         };
       });
   }
 
-  private renderCell(view: FieldView | undefined, spec: FieldSpec): TemplateResult {
-    if (!view) return html`<td>—</td>`;
+  private activityDot(row: Row): TemplateResult {
+    const commits = Number(row.commits);
+    return statusDot(commits > 0 ? "success" : undefined);
+  }
+
+  private renderCell(
+    view: FieldView | undefined,
+    spec: FieldSpec,
+    align: Alignment,
+  ): TemplateResult {
+    const style = `text-align: ${align}`;
+    if (!view) return html`<td style=${style}>—</td>`;
     if (spec.key === "ci_state" && !spec.attribute) {
-      return html`<td>${statusDot(view.stateObj.state)}</td>`;
+      return html`<td style=${style}>${statusDot(view.stateObj.state)}</td>`;
     }
-    return html`<td>
-      <span class="cell ${view.tone ? "cell--tone" : ""}" style="--c: ${view.color}"
+    return html`<td style=${style}>
+      <span class="cell ${view.tone || spec.color ? "cell--tone" : ""}" style="--c: ${view.color}"
         >${view.value}${view.unit ? html`<span class="cell__unit">${view.unit}</span>` : nothing}${
           view.trend ? trendArrow(view.trend) : nothing
         }</span
@@ -164,12 +222,18 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
     const rows = this.rows(specs).sort((a, b) => compareRows(a, b, column, direction));
     if (rows.length === 0) return this.renderMessage("no_repositories");
 
+    const titles = config.column_titles ?? "text";
+    const aligns = specs.map((spec) => columnAlignment(spec, rows));
     const headers = specs.map((spec) => {
       const id = fieldId(spec);
-      const label = rows
-        .map((row) => row.views.get(id)?.label)
-        .find((value) => value !== undefined);
-      return spec.name ?? label ?? humanize(spec.key);
+      const view = rows
+        .map((row) => row.views.get(id))
+        .find((candidate) => candidate !== undefined);
+      return {
+        text: spec.name ?? view?.label ?? humanize(spec.key),
+        icon: view ? fieldIcon(hass, spec.icon ? { ...view, icon: spec.icon } : view) : nothing,
+        color: spec.title_color ? colorValue(spec.title_color) : undefined,
+      };
     });
 
     return html`<ha-card>
@@ -178,15 +242,43 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
           <thead>
             <tr>
               <th>${t(hass, "repository")}</th>
-              ${headers.map((header) => html`<th>${header}</th>`)}
+              ${headers.map(
+                (header, index) =>
+                  html`<th
+                    title=${header.text}
+                    style=${[
+                      `text-align: ${aligns[index] ?? "left"}`,
+                      header.color ? `color: ${header.color}` : "",
+                    ]
+                      .filter(Boolean)
+                      .join("; ")}
+                  >
+                    ${titles === "text" ? nothing : header.icon}${
+                      titles === "icon" ? nothing : header.text
+                    }
+                  </th>`,
+              )}
             </tr>
           </thead>
           <tbody>
             ${rows.map(
               (row) =>
                 html`<tr>
-                  <td class="name">${row.name}</td>
-                  ${specs.map((spec) => this.renderCell(row.views.get(fieldId(spec)), spec))}
+                  <td class="name">
+                    <span class="name__content"
+                      >${config.show_activity ? this.activityDot(row) : nothing}<span
+                        class="name__text"
+                        >${
+                          row.url
+                            ? html`<a href=${row.url} target="_blank" rel="noopener noreferrer"
+                                >${row.name}</a
+                              >`
+                            : row.name
+                        }</span
+                      ></span
+                    >
+                  </td>
+                  ${specs.map((spec, index) => this.renderCell(row.views.get(fieldId(spec)), spec, aligns[index] ?? "left"))}
                 </tr>`,
             )}
           </tbody>

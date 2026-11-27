@@ -1,5 +1,4 @@
 export const en = {
-  all_clear: "All clear",
   device_not_found: "Device not found",
   no_repositories: "No repositories",
   unavailable: "Unavailable",
@@ -10,9 +9,6 @@ export const en = {
   commits_this_month: "Commits this month",
   release: "Release",
   ci: "CI",
-  failing_ci: "Failing CI",
-  review_requests: "Review requests",
-  stale_pull_requests: "Stale pull requests",
   repository: "Repository",
   vs_last_month: "vs last month",
   contributions: "Contributions this month",
@@ -55,7 +51,18 @@ export const en = {
   layout_list: "List",
   order_asc: "Ascending",
   order_desc: "Descending",
-  editor_show_release: "Show release version",
+  editor_show_release: "Show release version in title",
+  editor_hide_owner: "Hide owner",
+  titles_text: "Text",
+  titles_icon: "Icon",
+  titles_icon_text: "Icon and text",
+  editor_column_titles: "Column titles",
+  editor_show_activity: "Show activity dot",
+  align_left: "Left",
+  align_center: "Centre",
+  align_right: "Right",
+  editor_align: "Alignment",
+  editor_title_color: "Title colour",
 } as const;
 
 export type LocaleKey = keyof typeof en;
