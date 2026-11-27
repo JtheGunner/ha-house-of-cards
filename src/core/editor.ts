@@ -1,6 +1,7 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import type { BaseConfig } from "./base-card";
 import { editorLabel, t, type LocaleKey } from "./i18n";
+import { isHttps } from "./format";
 import { STATUS_OPERATORS, STATUS_STATES } from "./status";
 import { discoverFieldOptions, type FieldConfig, type FieldOption } from "./fields";
 import type { HomeAssistant } from "./types";
@@ -85,6 +86,31 @@ export function fieldsSelector(
 ): FormSchemaItem {
   const options = hass && deviceId ? discoverFieldOptions(hass, deviceId) : [];
   return fieldsSelectorFromOptions(hass, options, name);
+}
+
+/** The link sources of some devices: whether any has a page, and the attributes that hold an https URL. */
+export function linkSources(
+  hass: HomeAssistant | undefined,
+  deviceIds: string[],
+): { hasDevicePage: boolean; attributeUrls: FieldOption[] } {
+  if (!hass) return { hasDevicePage: false, attributeUrls: [] };
+  const hasDevicePage = deviceIds.some((id) => isHttps(hass.devices[id]?.configuration_url));
+  const urls = new Map<string, FieldOption>();
+  for (const id of deviceIds) {
+    for (const option of discoverFieldOptions(hass, id)) {
+      const [key, attribute] = option.value.split(":");
+      if (!key || !attribute || urls.has(option.value)) continue;
+      const holdsUrl = Object.values(hass.entities).some((entry) => {
+        if (entry.device_id !== id || (entry.translation_key || entry.entity_id) !== key) {
+          return false;
+        }
+        const value = hass.states[entry.entity_id]?.attributes[attribute];
+        return typeof value === "string" && isHttps(value);
+      });
+      if (holdsUrl) urls.set(option.value, option);
+    }
+  }
+  return { hasDevicePage, attributeUrls: [...urls.values()] };
 }
 
 /** The badge in the title: one sensor or attribute and an optional colour. */
@@ -208,6 +234,9 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
   /** Names of link options shown as a dropdown; `none` is stored as no value. */
   protected linkNames: string[] = [];
 
+  /** Names of dropdowns with a `none` entry that is stored as no value. */
+  protected noneNames: string[] = [];
+
   /** Names of options that hold one field (a string or an object with a `key`). */
   protected singleFieldNames: string[] = [];
 
@@ -242,6 +271,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       if (data[name] === true) data[name] = "device";
       else if (data[name] === undefined || data[name] === false) data[name] = "none";
     }
+    for (const name of this.noneNames) data[name] ??= "none";
     return data;
   }
 
@@ -270,6 +300,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     for (const name of this.linkNames) {
       if (config[name] === "none" || config[name] === false) delete config[name];
     }
+    for (const name of this.noneNames) if (config[name] === "none") delete config[name];
     for (const name of this.ruleListNames) {
       if (!(name in config)) continue;
       const entries = cleanEntries(config[name], "field");

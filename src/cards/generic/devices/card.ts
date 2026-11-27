@@ -11,44 +11,46 @@ import {
   type FieldView,
 } from "../../../core/fields";
 import { t } from "../../../core/i18n";
-import { statusDot, trendArrow } from "../../../core/parts";
+import { resolveLink } from "../../../core/link";
+import { colorDot, statusDot, trendArrow } from "../../../core/parts";
 import { fieldIcon } from "../../../core/parts/field-tile";
-import { findAccountDevices, listDevices, resolveDeviceEntities } from "../../../core/resolver";
+import { listPlatforms, PRESETS, presetOfDevice, selectDevices } from "../../../core/presets";
+import { resolveDeviceEntities } from "../../../core/resolver";
+import { evaluateStatus, type StatusRule } from "../../../core/status";
+import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
-import { GITHUB_PLATFORM as PLATFORM } from "../../../core/presets";
-import { GithubReposEditor } from "./editor";
+import { DevicesEditor } from "./editor";
 
-export const REPOS_CARD_TAG = "hoc-github-repos-card";
+export const DEVICES_CARD_TAG = "hoc-devices-card";
+const GENERIC_COLUMN_COUNT = 4;
 
-export const DEFAULT_COLUMNS: FieldConfig[] = [
-  "ci_state",
-  "stars",
-  { key: "commits_this_month", trend: "commits_vs_last_month" },
-  "latest_release",
-];
-
-export interface GithubReposConfig extends BaseConfig {
-  repositories?: string[] | "all";
-  /** Sensors or `sensor:attribute` entries, like `fields` of the other cards. */
+export interface DevicesConfig extends BaseConfig {
+  /** The devices to list. Without any, every device of `platform` is listed. */
+  devices?: string[];
+  /** An integration whose devices are all listed, and whose defaults the columns follow. */
+  platform?: string;
+  /** Sensors or `sensor:attribute` entries, like `fields` of the device card. */
   columns?: FieldConfig[];
   sort_by?: string;
   sort_order?: "asc" | "desc";
   max_height?: number;
-  /** Show `repo` instead of `owner/repo`. Off by default. */
+  /** Show the part after the last `/` of the name, such as `repo` instead of `owner/repo`. */
   hide_owner?: boolean;
   /** What the column titles show. Defaults to `text`. */
   column_titles?: "text" | "icon" | "icon_text";
-  /** A dot before each name: green when the repository had commits this month, grey otherwise. */
-  show_activity?: boolean;
-  /** Link each repository name to its GitHub page (https only). Off by default. */
-  link?: boolean;
+  /** A status dot before each name. Off by default. */
+  show_status?: boolean;
+  /** Rules for the dot; the first match wins. Replaces the integration's default. */
+  status?: StatusRule[];
+  /** Link each name: `device` for the device's page or `sensor:attribute` for a URL in an attribute. */
+  link?: boolean | string;
 }
 
 interface Row {
   id: string;
   url: string | undefined;
   name: string;
-  commits: string | undefined;
+  statusColor: string | undefined;
   views: Map<string, FieldView>;
 }
 
@@ -83,7 +85,7 @@ function compareRows(a: Row, b: Row, column: string, direction: 1 | -1): number 
   return order === 0 ? a.name.localeCompare(b.name) : order * direction;
 }
 
-export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
+export class DevicesCard extends HocBaseCard<DevicesConfig> {
   static override styles = [
     ...HocBaseCard.styles,
     css`
@@ -153,45 +155,51 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
   ];
 
   static getConfigElement(): HTMLElement {
-    return document.createElement(`${REPOS_CARD_TAG}-editor`);
+    return document.createElement(`${DEVICES_CARD_TAG}-editor`);
+  }
+
+  static getStubConfig(hass: HomeAssistant): Partial<DevicesConfig> {
+    const known = Object.keys(PRESETS).find((platform) =>
+      Object.values(hass.entities).some((entry) => entry.platform === platform && entry.device_id),
+    );
+    const first = known ?? listPlatforms(hass)[0]?.value;
+    return first ? { platform: first } : {};
   }
 
   private rows(specs: FieldSpec[]): Row[] {
     const { hass, config } = this;
     if (!hass || !config) return [];
-    const accounts = new Set(findAccountDevices(hass, PLATFORM));
-    const devices = listDevices(hass, PLATFORM).filter((device) => !accounts.has(device.id));
-    const wanted =
-      config.repositories === undefined ||
-      config.repositories === "all" ||
-      config.repositories.length === 0
-        ? null
-        : new Set(config.repositories);
-    return devices
-      .filter((device) => wanted === null || wanted.has(device.id))
-      .map((device) => {
-        const entities = resolveDeviceEntities(hass, device.id, PLATFORM);
-        const views = buildFieldViews(hass, entities, specs, device.name);
-        return {
-          id: device.id,
-          url:
-            config.link === true &&
-            hass.devices[device.id]?.configuration_url?.startsWith("https://")
-              ? (hass.devices[device.id]?.configuration_url ?? undefined)
-              : undefined,
-          commits: entities["commits_this_month"]?.state,
-          name:
-            config.hide_owner === true
-              ? (device.name.split("/").pop() ?? device.name)
-              : device.name,
-          views: new Map(views.map((view) => [view.id, view])),
-        };
-      });
+    return selectDevices(hass, config.devices, config.platform).map((device) => {
+      const preset = presetOfDevice(hass, device.id);
+      const entities = resolveDeviceEntities(hass, device.id, preset?.platform);
+      const views = buildFieldViews(hass, entities, specs, device.name);
+      const rules = config.status?.length ? config.status : (preset?.rowStatus ?? []);
+      const status = evaluateStatus(rules, entities);
+      return {
+        id: device.id,
+        url: resolveLink(config.link, undefined, hass.devices[device.id], entities),
+        statusColor: status.color,
+        name:
+          config.hide_owner === true ? (device.name.split("/").pop() ?? device.name) : device.name,
+        views: new Map(views.map((view) => [view.id, view])),
+      };
+    });
   }
 
-  private activityDot(row: Row): TemplateResult {
-    const commits = Number(row.commits);
-    return statusDot(commits > 0 ? "success" : undefined);
+  /** The configured columns, else the integration's, else the first sensors of the first device. */
+  private columnSpecs(): FieldSpec[] {
+    const { hass, config } = this;
+    if (!hass || !config) return [];
+    if (config.columns?.length) return config.columns.map(parseField);
+    const devices = selectDevices(hass, config.devices, config.platform);
+    const first = devices[0];
+    const preset = config.platform ? PRESETS[config.platform] : undefined;
+    const known = preset ?? (first ? presetOfDevice(hass, first.id) : undefined);
+    if (known) return known.columns.map(parseField);
+    if (!first) return [];
+    return Object.keys(resolveDeviceEntities(hass, first.id))
+      .slice(0, GENERIC_COLUMN_COUNT)
+      .map((key) => ({ key }));
   }
 
   private renderCell(
@@ -216,11 +224,15 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
   protected renderContent(): TemplateResult {
     const { hass, config } = this;
     if (!hass || !config) return html``;
-    const specs = (config.columns?.length ? config.columns : DEFAULT_COLUMNS).map(parseField);
+    const specs = this.columnSpecs();
     const column = config.sort_by ?? "name";
     const direction = config.sort_order === "desc" ? -1 : 1;
     const rows = this.rows(specs).sort((a, b) => compareRows(a, b, column, direction));
-    if (rows.length === 0) return this.renderMessage("no_repositories");
+    if (rows.length === 0) {
+      return this.renderMessage(
+        config.devices?.length || config.platform ? "no_devices" : "choose_devices",
+      );
+    }
 
     const titles = config.column_titles ?? "text";
     const aligns = specs.map((spec) => columnAlignment(spec, rows));
@@ -241,7 +253,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         <table>
           <thead>
             <tr>
-              <th>${t(hass, "repository")}</th>
+              <th>${t(hass, "device")}</th>
               ${headers.map(
                 (header, index) =>
                   html`<th
@@ -266,7 +278,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
                 html`<tr>
                   <td class="name">
                     <span class="name__content"
-                      >${config.show_activity ? this.activityDot(row) : nothing}<span
+                      >${config.show_status ? colorDot(row.statusColor) : nothing}<span
                         class="name__text"
                         >${
                           row.url
@@ -288,11 +300,12 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
   }
 }
 
-export const reposCardDefinition: CardDefinition = {
-  tag: REPOS_CARD_TAG,
-  ctor: GithubReposCard,
-  editorTag: `${REPOS_CARD_TAG}-editor`,
-  editorCtor: GithubReposEditor,
-  name: "GitHub repositories",
-  description: "Several GitHub Pulse repositories as a sortable table with selectable columns.",
+export const devicesCardDefinition: CardDefinition = {
+  tag: DEVICES_CARD_TAG,
+  ctor: DevicesCard,
+  editorTag: `${DEVICES_CARD_TAG}-editor`,
+  editorCtor: DevicesEditor,
+  name: "Devices",
+  description:
+    "Several devices as a sortable table with selectable columns. GitHub Pulse and YouTrack come with defaults.",
 };

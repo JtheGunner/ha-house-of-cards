@@ -47,9 +47,10 @@ describe("registerCards", () => {
 describe("cards", () => {
   it("contains the generic cards with a unique tag", () => {
     const tags = cards.map((card) => card.tag);
-    expect(tags).toEqual(expect.arrayContaining(["hoc-device-card", "hoc-github-repos-card"]));
+    expect(tags).toEqual(expect.arrayContaining(["hoc-device-card", "hoc-devices-card"]));
     for (const removed of [
       "hoc-github-card",
+      "hoc-github-repos-card",
       "hoc-github-profile-card",
       "hoc-github-attention-card",
       "hoc-youtrack-project-card",
