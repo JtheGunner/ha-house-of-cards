@@ -254,7 +254,7 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
         .map((row) => row.views.get(id))
         .find((candidate) => candidate !== undefined);
       return {
-        text: spec.name ?? view?.label ?? humanize(spec.key),
+        text: spec.name ?? view?.entityLabel ?? humanize(spec.key),
         icon: view ? fieldIcon(hass, spec.icon ? { ...view, icon: spec.icon } : view) : nothing,
         color: spec.title_color ? colorValue(spec.title_color) : undefined,
       };

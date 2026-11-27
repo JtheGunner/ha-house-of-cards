@@ -53,6 +53,35 @@ describe("buildFieldViews", () => {
     expect(views([entity("stars", "2")], ["stars"], "de")[0]?.label).toBe("Sterne");
   });
 
+  it("keeps the short known label but also exposes the Home Assistant name as entityLabel", () => {
+    const [known, plain] = views(
+      [
+        entity("issues_open", "3", { friendly_name: "my-repo Offene Issues" }),
+        entity("stars", "5"),
+      ],
+      ["issues_open", "stars"],
+      "de",
+    );
+    expect(known?.label).toBe("Offen");
+    expect(known?.entityLabel).toBe("Offene Issues");
+    expect(plain?.label).toBe("Sterne");
+    expect(plain?.entityLabel).toBe("Sterne");
+  });
+
+  it("appends the attribute to entityLabel and lets a configured name win over both", () => {
+    const [attribute, named] = views(
+      [
+        entity("issues_open", "3", { friendly_name: "my-repo Offene Issues", url: "https://x" }),
+        entity("stars", "5", { friendly_name: "my-repo Sterne (HA)" }),
+      ],
+      ["issues_open:url", { key: "stars", name: "Fans" }],
+      "de",
+    );
+    expect(attribute?.entityLabel).toBe("Offene Issues › Url");
+    expect(named?.label).toBe("Fans");
+    expect(named?.entityLabel).toBe("Fans");
+  });
+
   it("omits missing sensors, unusable states and missing attributes", () => {
     const result = views(
       [
@@ -181,5 +210,22 @@ describe("discoverFieldOptions", () => {
     const options = discoverFieldOptions(hass, "d1");
     expect(options.map((o) => o.value)).toEqual(["latest_release", "latest_release:url", "stars"]);
     expect(options[1]?.label).toBe("Release › Url");
+  });
+
+  it("labels options with the Home Assistant entity name, falling back to the known label", () => {
+    const hass = fixtureHass({
+      devices: [{ id: "d1", name: "my-repo" }],
+      language: "de",
+      entities: [
+        entity("issues_open", "3", { friendly_name: "my-repo Offene Issues", url: "https://x" }),
+        entity("stars", "5"),
+      ],
+    });
+    const options = discoverFieldOptions(hass, "d1");
+    expect(options.map((o) => [o.value, o.label])).toEqual([
+      ["issues_open", "Offene Issues"],
+      ["issues_open:url", "Offene Issues › Url"],
+      ["stars", "Sterne"],
+    ]);
   });
 });
