@@ -1655,6 +1655,10 @@ var bt = {
 				selector: { boolean: {} }
 			},
 			{
+				name: "link",
+				selector: { boolean: {} }
+			},
+			{
 				name: "show_activity",
 				selector: { boolean: {} }
 			},
@@ -1744,6 +1748,13 @@ var It = [
         align-items: center;
         gap: 8px;
       }
+      .name__text a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .name__text a:hover {
+        text-decoration: underline;
+      }
       .name__content .dot {
         flex: none;
       }
@@ -1775,6 +1786,7 @@ var It = [
 					let i = Ze(t, r.id, $), a = Y(t, i, e, r.name);
 					return {
 						id: r.id,
+						url: n.link === !0 && t.devices[r.id]?.configuration_url?.startsWith("https://") ? t.devices[r.id]?.configuration_url ?? void 0 : void 0,
 						commits: i.commits_this_month?.state,
 						name: n.hide_owner === !0 ? r.name.split("/").pop() ?? r.name : r.name,
 						views: new Map(a.map((e) => [e.id, e]))
@@ -1828,7 +1840,9 @@ var It = [
                     <span class="name__content"
                       >${t.show_activity ? this.activityDot(e) : j}<span
                         class="name__text"
-                        >${e.name}</span
+                        >${e.url ? k`<a href=${e.url} target="_blank" rel="noopener noreferrer"
+                                >${e.name}</a
+                              >` : e.name}</span
                       ></span
                     >
                   </td>

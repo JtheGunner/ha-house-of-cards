@@ -56,6 +56,7 @@ export class GithubReposEditor extends HocBaseEditor<GithubReposConfig> {
       },
       choiceSelector(this.hass, "order", ["asc", "desc"], "sort_order"),
       { name: "hide_owner", selector: { boolean: {} } },
+      { name: "link", selector: { boolean: {} } },
       { name: "show_activity", selector: { boolean: {} } },
       choiceSelector(this.hass, "titles", ["text", "icon", "icon_text"], "column_titles"),
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },

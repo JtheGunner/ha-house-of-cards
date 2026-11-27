@@ -40,10 +40,13 @@ export interface GithubReposConfig extends BaseConfig {
   column_titles?: "text" | "icon" | "icon_text";
   /** A dot before each name: green when the repository had commits this month, grey otherwise. */
   show_activity?: boolean;
+  /** Link each repository name to its GitHub page (https only). Off by default. */
+  link?: boolean;
 }
 
 interface Row {
   id: string;
+  url: string | undefined;
   name: string;
   commits: string | undefined;
   views: Map<string, FieldView>;
@@ -121,6 +124,13 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         align-items: center;
         gap: 8px;
       }
+      .name__text a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .name__text a:hover {
+        text-decoration: underline;
+      }
       .name__content .dot {
         flex: none;
       }
@@ -164,6 +174,11 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
         const views = buildFieldViews(hass, entities, specs, device.name);
         return {
           id: device.id,
+          url:
+            config.link === true &&
+            hass.devices[device.id]?.configuration_url?.startsWith("https://")
+              ? (hass.devices[device.id]?.configuration_url ?? undefined)
+              : undefined,
           commits: entities["commits_this_month"]?.state,
           name:
             config.hide_owner === true
@@ -253,7 +268,13 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
                     <span class="name__content"
                       >${config.show_activity ? this.activityDot(row) : nothing}<span
                         class="name__text"
-                        >${row.name}</span
+                        >${
+                          row.url
+                            ? html`<a href=${row.url} target="_blank" rel="noopener noreferrer"
+                                >${row.name}</a
+                              >`
+                            : row.name
+                        }</span
                       ></span
                     >
                   </td>

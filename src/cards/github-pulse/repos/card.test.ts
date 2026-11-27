@@ -13,6 +13,7 @@ interface Repo {
   ci?: string;
   commits?: string;
   release?: string;
+  url?: string;
 }
 
 function repoEntities(repo: Repo): FixtureEntity[] {
@@ -34,7 +35,7 @@ async function mount(repos: Repo[], config: Record<string, unknown> = {}) {
   const hass = fixtureHass({
     devices: [
       { id: "account", name: "GitHub octocat" },
-      ...repos.map((repo) => ({ id: repo.id, name: repo.name })),
+      ...repos.map((repo) => ({ id: repo.id, name: repo.name, configuration_url: repo.url })),
     ],
     entities: [
       { platform: P, deviceId: "account", translationKey: "contributions_this_month", state: "9" },
@@ -326,5 +327,21 @@ describe("hoc-github-repos-card", () => {
     expect(root.querySelector("tbody td:nth-child(2) .cell")?.className).not.toContain(
       "cell--tone",
     );
+  });
+
+  it("links the repository name only when link is on and the url is https", async () => {
+    const repos = [
+      { id: "a", name: "o/a", url: "https://github.com/o/a" },
+      { id: "b", name: "o/b", url: "javascript:alert(1)" },
+      { id: "c", name: "o/c" },
+    ];
+    const off = await mount(repos);
+    expect(off.root.querySelector("tbody .name a")).toBeNull();
+    const on = await mount(repos, { link: true });
+    const anchors = [...on.root.querySelectorAll("tbody .name a")];
+    expect(anchors).toHaveLength(1);
+    expect(anchors[0]?.getAttribute("href")).toBe("https://github.com/o/a");
+    expect(anchors[0]?.getAttribute("rel")).toContain("noopener");
+    expect(anchors[0]?.textContent?.trim()).toBe("o/a");
   });
 });
