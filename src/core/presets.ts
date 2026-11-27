@@ -1,5 +1,6 @@
 import type { FieldConfig } from "./fields";
 import type { FieldsLayout } from "./fields-card";
+import type { ResolvedEntities } from "./resolver";
 import type { HomeAssistant } from "./types";
 
 /** What the generic cards know about one integration. Presets are data only. */
@@ -75,4 +76,17 @@ export function presetOfDevice(hass: HomeAssistant, deviceId: string): Preset | 
     if (preset) return preset;
   }
   return undefined;
+}
+
+const GENERIC_FIELD_COUNT = 6;
+
+/** The fields a card shows while its own `fields` is empty. */
+export function defaultFieldsFor(
+  preset: Preset | undefined,
+  layout: FieldsLayout,
+  entities: ResolvedEntities,
+): FieldConfig[] {
+  if (!preset) return Object.keys(entities).slice(0, GENERIC_FIELD_COUNT);
+  const variant = preset.variant;
+  return (variant && variant.marker in entities ? variant.layouts : preset.layouts)[layout];
 }

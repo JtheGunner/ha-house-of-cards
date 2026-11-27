@@ -6,10 +6,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- The visual editor of the device card lists the default fields of the chosen layout in `fields` so you can edit them in place. Changing nothing keeps the defaults, and they follow the layout.
 - Status of the device card: `status` is a list of rules (sensor or `sensor:attribute`, condition, value, resulting status). The first match wins and replaces the integration's default status. Rules are edited in the visual editor and only shown while `show_status` is on.
 - Presets: the device card knows GitHub Pulse and YouTrack devices and starts with their fields and status, including the GitHub profile for the account device.
 - `badge` on the device card: shows any sensor or attribute as a badge on the far side of the title. It is grey by default and takes a `color`.
-- `link` on the device card accepts `device` (the device's page) or `sensor:attribute` (a URL held in an attribute); `link_url` sets any https URL. `link: true` keeps meaning the device page.
+- `link` on the device card accepts `device` (the device's page) or `sensor:attribute` (a URL held in an attribute); `link_url` sets any https URL while `link` gives no target; the visual editor hides it once a link source is chosen. `link: true` keeps meaning the device page.
 - Per-column `title_color` in the repositories table colours the column title; `color` tints the values.
 - Per-column `align` in the repositories table. By default number columns align right, text columns left; the column title follows.
 - `link` on the repositories table: repository names link to GitHub. Off by default.

@@ -215,12 +215,16 @@ describe("hoc-device-card badge and link", () => {
     expect(root.querySelector(".name a")?.getAttribute("href")).toBe("https://x/r");
   });
 
-  it("lets link_url win over link", async () => {
+  it("lets link win over link_url and falls back to link_url without a target", async () => {
     const { root } = await mount([RELEASE], {
       link: "release:url",
       link_url: "https://example.com/p",
     });
-    expect(root.querySelector(".name a")?.getAttribute("href")).toBe("https://example.com/p");
+    expect(root.querySelector(".name a")?.getAttribute("href")).toBe("https://x/r");
+    const fallback = await mount([RELEASE], { link: "device", link_url: "https://example.com/p" });
+    expect(fallback.root.querySelector(".name a")?.getAttribute("href")).toBe(
+      "https://example.com/p",
+    );
   });
 
   it("never links to anything but https", async () => {

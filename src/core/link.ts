@@ -5,8 +5,8 @@ import type { HassDevice } from "./types";
 
 /**
  * The target of the title link. `link` is `device` (or `true`) for the device's own page,
- * `sensor:attribute` for a URL held in an attribute, or an https URL. `link_url` wins over
- * `link`. Only https targets are ever returned.
+ * `sensor:attribute` for a URL held in an attribute, or an https URL. `link` wins over
+ * `link_url`, which only applies while `link` gives no target. Only https targets are ever returned.
  */
 export function resolveLink(
   link: unknown,
@@ -14,7 +14,7 @@ export function resolveLink(
   device: HassDevice | undefined,
   entities: ResolvedEntities,
 ): string | undefined {
-  for (const candidate of [linkUrl, link]) {
+  for (const candidate of [link, linkUrl]) {
     const target = resolveOne(candidate, device, entities);
     if (target) return target;
   }

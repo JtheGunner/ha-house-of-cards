@@ -16,6 +16,11 @@ import { evaluateStatus, type Status, type StatusRule } from "./status";
 
 export type FieldsLayout = "compact" | "standard" | "list";
 
+/** Unknown layouts, such as the removed `detailed`, render as `standard`. */
+export function layoutOf(layout: unknown): FieldsLayout {
+  return layout === "compact" || layout === "list" ? layout : "standard";
+}
+
 export interface FieldsConfig extends BaseConfig {
   device?: string;
   fields?: FieldConfig[];
@@ -24,7 +29,7 @@ export interface FieldsConfig extends BaseConfig {
   name?: string;
   /** Link the title: `device` for the device's page, `sensor:attribute` for a URL in an attribute. */
   link?: boolean | string;
-  /** Link the title to this https URL. Wins over `link`. */
+  /** Link the title to this https URL while `link` gives no target. */
   link_url?: string;
   /** A value shown as a coloured badge next to the title: a sensor, `sensor:attribute` or an object. */
   badge?: FieldConfig;
@@ -188,8 +193,7 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
     const name = config.name?.trim() || deviceName;
     const showStatus = config.show_status !== false;
     const entities = resolveDeviceEntities(hass, deviceId, this.platform);
-    const layout: FieldsLayout =
-      config.layout === "compact" || config.layout === "list" ? config.layout : "standard";
+    const layout = layoutOf(config.layout);
     const chosen = config.fields?.length ? config.fields : this.defaultFields(layout, entities);
     const views = buildFieldViews(hass, entities, chosen.map(parseField), deviceName);
 

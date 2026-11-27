@@ -142,4 +142,98 @@ describe("hoc-device-card editor", () => {
     form.dispatchEvent(new CustomEvent("value-changed", { detail: { value: { status: [] } } }));
     expect(received[0]).not.toHaveProperty("status");
   });
+
+  it("hides the link URL and drops it once a link source is chosen", async () => {
+    const free = await mountEditor("github_pulse", {}, "https://github.com/o/r");
+    expect(free.form.schema.map((item) => item.name)).toContain("link_url");
+    const chosen = await mountEditor("github_pulse", { link: "device", link_url: "https://x/y" });
+    expect(chosen.form.schema.map((item) => item.name)).not.toContain("link_url");
+    free.form.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: { value: { link: "device", link_url: "https://x/y" } },
+      }),
+    );
+    expect(free.received[0]).not.toHaveProperty("link_url");
+    expect(free.received[0]?.["link"]).toBe("device");
+  });
+});
+
+describe("hoc-device-card editor fields prefill", () => {
+  const github = [
+    "stars",
+    "forks",
+    "open_issues",
+    "open_pull_requests",
+    "commits_this_month",
+    "latest_release",
+  ].map((translationKey) => ({
+    platform: "github_pulse",
+    deviceId: "d1",
+    translationKey,
+    state: "1",
+  }));
+
+  async function mountGithub(config: Record<string, unknown> = {}) {
+    const hass = fixtureHass({ devices: [{ id: "d1", name: "repo" }], entities: github });
+    const editor = document.createElement("hoc-device-card-editor") as unknown as HTMLElement & {
+      hass: unknown;
+      setConfig: (config: unknown) => void;
+      updateComplete: Promise<unknown>;
+    };
+    editor.hass = hass;
+    editor.setConfig({ type: "x", device: "d1", ...config });
+    document.body.append(editor);
+    await editor.updateComplete;
+    const form = editor.shadowRoot?.querySelector("ha-form") as unknown as {
+      data: Record<string, unknown>;
+    } & HTMLElement;
+    const received: Record<string, unknown>[] = [];
+    editor.addEventListener("config-changed", (event) =>
+      received.push((event as CustomEvent).detail.config),
+    );
+    return { form, received };
+  }
+
+  const keys = (data: Record<string, unknown>) =>
+    (data["fields"] as { key: string }[]).map((entry) => entry.key);
+
+  it("lists the default fields of the layout while fields is empty", async () => {
+    const standard = await mountGithub();
+    expect(keys(standard.form.data)).toEqual([
+      "stars",
+      "forks",
+      "open_issues",
+      "open_pull_requests",
+      "commits_this_month",
+      "latest_release",
+    ]);
+    const compact = await mountGithub({ layout: "compact" });
+    expect(keys(compact.form.data)).toEqual(["stars", "latest_release"]);
+  });
+
+  it("shows the chosen fields instead of the defaults", async () => {
+    const { form } = await mountGithub({ fields: ["forks"] });
+    expect(keys(form.data)).toEqual(["forks"]);
+  });
+
+  it("keeps fields unset while the shown defaults are untouched, so they follow the layout", async () => {
+    const { form, received } = await mountGithub();
+    form.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: { value: { layout: "compact", fields: form.data["fields"] } },
+      }),
+    );
+    expect(received[0]?.["layout"]).toBe("compact");
+    expect(received[0]).not.toHaveProperty("fields");
+  });
+
+  it("stores the fields once one of them is changed", async () => {
+    const { form, received } = await mountGithub();
+    const edited = (form.data["fields"] as Record<string, unknown>[]).slice(0, 2);
+    form.dispatchEvent(new CustomEvent("value-changed", { detail: { value: { fields: edited } } }));
+    expect((received[0]?.["fields"] as { key: string }[]).map((f) => f.key)).toEqual([
+      "stars",
+      "forks",
+    ]);
+  });
 });

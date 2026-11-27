@@ -1,13 +1,12 @@
 import { HocFieldsCard, type FieldsConfig, type FieldsLayout } from "../../../core/fields-card";
 import type { FieldConfig } from "../../../core/fields";
-import { presetOfDevice, type Preset } from "../../../core/presets";
+import { defaultFieldsFor, presetOfDevice, type Preset } from "../../../core/presets";
 import type { ResolvedEntities } from "../../../core/resolver";
 import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
 import { DeviceCardEditor } from "./editor";
 
 export const DEVICE_CARD_TAG = "hoc-device-card";
-const DEFAULT_FIELD_COUNT = 6;
 
 export interface DeviceCardConfig extends FieldsConfig {
   device: string;
@@ -39,10 +38,7 @@ export class DeviceCard extends HocFieldsCard<DeviceCardConfig> {
   }
 
   protected defaultFields(layout: FieldsLayout, entities: ResolvedEntities): FieldConfig[] {
-    const preset = this.preset();
-    if (!preset) return Object.keys(entities).slice(0, DEFAULT_FIELD_COUNT);
-    const variant = preset.variant;
-    return (variant && variant.marker in entities ? variant.layouts : preset.layouts)[layout];
+    return defaultFieldsFor(this.preset(), layout, entities);
   }
 
   static getStubConfig(hass: HomeAssistant): Partial<DeviceCardConfig> {
