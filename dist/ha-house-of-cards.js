@@ -1805,7 +1805,7 @@ var Ft = [
               <th>${H(e, "repository")}</th>
               ${c.map((e, t) => k`<th
                     title=${e.text}
-                    style=${[`text-align: ${o === "icon" ? "center" : s[t] ?? "left"}`, e.color ? `color: ${e.color}` : ""].filter(Boolean).join("; ")}
+                    style=${[`text-align: ${s[t] ?? "left"}`, e.color ? `color: ${e.color}` : ""].filter(Boolean).join("; ")}
                   >
                     ${o === "text" ? j : e.icon}${o === "icon" ? j : e.text}
                   </th>`)}

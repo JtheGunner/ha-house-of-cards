@@ -231,7 +231,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
                   html`<th
                     title=${header.text}
                     style=${[
-                      `text-align: ${titles === "icon" ? "center" : (aligns[index] ?? "left")}`,
+                      `text-align: ${aligns[index] ?? "left"}`,
                       header.color ? `color: ${header.color}` : "",
                     ]
                       .filter(Boolean)
