@@ -40,7 +40,7 @@ export class GithubReposEditor extends HocBaseEditor<GithubReposConfig> {
         name: "repositories",
         selector: { device: { integration: "github_pulse", multiple: true } },
       },
-      fieldsSelectorFromOptions(this.hass, options, "columns"),
+      fieldsSelectorFromOptions(this.hass, options, "columns", true),
       {
         name: "sort_by",
         selector: {

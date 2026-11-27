@@ -261,4 +261,52 @@ describe("hoc-github-repos-card", () => {
     const { names } = await mount(REPOS, { repositories: ["r1", "r1", "r2"] });
     expect(names).toEqual(["alpha", "bravo"]);
   });
+
+  it("keeps the activity dot apart from the name text", async () => {
+    const { root } = await mount([{ id: "a", name: "o/a", commits: "4" }], { show_activity: true });
+    const cell = root.querySelector("tbody .name");
+    expect(cell?.querySelector(".name__content .dot")).not.toBeNull();
+    expect(cell?.querySelector(".name__content .name__text")?.textContent?.trim()).toBe("o/a");
+  });
+
+  it("aligns number columns right and text columns left by default, in header and cells", async () => {
+    const { root } = await mount(REPOS, { columns: ["stars", "latest_release"] });
+    const align = (selector: string) =>
+      (root.querySelector(selector) as HTMLElement).style.textAlign;
+    expect(align("thead th:nth-child(2)")).toBe("right");
+    expect(align("tbody tr td:nth-child(2)")).toBe("right");
+    expect(align("thead th:nth-child(3)")).toBe("left");
+    expect(align("tbody tr td:nth-child(3)")).toBe("left");
+  });
+
+  it("lets a column set its own alignment", async () => {
+    const { root } = await mount(REPOS, { columns: [{ key: "stars", align: "center" }] });
+    expect((root.querySelector("tbody td:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "center",
+    );
+    expect((root.querySelector("thead th:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "center",
+    );
+  });
+
+  it("centres icon-only titles whatever the column alignment", async () => {
+    const { root } = await mount(REPOS, { column_titles: "icon", columns: ["stars"] });
+    expect((root.querySelector("thead th:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "center",
+    );
+    expect((root.querySelector("tbody td:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "right",
+    );
+  });
+
+  it("treats a column with any non-numeric value as text", async () => {
+    const mixed = [
+      { id: "a", name: "a", stars: "5" },
+      { id: "b", name: "b", stars: "n/a" },
+    ];
+    const { root } = await mount(mixed, { columns: ["stars"] });
+    expect((root.querySelector("tbody td:nth-child(2)") as HTMLElement).style.textAlign).toBe(
+      "left",
+    );
+  });
 });

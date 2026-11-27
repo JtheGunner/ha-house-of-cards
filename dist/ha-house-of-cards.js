@@ -612,7 +612,11 @@ var De = o`
 	titles_icon: "Icon",
 	titles_icon_text: "Icon und Text",
 	editor_column_titles: "Spaltentitel",
-	editor_show_activity: "Aktivitätspunkt anzeigen"
+	editor_show_activity: "Aktivitätspunkt anzeigen",
+	align_left: "Links",
+	align_center: "Zentriert",
+	align_right: "Rechts",
+	editor_align: "Ausrichtung"
 }, B = {
 	device_not_found: "Device not found",
 	no_repositories: "No repositories",
@@ -672,7 +676,11 @@ var De = o`
 	titles_icon: "Icon",
 	titles_icon_text: "Icon and text",
 	editor_column_titles: "Column titles",
-	editor_show_activity: "Show activity dot"
+	editor_show_activity: "Show activity dot",
+	align_left: "Left",
+	align_center: "Centre",
+	align_right: "Right",
+	editor_align: "Alignment"
 }, ke = {
 	en: B,
 	de: Oe
@@ -1175,8 +1183,15 @@ function tt(e, t, n, r) {
 function nt(e, t, n = "layout") {
 	return tt(e, "layout", t, n);
 }
-function rt(e, t, n = "fields") {
-	let r = (t) => e ? V(e, t) : t;
+function rt(e, t, n = "fields", r = !1) {
+	let i = (t) => e ? V(e, t) : t, a = [
+		"left",
+		"center",
+		"right"
+	].map((t) => ({
+		value: t,
+		label: e ? H(e, `align_${t}`) : t
+	}));
 	return {
 		name: n,
 		selector: { object: {
@@ -1184,7 +1199,7 @@ function rt(e, t, n = "fields") {
 			label_field: "key",
 			fields: {
 				key: {
-					label: r("sensor"),
+					label: i("sensor"),
 					required: !0,
 					selector: { select: {
 						mode: "dropdown",
@@ -1193,17 +1208,24 @@ function rt(e, t, n = "fields") {
 					} }
 				},
 				name: {
-					label: r("name"),
+					label: i("name"),
 					selector: { text: {} }
 				},
 				icon: {
-					label: r("icon"),
+					label: i("icon"),
 					selector: { icon: {} }
 				},
 				color: {
-					label: r("color"),
+					label: i("color"),
 					selector: { ui_color: {} }
-				}
+				},
+				...r ? { align: {
+					label: i("align"),
+					selector: { select: {
+						mode: "dropdown",
+						options: a
+					} }
+				} } : {}
 			}
 		} }
 	};
@@ -1604,7 +1626,7 @@ var yt = {
 					multiple: !0
 				} }
 			},
-			rt(this.hass, e, "columns"),
+			rt(this.hass, e, "columns", !0),
 			{
 				name: "sort_by",
 				selector: { select: {
@@ -1650,10 +1672,16 @@ var yt = {
 	"latest_release"
 ];
 function Mt(e, t) {
+	if (e.align) return e.align;
+	if (e.key === "ci_state" && !e.attribute) return "left";
+	let n = t.flatMap((t) => t.views.get(G(e)) ?? []);
+	return n.length > 0 && n.every((e) => typeof e.raw == "number") ? "right" : "left";
+}
+function Nt(e, t) {
 	return t === "name" ? e.name : e.views.get(t)?.raw ?? null;
 }
-function Nt(e, t, n, r) {
-	let i = Mt(e, n), a = Mt(t, n);
+function Pt(e, t, n, r) {
+	let i = Nt(e, n), a = Nt(t, n);
 	if (i === null && a === null) return e.name.localeCompare(t.name);
 	if (i === null) return 1;
 	if (a === null) return -1;
@@ -1661,7 +1689,7 @@ function Nt(e, t, n, r) {
 	return o = typeof i == "number" && typeof a == "number" ? i - a : typeof i == "number" ? -1 : typeof a == "number" ? 1 : i.localeCompare(a), o === 0 ? e.name.localeCompare(t.name) : o * r;
 }
 // src/registry.ts
-var Pt = [
+var Ft = [
 	mt,
 	{
 		tag: At,
@@ -1700,6 +1728,14 @@ var Pt = [
         font-weight: 500;
         color: var(--primary-text-color);
       }
+      .name__content {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .name__content .dot {
+        flex: none;
+      }
       .cell {
         display: inline-flex;
         align-items: center;
@@ -1737,19 +1773,20 @@ var Pt = [
 			activityDot(e) {
 				return z(Number(e.commits) > 0 ? "success" : void 0);
 			}
-			renderCell(e, t) {
-				return e ? t.key === "ci_state" && !t.attribute ? k`<td>${z(e.stateObj.state)}</td>` : k`<td>
+			renderCell(e, t, n) {
+				let r = `text-align: ${n}`;
+				return e ? t.key === "ci_state" && !t.attribute ? k`<td style=${r}>${z(e.stateObj.state)}</td>` : k`<td style=${r}>
       <span class="cell ${e.tone || t.color ? "cell--tone" : ""}" style="--c: ${e.color}"
         >${e.value}${e.unit ? k`<span class="cell__unit">${e.unit}</span>` : j}${e.trend ? Ee(e.trend) : j}</span
       >
-    </td>` : k`<td>—</td>`;
+    </td>` : k`<td style=${r}>—</td>`;
 			}
 			renderContent() {
 				let { hass: e, config: t } = this;
 				if (!e || !t) return k``;
-				let n = (t.columns?.length ? t.columns : jt).map(ze), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Nt(e, t, r, i));
+				let n = (t.columns?.length ? t.columns : jt).map(ze), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => Pt(e, t, r, i));
 				if (a.length === 0) return this.renderMessage("no_repositories");
-				let o = t.column_titles ?? "text", s = n.map((t) => {
+				let o = t.column_titles ?? "text", s = n.map((e) => Mt(e, a)), c = n.map((t) => {
 					let n = G(t), r = a.map((e) => e.views.get(n)).find((e) => e !== void 0);
 					return {
 						text: t.name ?? r?.label ?? K(t.key),
@@ -1766,9 +1803,9 @@ var Pt = [
           <thead>
             <tr>
               <th>${H(e, "repository")}</th>
-              ${s.map((e) => k`<th
+              ${c.map((e, t) => k`<th
                     title=${e.text}
-                    style=${e.color ? `color: ${e.color}` : ""}
+                    style=${[`text-align: ${o === "icon" ? "center" : s[t] ?? "left"}`, e.color ? `color: ${e.color}` : ""].filter(Boolean).join("; ")}
                   >
                     ${o === "text" ? j : e.icon}${o === "icon" ? j : e.text}
                   </th>`)}
@@ -1777,9 +1814,14 @@ var Pt = [
           <tbody>
             ${a.map((e) => k`<tr>
                   <td class="name">
-                    ${t.show_activity ? this.activityDot(e) : j}${e.name}
+                    <span class="name__content"
+                      >${t.show_activity ? this.activityDot(e) : j}<span
+                        class="name__text"
+                        >${e.name}</span
+                      ></span
+                    >
                   </td>
-                  ${n.map((t) => this.renderCell(e.views.get(G(t)), t))}
+                  ${n.map((t, n) => this.renderCell(e.views.get(G(t)), t, s[n] ?? "left"))}
                 </tr>`)}
           </tbody>
         </table>
@@ -1796,12 +1838,12 @@ var Pt = [
 	yt,
 	Ot
 ];
-function Ft(e, t) {
+function It(e, t) {
 	customElements.get(e) || customElements.define(e, t);
 }
-function It(e = Pt) {
+function Lt(e = Ft) {
 	window.customCards ??= [];
-	for (let t of e) Ft(t.tag, t.ctor), t.editorTag && t.editorCtor && Ft(t.editorTag, t.editorCtor), window.customCards.some((e) => e.type === t.tag) || window.customCards.push({
+	for (let t of e) It(t.tag, t.ctor), t.editorTag && t.editorCtor && It(t.editorTag, t.editorCtor), window.customCards.some((e) => e.type === t.tag) || window.customCards.push({
 		type: t.tag,
 		name: t.name,
 		description: t.description,
@@ -1809,5 +1851,5 @@ function It(e = Pt) {
 	});
 }
 // src/index.ts
-It();
-export { It as registerCards };
+Lt();
+export { Lt as registerCards };

@@ -19,6 +19,7 @@ export const EDITOR_OPTION_NAMES = [
   "hide_owner",
   "show_activity",
   "column_titles",
+  "align",
   "repositories",
   "sort_by",
   "sort_order",

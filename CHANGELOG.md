@@ -7,6 +7,7 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Added
 
 - `show_release` on the GitHub card: shows the latest release version on the far side of the header. Off by default.
+- Per-column `align` in the repositories table. By default number columns align right, text columns left; icon-only titles are centred.
 - `column_titles` on the repositories table: titles as text, icon or icon and text.
 - `show_activity` on the repositories table: a green or grey dot before each name, by commits this month.
 - `hide_owner` on the repositories table: show `repo` instead of `owner/repo`.
@@ -20,6 +21,8 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Fixed
 
 - Selecting a repository twice in the repositories table no longer ties two entries together; duplicates are dropped.
+
+- The activity dot keeps its distance from the name and no longer wraps onto its own line.
 
 ### Removed
 

@@ -27,7 +27,9 @@ sort_order: desc
 | `show_activity` | `false` | A dot before each repository name: green when it had commits this month, grey otherwise |
 | `max_height` | `400` | Height in pixels before the table scrolls |
 
-A column is a sensor key or `sensor:attribute`, exactly like `fields` of the [device card](hoc-device-card.md#fields); objects work too: `name` replaces the column title, `icon` sets the icon used in the column title (see `column_titles`), `color` tints the values, and `trend` adds a change arrow from another sensor. `sort_by` takes `name` or a column. In the visual editor you choose from every sensor and attribute of your repositories.
+A column is a sensor key or `sensor:attribute`, exactly like `fields` of the [device card](hoc-device-card.md#fields); objects work too: `name` replaces the column title, `icon` sets the icon used in the column title (see `column_titles`), `color` tints the values, `align` sets `left`, `center` or `right` for the column, and `trend` adds a change arrow from another sensor. `sort_by` takes `name` or a column. In the visual editor you choose from every sensor and attribute of your repositories.
+
+Without `align`, columns that hold only numbers are right-aligned and everything else is left-aligned, titles included. Icon-only titles are always centred.
 
 ## UI Lovelace Minimalist
 

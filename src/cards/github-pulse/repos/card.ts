@@ -48,6 +48,18 @@ interface Row {
   views: Map<string, FieldView>;
 }
 
+type Alignment = "left" | "center" | "right";
+
+/** An explicit `align` wins; otherwise a column of only numbers aligns right and anything else left. */
+function columnAlignment(spec: FieldSpec, rows: Row[]): Alignment {
+  if (spec.align) return spec.align;
+  if (spec.key === "ci_state" && !spec.attribute) return "left";
+  const values = rows.flatMap((row) => row.views.get(fieldId(spec)) ?? []);
+  return values.length > 0 && values.every((view) => typeof view.raw === "number")
+    ? "right"
+    : "left";
+}
+
 function sortValue(row: Row, column: string): number | string | null {
   if (column === "name") return row.name;
   return row.views.get(column)?.raw ?? null;
@@ -102,6 +114,14 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
       .name {
         font-weight: 500;
         color: var(--primary-text-color);
+      }
+      .name__content {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .name__content .dot {
+        flex: none;
       }
       .cell {
         display: inline-flex;
@@ -158,12 +178,17 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
     return statusDot(commits > 0 ? "success" : undefined);
   }
 
-  private renderCell(view: FieldView | undefined, spec: FieldSpec): TemplateResult {
-    if (!view) return html`<td>—</td>`;
+  private renderCell(
+    view: FieldView | undefined,
+    spec: FieldSpec,
+    align: Alignment,
+  ): TemplateResult {
+    const style = `text-align: ${align}`;
+    if (!view) return html`<td style=${style}>—</td>`;
     if (spec.key === "ci_state" && !spec.attribute) {
-      return html`<td>${statusDot(view.stateObj.state)}</td>`;
+      return html`<td style=${style}>${statusDot(view.stateObj.state)}</td>`;
     }
-    return html`<td>
+    return html`<td style=${style}>
       <span class="cell ${view.tone || spec.color ? "cell--tone" : ""}" style="--c: ${view.color}"
         >${view.value}${view.unit ? html`<span class="cell__unit">${view.unit}</span>` : nothing}${
           view.trend ? trendArrow(view.trend) : nothing
@@ -182,6 +207,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
     if (rows.length === 0) return this.renderMessage("no_repositories");
 
     const titles = config.column_titles ?? "text";
+    const aligns = specs.map((spec) => columnAlignment(spec, rows));
     const headers = specs.map((spec) => {
       const id = fieldId(spec);
       const view = rows
@@ -201,10 +227,15 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
             <tr>
               <th>${t(hass, "repository")}</th>
               ${headers.map(
-                (header) =>
+                (header, index) =>
                   html`<th
                     title=${header.text}
-                    style=${header.color ? `color: ${header.color}` : ""}
+                    style=${[
+                      `text-align: ${titles === "icon" ? "center" : (aligns[index] ?? "left")}`,
+                      header.color ? `color: ${header.color}` : "",
+                    ]
+                      .filter(Boolean)
+                      .join("; ")}
                   >
                     ${titles === "text" ? nothing : header.icon}${
                       titles === "icon" ? nothing : header.text
@@ -218,9 +249,14 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
               (row) =>
                 html`<tr>
                   <td class="name">
-                    ${config.show_activity ? this.activityDot(row) : nothing}${row.name}
+                    <span class="name__content"
+                      >${config.show_activity ? this.activityDot(row) : nothing}<span
+                        class="name__text"
+                        >${row.name}</span
+                      ></span
+                    >
                   </td>
-                  ${specs.map((spec) => this.renderCell(row.views.get(fieldId(spec)), spec))}
+                  ${specs.map((spec, index) => this.renderCell(row.views.get(fieldId(spec)), spec, aligns[index] ?? "left"))}
                 </tr>`,
             )}
           </tbody>

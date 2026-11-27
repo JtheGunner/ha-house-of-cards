@@ -60,4 +60,8 @@ export const de: Record<LocaleKey, string> = {
   titles_icon_text: "Icon und Text",
   editor_column_titles: "Spaltentitel",
   editor_show_activity: "Aktivitätspunkt anzeigen",
+  align_left: "Links",
+  align_center: "Zentriert",
+  align_right: "Rechts",
+  editor_align: "Ausrichtung",
 };

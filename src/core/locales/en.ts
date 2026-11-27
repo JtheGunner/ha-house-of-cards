@@ -58,6 +58,10 @@ export const en = {
   titles_icon_text: "Icon and text",
   editor_column_titles: "Column titles",
   editor_show_activity: "Show activity dot",
+  align_left: "Left",
+  align_center: "Centre",
+  align_right: "Right",
+  editor_align: "Alignment",
 } as const;
 
 export type LocaleKey = keyof typeof en;

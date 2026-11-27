@@ -40,8 +40,13 @@ export function fieldsSelectorFromOptions(
   hass: HomeAssistant | undefined,
   options: FieldOption[],
   name = "fields",
+  withAlign = false,
 ): FormSchemaItem {
   const label = (key: string) => (hass ? editorLabel(hass, key) : key);
+  const alignOptions = ["left", "center", "right"].map((value) => ({
+    value,
+    label: hass ? t(hass, `align_${value}` as LocaleKey) : value,
+  }));
   return {
     name,
     selector: {
@@ -57,6 +62,14 @@ export function fieldsSelectorFromOptions(
           name: { label: label("name"), selector: { text: {} } },
           icon: { label: label("icon"), selector: { icon: {} } },
           color: { label: label("color"), selector: { ui_color: {} } },
+          ...(withAlign
+            ? {
+                align: {
+                  label: label("align"),
+                  selector: { select: { mode: "dropdown", options: alignOptions } },
+                },
+              }
+            : {}),
         },
       },
     },

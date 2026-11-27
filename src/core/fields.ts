@@ -12,6 +12,8 @@ export interface FieldSpec {
   color?: string;
   /** Key of another sensor whose percentage is shown as a trend arrow. */
   trend?: string;
+  /** Text alignment in tables. Without it numbers align right and text left. */
+  align?: "left" | "center" | "right";
 }
 
 export type FieldConfig = string | FieldSpec;
