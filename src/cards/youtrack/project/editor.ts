@@ -12,7 +12,7 @@ export class YoutrackProjectEditor extends HocBaseEditor<YoutrackProjectConfig> 
   protected schema() {
     return [
       { ...deviceSelector("youtrack"), required: true },
-      layoutSelector(["compact", "standard", "list"]),
+      layoutSelector(this.hass, ["compact", "standard", "list"]),
       { name: "name", selector: { text: {} } },
       { name: "link", selector: { boolean: {} } },
       { name: "show_status", selector: { boolean: {} } },

@@ -15,7 +15,7 @@ export class GithubProfileEditor extends HocBaseEditor<FieldsConfig> {
       this.config?.device ?? (this.hass ? findAccountDevice(this.hass, "github_pulse") : undefined);
     return [
       deviceSelector("github_pulse"),
-      layoutSelector(["compact", "standard", "list"]),
+      layoutSelector(this.hass, ["compact", "standard", "list"]),
       { name: "name", selector: { text: {} } },
       { name: "link", selector: { boolean: {} } },
       { name: "show_status", selector: { boolean: {} } },

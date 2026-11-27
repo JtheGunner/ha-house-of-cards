@@ -12,7 +12,7 @@ export class GithubRepoEditor extends HocBaseEditor<GithubRepoConfig> {
   protected schema() {
     return [
       { ...deviceSelector("github_pulse"), required: true },
-      layoutSelector(["compact", "standard", "list"]),
+      layoutSelector(this.hass, ["compact", "standard", "list"]),
       { name: "name", selector: { text: {} } },
       { name: "link", selector: { boolean: {} } },
       { name: "show_status", selector: { boolean: {} } },

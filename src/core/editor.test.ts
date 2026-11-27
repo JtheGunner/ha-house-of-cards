@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { fixtureHass } from "../../test/fixtures/hass";
 import type { BaseConfig } from "./base-card";
-import { deviceSelector, fieldsSelectorFromOptions, HocBaseEditor, layoutSelector } from "./editor";
+import {
+  choiceSelector,
+  deviceSelector,
+  fieldsSelectorFromOptions,
+  HocBaseEditor,
+  layoutSelector,
+} from "./editor";
 
 class TestEditor extends HocBaseEditor<{ type: string; device?: string; layout?: string }> {
   protected schema() {
-    return [deviceSelector("github_pulse"), layoutSelector(["compact", "standard"])];
+    return [deviceSelector("github_pulse"), layoutSelector(undefined, ["compact", "standard"])];
   }
 }
 customElements.define("hoc-test-editor", TestEditor);
@@ -50,8 +56,14 @@ describe("selectors", () => {
     });
   });
   it("layoutSelector offers the given options", () => {
-    expect(layoutSelector(["compact", "list"]).selector).toEqual({
-      select: { mode: "dropdown", options: ["compact", "list"] },
+    expect(layoutSelector(undefined, ["compact", "list"]).selector).toEqual({
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "compact", label: "compact" },
+          { value: "list", label: "list" },
+        ],
+      },
     });
   });
 });
@@ -60,7 +72,7 @@ describe("field list editing", () => {
   class FieldEditor extends HocBaseEditor<BaseConfig & { fields?: unknown[] }> {
     protected override fieldListNames = ["fields"];
     protected schema() {
-      return [fieldsSelectorFromOptions([{ value: "stars", label: "Stars" }])];
+      return [fieldsSelectorFromOptions(undefined, [{ value: "stars", label: "Stars" }])];
     }
   }
   customElements.define("hoc-field-test-editor", FieldEditor);
@@ -83,7 +95,7 @@ describe("field list editing", () => {
   }
 
   it("offers name, icon and colour per field", () => {
-    const schema = fieldsSelectorFromOptions([{ value: "stars", label: "Stars" }]);
+    const schema = fieldsSelectorFromOptions(undefined, [{ value: "stars", label: "Stars" }]);
     const fields = (schema.selector as { object: { fields: Record<string, unknown> } }).object
       .fields;
     expect(Object.keys(fields)).toEqual(["key", "name", "icon", "color"]);
@@ -116,5 +128,47 @@ describe("field list editing", () => {
       }),
     );
     expect(received[0]?.fields).toEqual([{ key: "stars", icon: "mdi:star" }]);
+  });
+});
+
+describe("editor labels", () => {
+  it("labels options and field parts in the Home Assistant language, capitalised", async () => {
+    const editor = document.createElement("hoc-test-editor") as TestEditor;
+    editor.hass = fixtureHass({ language: "de" });
+    editor.setConfig({ type: "custom:x" });
+    document.body.append(editor);
+    await editor.updateComplete;
+    const form = editor.shadowRoot?.querySelector("ha-form") as unknown as {
+      computeLabel: (item: { name: string }) => string;
+    };
+    expect(form.computeLabel({ name: "device" })).toBe("Gerät");
+    const hass = fixtureHass({ language: "de" });
+    const fields = (
+      fieldsSelectorFromOptions(hass, []).selector as {
+        object: { fields: Record<string, { label: string }> };
+      }
+    ).object.fields;
+    expect(Object.values(fields).map((f) => f.label)).toEqual(["Sensor", "Name", "Icon", "Farbe"]);
+  });
+});
+
+describe("choice labels", () => {
+  it("translates layout and order values", () => {
+    const de = fixtureHass({ language: "de" });
+    const en = fixtureHass();
+    const labels = (item: { selector: unknown }) =>
+      (item.selector as { select: { options: { label: string }[] } }).select.options.map(
+        (o) => o.label,
+      );
+    expect(labels(layoutSelector(de, ["compact", "standard", "list"]))).toEqual([
+      "Kompakt",
+      "Standard",
+      "Liste",
+    ]);
+    expect(labels(layoutSelector(en, ["compact", "list"]))).toEqual(["Compact", "List"]);
+    expect(labels(choiceSelector(de, "order", ["asc", "desc"], "sort_order"))).toEqual([
+      "Aufsteigend",
+      "Absteigend",
+    ]);
   });
 });
