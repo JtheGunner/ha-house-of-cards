@@ -127,9 +127,9 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
       tbody tr + tr td {
         border-top: 1px solid var(--divider-color);
       }
-      .name {
+      td.name {
         font-weight: 500;
-        color: var(--primary-text-color);
+        color: var(--secondary-text-color);
       }
       .name__content {
         display: inline-flex;

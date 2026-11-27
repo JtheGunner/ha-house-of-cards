@@ -107,4 +107,7 @@ export const fieldStyles = css`
   .field--row .field__main {
     order: 2;
   }
+  .field--row .field__label {
+    font-size: ${fontPrimary};
+  }
 `;

@@ -253,34 +253,34 @@ var g = class extends HTMLElement {
 };
 g.elementStyles = [], g.shadowRootOptions = { mode: "open" }, g[h("elementProperties")] = /* @__PURE__ */ new Map(), g[h("finalized")] = /* @__PURE__ */ new Map(), re?.({ ReactiveElement: g }), (p.reactiveElementVersions ??= []).push("2.1.2");
 // node_modules/lit-html/lit-html.js
-var se = globalThis, ce = (e) => e, _ = se.trustedTypes, le = _ ? _.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, ue = "$lit$", v = `lit$${Math.random().toFixed(9).slice(2)}$`, de = "?" + v, fe = `<${de}>`, y = document, b = () => y.createComment(""), x = (e) => e === null || typeof e != "object" && typeof e != "function", pe = Array.isArray, me = (e) => pe(e) || typeof e?.[Symbol.iterator] == "function", he = "[ 	\n\f\r]", S = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ge = /-->/g, _e = />/g, C = RegExp(`>|${he}(?:([^\\s"'>=/]+)(${he}*=${he}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ve = /'/g, ye = /"/g, be = /^(?:script|style|textarea|title)$/i, w = ((e) => (t, ...n) => ({
+var se = globalThis, ce = (e) => e, _ = se.trustedTypes, le = _ ? _.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, ue = "$lit$", v = `lit$${Math.random().toFixed(9).slice(2)}$`, de = "?" + v, fe = `<${de}>`, y = document, b = () => y.createComment(""), x = (e) => e === null || typeof e != "object" && typeof e != "function", S = Array.isArray, pe = (e) => S(e) || typeof e?.[Symbol.iterator] == "function", me = "[ 	\n\f\r]", C = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, he = /-->/g, ge = />/g, w = RegExp(`>|${me}(?:([^\\s"'>=/]+)(${me}*=${me}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), _e = /'/g, ve = /"/g, ye = /^(?:script|style|textarea|title)$/i, T = ((e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
-}))(1), T = Symbol.for("lit-noChange"), E = Symbol.for("lit-nothing"), xe = /* @__PURE__ */ new WeakMap(), D = y.createTreeWalker(y, 129);
-function Se(e, t) {
-	if (!pe(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+}))(1), E = Symbol.for("lit-noChange"), D = Symbol.for("lit-nothing"), be = /* @__PURE__ */ new WeakMap(), O = y.createTreeWalker(y, 129);
+function xe(e, t) {
+	if (!S(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
 	return le === void 0 ? t : le.createHTML(t);
 }
-var Ce = (e, t) => {
-	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = S;
+var Se = (e, t) => {
+	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = C;
 	for (let t = 0; t < n; t++) {
 		let n = e[t], s, c, l = -1, u = 0;
-		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === S ? c[1] === "!--" ? o = ge : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = C) : (be.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = C) : o = _e : o === C ? c[0] === ">" ? (o = i ?? S, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? C : c[3] === "\"" ? ye : ve) : o === ye || o === ve ? o = C : o === ge || o === _e ? o = S : (o = C, i = void 0);
-		let d = o === C && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === S ? n + fe : l >= 0 ? (r.push(s), n.slice(0, l) + ue + n.slice(l) + v + d) : n + v + (l === -2 ? t : d);
+		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === C ? c[1] === "!--" ? o = he : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = w) : (ye.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = w) : o = ge : o === w ? c[0] === ">" ? (o = i ?? C, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? w : c[3] === "\"" ? ve : _e) : o === ve || o === _e ? o = w : o === he || o === ge ? o = C : (o = w, i = void 0);
+		let d = o === w && e[t + 1].startsWith("/>") ? " " : "";
+		a += o === C ? n + fe : l >= 0 ? (r.push(s), n.slice(0, l) + ue + n.slice(l) + v + d) : n + v + (l === -2 ? t : d);
 	}
-	return [Se(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
-}, O = class e {
+	return [xe(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
+}, k = class e {
 	constructor({ strings: t, _$litType$: n }, r) {
 		let i;
 		this.parts = [];
-		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = Ce(t, n);
-		if (this.el = e.createElement(l, r), D.currentNode = this.el.content, n === 2 || n === 3) {
+		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = Se(t, n);
+		if (this.el = e.createElement(l, r), O.currentNode = this.el.content, n === 2 || n === 3) {
 			let e = this.el.content.firstChild;
 			e.replaceWith(...e.childNodes);
 		}
-		for (; (i = D.nextNode()) !== null && c.length < s;) {
+		for (; (i = O.nextNode()) !== null && c.length < s;) {
 			if (i.nodeType === 1) {
 				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(ue)) {
 					let t = u[o++], n = i.getAttribute(e).split(v), r = /([.?@])?(.*)/.exec(t);
@@ -289,17 +289,17 @@ var Ce = (e, t) => {
 						index: a,
 						name: r[2],
 						strings: n,
-						ctor: r[1] === "." ? Ee : r[1] === "?" ? De : r[1] === "@" ? Oe : A
+						ctor: r[1] === "." ? Te : r[1] === "?" ? Ee : r[1] === "@" ? De : j
 					}), i.removeAttribute(e);
 				} else e.startsWith(v) && (c.push({
 					type: 6,
 					index: a
 				}), i.removeAttribute(e));
-				if (be.test(i.tagName)) {
+				if (ye.test(i.tagName)) {
 					let e = i.textContent.split(v), t = e.length - 1;
 					if (t > 0) {
 						i.textContent = _ ? _.emptyScript : "";
-						for (let n = 0; n < t; n++) i.append(e[n], b()), D.nextNode(), c.push({
+						for (let n = 0; n < t; n++) i.append(e[n], b()), O.nextNode(), c.push({
 							type: 2,
 							index: ++a
 						});
@@ -327,12 +327,12 @@ var Ce = (e, t) => {
 		return n.innerHTML = e, n;
 	}
 };
-function k(e, t, n = e, r) {
-	if (t === T) return t;
+function A(e, t, n = e, r) {
+	if (t === E) return t;
 	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = x(t) ? void 0 : t._$litDirective$;
-	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = k(e, i._$AS(e, t.values), i, r)), t;
+	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = A(e, i._$AS(e, t.values), i, r)), t;
 }
-var we = class {
+var Ce = class {
 	constructor(e, t) {
 		this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
 	}
@@ -344,27 +344,27 @@ var we = class {
 	}
 	u(e) {
 		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? y).importNode(t, !0);
-		D.currentNode = r;
-		let i = D.nextNode(), a = 0, o = 0, s = n[0];
+		O.currentNode = r;
+		let i = O.nextNode(), a = 0, o = 0, s = n[0];
 		for (; s !== void 0;) {
 			if (a === s.index) {
 				let t;
-				s.type === 2 ? t = new Te(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new ke(i, this, e)), this._$AV.push(t), s = n[++o];
+				s.type === 2 ? t = new we(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new Oe(i, this, e)), this._$AV.push(t), s = n[++o];
 			}
-			a !== s?.index && (i = D.nextNode(), a++);
+			a !== s?.index && (i = O.nextNode(), a++);
 		}
-		return D.currentNode = y, r;
+		return O.currentNode = y, r;
 	}
 	p(e) {
 		let t = 0;
 		for (let n of this._$AV) n !== void 0 && (n.strings === void 0 ? n._$AI(e[t]) : (n._$AI(e, n, t), t += n.strings.length - 2)), t++;
 	}
-}, Te = class e {
+}, we = class e {
 	get _$AU() {
 		return this._$AM?._$AU ?? this._$Cv;
 	}
 	constructor(e, t, n, r) {
-		this.type = 2, this._$AH = E, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
+		this.type = 2, this._$AH = D, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
 	}
 	get parentNode() {
 		let e = this._$AA.parentNode, t = this._$AM;
@@ -377,7 +377,7 @@ var we = class {
 		return this._$AB;
 	}
 	_$AI(e, t = this) {
-		e = k(this, e, t), x(e) ? e === E || e == null || e === "" ? (this._$AH !== E && this._$AR(), this._$AH = E) : e !== this._$AH && e !== T && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? me(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
+		e = A(this, e, t), x(e) ? e === D || e == null || e === "" ? (this._$AH !== D && this._$AR(), this._$AH = D) : e !== this._$AH && e !== E && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? pe(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
 	}
 	O(e) {
 		return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -386,22 +386,22 @@ var we = class {
 		this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
 	}
 	_(e) {
-		this._$AH !== E && x(this._$AH) ? this._$AA.nextSibling.data = e : this.T(y.createTextNode(e)), this._$AH = e;
+		this._$AH !== D && x(this._$AH) ? this._$AA.nextSibling.data = e : this.T(y.createTextNode(e)), this._$AH = e;
 	}
 	$(e) {
-		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = O.createElement(Se(n.h, n.h[0]), this.options)), n);
+		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = k.createElement(xe(n.h, n.h[0]), this.options)), n);
 		if (this._$AH?._$AD === r) this._$AH.p(t);
 		else {
-			let e = new we(r, this), n = e.u(this.options);
+			let e = new Ce(r, this), n = e.u(this.options);
 			e.p(t), this.T(n), this._$AH = e;
 		}
 	}
 	_$AC(e) {
-		let t = xe.get(e.strings);
-		return t === void 0 && xe.set(e.strings, t = new O(e)), t;
+		let t = be.get(e.strings);
+		return t === void 0 && be.set(e.strings, t = new k(e)), t;
 	}
 	k(t) {
-		pe(this._$AH) || (this._$AH = [], this._$AR());
+		S(this._$AH) || (this._$AH = [], this._$AR());
 		let n = this._$AH, r, i = 0;
 		for (let a of t) i === n.length ? n.push(r = new e(this.O(b()), this.O(b()), this, this.options)) : r = n[i], r._$AI(a), i++;
 		i < n.length && (this._$AR(r && r._$AB.nextSibling, i), n.length = i);
@@ -415,7 +415,7 @@ var we = class {
 	setConnected(e) {
 		this._$AM === void 0 && (this._$Cv = e, this._$AP?.(e));
 	}
-}, A = class {
+}, j = class {
 	get tagName() {
 		return this.element.tagName;
 	}
@@ -423,47 +423,47 @@ var we = class {
 		return this._$AM._$AU;
 	}
 	constructor(e, t, n, r, i) {
-		this.type = 1, this._$AH = E, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = E;
+		this.type = 1, this._$AH = D, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = D;
 	}
 	_$AI(e, t = this, n, r) {
 		let i = this.strings, a = !1;
-		if (i === void 0) e = k(this, e, t, 0), a = !x(e) || e !== this._$AH && e !== T, a && (this._$AH = e);
+		if (i === void 0) e = A(this, e, t, 0), a = !x(e) || e !== this._$AH && e !== E, a && (this._$AH = e);
 		else {
 			let r = e, o, s;
-			for (e = i[0], o = 0; o < i.length - 1; o++) s = k(this, r[n + o], t, o), s === T && (s = this._$AH[o]), a ||= !x(s) || s !== this._$AH[o], s === E ? e = E : e !== E && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
+			for (e = i[0], o = 0; o < i.length - 1; o++) s = A(this, r[n + o], t, o), s === E && (s = this._$AH[o]), a ||= !x(s) || s !== this._$AH[o], s === D ? e = D : e !== D && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
 		}
 		a && !r && this.j(e);
 	}
 	j(e) {
-		e === E ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
+		e === D ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
 	}
-}, Ee = class extends A {
+}, Te = class extends j {
 	constructor() {
 		super(...arguments), this.type = 3;
 	}
 	j(e) {
-		this.element[this.name] = e === E ? void 0 : e;
+		this.element[this.name] = e === D ? void 0 : e;
 	}
-}, De = class extends A {
+}, Ee = class extends j {
 	constructor() {
 		super(...arguments), this.type = 4;
 	}
 	j(e) {
-		this.element.toggleAttribute(this.name, !!e && e !== E);
+		this.element.toggleAttribute(this.name, !!e && e !== D);
 	}
-}, Oe = class extends A {
+}, De = class extends j {
 	constructor(e, t, n, r, i) {
 		super(e, t, n, r, i), this.type = 5;
 	}
 	_$AI(e, t = this) {
-		if ((e = k(this, e, t, 0) ?? E) === T) return;
-		let n = this._$AH, r = e === E && n !== E || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== E && (n === E || r);
+		if ((e = A(this, e, t, 0) ?? D) === E) return;
+		let n = this._$AH, r = e === D && n !== D || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== D && (n === D || r);
 		r && this.element.removeEventListener(this.name, this, n), i && this.element.addEventListener(this.name, this, e), this._$AH = e;
 	}
 	handleEvent(e) {
 		typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, e) : this._$AH.handleEvent(e);
 	}
-}, ke = class {
+}, Oe = class {
 	constructor(e, t, n) {
 		this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = n;
 	}
@@ -471,18 +471,18 @@ var we = class {
 		return this._$AM._$AU;
 	}
 	_$AI(e) {
-		k(this, e);
+		A(this, e);
 	}
 };
-(0, se.litHtmlPolyfillSupport)?.(O, Te), (se.litHtmlVersions ??= []).push("3.3.3");
-var Ae = (e, t, n) => {
+(0, se.litHtmlPolyfillSupport)?.(k, we), (se.litHtmlVersions ??= []).push("3.3.3");
+var ke = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
-		r._$litPart$ = i = new Te(t.insertBefore(b(), e), e, void 0, n ?? {});
+		r._$litPart$ = i = new we(t.insertBefore(b(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
-}, je = globalThis, j = class extends g {
+}, M = globalThis, N = class extends g {
 	constructor() {
 		super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
 	}
@@ -492,7 +492,7 @@ var Ae = (e, t, n) => {
 	}
 	update(e) {
 		let t = this.render();
-		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Ae(t, this.renderRoot, this.renderOptions);
+		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = ke(t, this.renderRoot, this.renderOptions);
 	}
 	connectedCallback() {
 		super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -501,14 +501,14 @@ var Ae = (e, t, n) => {
 		super.disconnectedCallback(), this._$Do?.setConnected(!1);
 	}
 	render() {
-		return T;
+		return E;
 	}
 };
-j._$litElement$ = !0, j.finalized = !0, je.litElementHydrateSupport?.({ LitElement: j }), (0, je.litElementPolyfillSupport)?.({ LitElement: j }), (je.litElementVersions ??= []).push("4.2.2");
+N._$litElement$ = !0, N.finalized = !0, M.litElementHydrateSupport?.({ LitElement: N }), (0, M.litElementPolyfillSupport)?.({ LitElement: N }), (M.litElementVersions ??= []).push("4.2.2");
 // src/core/parts/typography.ts
-var Me = o`var(--ha-font-size-m, 14px)`, M = o`var(--ha-font-size-s, 12px)`;
+var Ae = o`var(--ha-font-size-m, 14px)`, P = o`var(--ha-font-size-s, 12px)`;
 // src/core/parts/index.ts
-function Ne(e) {
+function je(e) {
 	switch (e) {
 		case "success": return "success";
 		case "failure":
@@ -517,21 +517,21 @@ function Ne(e) {
 		default: return "neutral";
 	}
 }
+function Me(e) {
+	return T`<span class="dot dot--${je(e)}" aria-hidden="true"></span>`;
+}
+function Ne(e) {
+	return e ? T`<span class="dot" style="background: ${e}" aria-hidden="true"></span>` : T`<span class="dot dot--neutral" aria-hidden="true"></span>`;
+}
 function Pe(e) {
-	return w`<span class="dot dot--${Ne(e)}" aria-hidden="true"></span>`;
-}
-function Fe(e) {
-	return e ? w`<span class="dot" style="background: ${e}" aria-hidden="true"></span>` : w`<span class="dot dot--neutral" aria-hidden="true"></span>`;
-}
-function Ie(e) {
 	let t = {
 		up: "▲",
 		down: "▼",
 		flat: "▬"
 	}[e.direction], n = e.direction !== "flat" && e.percent !== null ? ` ${Math.round(Math.abs(e.percent))} %` : "";
-	return w`<span class="trend trend--${e.direction}">${t}${n}</span>`;
+	return T`<span class="trend trend--${e.direction}">${t}${n}</span>`;
 }
-var Le = o`
+var Fe = o`
   .dot {
     display: inline-block;
     width: 0.6em;
@@ -549,7 +549,7 @@ var Le = o`
     background: var(--warning-color);
   }
   .trend {
-    font-size: ${M};
+    font-size: ${P};
     color: var(--secondary-text-color);
   }
   .trend--up {
@@ -558,7 +558,7 @@ var Le = o`
   .trend--down {
     color: var(--error-color);
   }
-`, Re = {
+`, Ie = {
 	device_not_found: "Gerät nicht gefunden",
 	no_devices: "Keine Geräte",
 	choose_devices: "Wähle Geräte oder eine Integration",
@@ -648,7 +648,7 @@ var Le = o`
 	state_pending: "Warnung",
 	state_failure: "Fehler",
 	state_none: "Kein Status"
-}, N = {
+}, F = {
 	device_not_found: "Device not found",
 	no_devices: "No devices",
 	choose_devices: "Choose devices or an integration",
@@ -738,21 +738,21 @@ var Le = o`
 	state_pending: "Warning",
 	state_failure: "Error",
 	state_none: "No status"
-}, ze = {
-	en: N,
-	de: Re
+}, Le = {
+	en: F,
+	de: Ie
 };
-function P(e, t) {
-	let n = `editor_${t}`, r = (ze[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? N)[n] ?? N[n];
+function I(e, t) {
+	let n = `editor_${t}`, r = (Le[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? F)[n] ?? F[n];
 	if (r) return r;
 	let i = t.replace(/_/g, " ");
 	return i.charAt(0).toUpperCase() + i.slice(1);
 }
-function F(e, t) {
-	return (ze[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? N)[t];
+function L(e, t) {
+	return (Le[e.locale.language.toLowerCase().split("-")[0] ?? "en"] ?? F)[t];
 }
 // src/core/base-card.ts
-var I = class extends j {
+var R = class extends N {
 	static {
 		this.requiredKeys = [];
 	}
@@ -763,7 +763,7 @@ var I = class extends j {
 		};
 	}
 	static {
-		this.styles = [Le, o`
+		this.styles = [Fe, o`
       ha-card {
         padding: 12px 16px;
       }
@@ -791,20 +791,20 @@ var I = class extends j {
 		};
 	}
 	renderMessage(e, t = !1) {
-		let n = this.hass ? F(this.hass, e) : e;
-		return w`<ha-card
+		let n = this.hass ? L(this.hass, e) : e;
+		return T`<ha-card
       ><div class="message ${t ? "message--error" : ""}">${n}</div></ha-card
     >`;
 	}
 	render() {
-		return !this.config || !this.hass ? E : this.renderContent();
+		return !this.config || !this.hass ? D : this.renderContent();
 	}
-}, Be = 1;
-function Ve(e) {
+}, Re = 1;
+function ze(e) {
 	return e === null || !Number.isFinite(e) ? {
 		direction: "flat",
 		percent: null
-	} : Math.abs(e) <= Be ? {
+	} : Math.abs(e) <= Re ? {
 		direction: "flat",
 		percent: e
 	} : {
@@ -812,24 +812,24 @@ function Ve(e) {
 		percent: e
 	};
 }
-var He = /* @__PURE__ */ new Set([
+var Be = /* @__PURE__ */ new Set([
 	"unknown",
 	"unavailable",
 	""
 ]);
-function Ue(e) {
-	return e === void 0 || He.has(e);
+function Ve(e) {
+	return e === void 0 || Be.has(e);
 }
-function L(e) {
+function z(e) {
 	if (e === void 0 || e.trim() === "") return null;
 	let t = Number(e);
 	return Number.isFinite(t) ? t : null;
 }
-function We(e) {
-	let t = L(e);
+function He(e) {
+	let t = z(e);
 	return t === null ? "—" : Math.abs(t) < 1e3 ? String(t) : `${Number((t / 1e3).toFixed(1))}k`;
 }
-function R(e) {
+function B(e) {
 	if (typeof e != "string" || !e.startsWith("https://")) return !1;
 	try {
 		return new URL(e).protocol === "https:";
@@ -838,7 +838,7 @@ function R(e) {
 	}
 }
 // src/core/fields.ts
-var Ge = {
+var Ue = {
 	stars: "stars",
 	forks: "forks",
 	open_issues: "issues",
@@ -863,7 +863,7 @@ var Ge = {
 	issues_critical_open: "issues_critical_open",
 	issues_created_7d: "issues_created_7d",
 	issues_resolved_7d: "issues_resolved_7d"
-}, Ke = [
+}, We = [
 	"blue",
 	"purple",
 	"teal",
@@ -872,11 +872,11 @@ var Ge = {
 	"green",
 	"indigo",
 	"amber"
-], z = {
+], V = {
 	success: "var(--success-color, var(--green-color))",
 	failure: "var(--error-color, var(--red-color))",
 	pending: "var(--warning-color, var(--amber-color))"
-}, qe = /* @__PURE__ */ new Set([
+}, Ge = /* @__PURE__ */ new Set([
 	"friendly_name",
 	"unit_of_measurement",
 	"device_class",
@@ -889,7 +889,7 @@ var Ge = {
 	"restored",
 	"editable"
 ]);
-function B(e) {
+function H(e) {
 	if (typeof e != "string") {
 		if (e.attribute === void 0 && e.key.includes(":")) {
 			let [t = "", ...n] = e.key.split(":");
@@ -907,42 +907,42 @@ function B(e) {
 		attribute: n.join(":")
 	} : { key: t };
 }
-function V(e) {
+function U(e) {
 	return e.attribute ? `${e.key}:${e.attribute}` : e.key;
 }
-function H(e) {
+function W(e) {
 	let t = e.replace(/_/g, " ");
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
-function Je(e) {
+function Ke(e) {
 	let t = 0;
 	for (let n of e) t = t * 31 + n.charCodeAt(0) >>> 0;
 	return t;
 }
-function U(e) {
+function qe(e) {
 	return `var(--${e}-color)`;
 }
-function W(e) {
-	return /^[a-z-]+$/.test(e) ? U(e) : e;
+function G(e) {
+	return /^[a-z-]+$/.test(e) ? qe(e) : e;
 }
-function Ye(e) {
-	return U(Ke[Je(e) % Ke.length] ?? "blue");
+function Je(e) {
+	return qe(We[Ke(e) % We.length] ?? "blue");
 }
-function Xe(e, t) {
-	return e.color ? /^[a-z-]+$/.test(e.color) ? U(e.color) : e.color : t ? z[t] : Ye(e.key);
+function Ye(e, t) {
+	return e.color ? /^[a-z-]+$/.test(e.color) ? qe(e.color) : e.color : t ? V[t] : Je(e.key);
 }
-function G(e, t, n, r) {
-	let i = Ge[t];
-	if (i) return F(e, i);
+function Xe(e, t, n, r) {
+	let i = Ue[t];
+	if (i) return L(e, i);
 	let a = n.attributes.friendly_name;
-	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || H(t);
+	return typeof a == "string" && a.trim() !== "" && (r && a.startsWith(`${r} `) ? a.slice(r.length + 1) : a).trim() || W(t);
 }
 function Ze(e, t) {
 	if (t === "success") return "success";
 	if (t === "failure" || t === "error") return "failure";
 	if (t === "pending" || t === "queued") return "pending";
 	if (e.startsWith("has_") && t === "on") return "failure";
-	let n = L(t);
+	let n = z(t);
 	if (n !== null) {
 		if (/(overdue|critical|failing|stale)/.test(e)) return n > 0 ? "failure" : void 0;
 		if (/(_vs_|trend)/.test(e)) {
@@ -952,37 +952,37 @@ function Ze(e, t) {
 	}
 }
 function Qe(e) {
-	if (typeof e == "number") return Math.abs(e) >= 1e3 ? We(String(e)) : String(e);
+	if (typeof e == "number") return Math.abs(e) >= 1e3 ? He(String(e)) : String(e);
 	if (typeof e == "string") return e.trim() === "" ? void 0 : e;
 	if (typeof e == "boolean") return e ? "✓" : "–";
 	if (Array.isArray(e)) return String(e.length);
 }
 function $e(e, t) {
-	let n = t.attributes.unit_of_measurement, r = typeof n == "string" && n !== "" ? n : void 0, i = L(t.state);
+	let n = t.attributes.unit_of_measurement, r = typeof n == "string" && n !== "" ? n : void 0, i = z(t.state);
 	return i === null ? { value: e.formatEntityState?.(t) ?? t.state } : r ? {
 		value: String(i),
 		unit: r
-	} : { value: Math.abs(i) >= 1e3 ? We(t.state) : String(i) };
+	} : { value: Math.abs(i) >= 1e3 ? He(t.state) : String(i) };
 }
 function K(e, t, n, r) {
 	return n.flatMap((n) => {
 		let i = t[n.key];
-		if (!i || Ue(i.state)) return [];
+		if (!i || Ve(i.state)) return [];
 		let a, o;
 		if (n.attribute) {
 			let e = i.attributes[n.attribute], t = Qe(e);
 			if (t === void 0) return [];
 			a = { value: t }, o = typeof e == "number" ? e : t;
-		} else a = $e(e, i), o = L(i.state) ?? i.state;
-		let s = n.attribute ? void 0 : Ze(n.key, i.state), c = n.name ?? (n.attribute ? `${G(e, n.key, i, r)} › ${H(n.attribute)}` : G(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
-			id: V(n),
+		} else a = $e(e, i), o = z(i.state) ?? i.state;
+		let s = n.attribute ? void 0 : Ze(n.key, i.state), c = n.name ?? (n.attribute ? `${Xe(e, n.key, i, r)} › ${W(n.attribute)}` : Xe(e, n.key, i, r)), l = n.trend ? t[n.trend]?.state : void 0, u = {
+			id: U(n),
 			label: c,
 			...a,
 			raw: o,
-			color: Xe(n, s),
+			color: Ye(n, s),
 			stateObj: i
 		};
-		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = Ve(L(l))), [u];
+		return n.icon && (u.icon = n.icon), n.attribute && (u.attribute = n.attribute), s && (u.tone = s), l !== void 0 && (u.trend = ze(z(l))), [u];
 	});
 }
 function et(e) {
@@ -990,7 +990,7 @@ function et(e) {
 		"failure",
 		"pending",
 		"success"
-	]) if (e.some((e) => e.tone === t)) return z[t];
+	]) if (e.some((e) => e.tone === t)) return V[t];
 }
 function q(e, t) {
 	let n = e.devices[t]?.name ?? void 0, r = [], i = /* @__PURE__ */ new Set();
@@ -1001,14 +1001,14 @@ function q(e, t) {
 		let s = a.translation_key || a.entity_id;
 		if (i.has(s)) continue;
 		i.add(s);
-		let c = G(e, s, o, n);
+		let c = Xe(e, s, o, n);
 		r.push({
 			value: s,
 			label: c
 		});
-		for (let [e, t] of Object.entries(o.attributes)) qe.has(e) || Qe(t) === void 0 || Array.isArray(t) || r.push({
+		for (let [e, t] of Object.entries(o.attributes)) Ge.has(e) || Qe(t) === void 0 || Array.isArray(t) || r.push({
 			value: `${s}:${e}`,
-			label: `${c} › ${H(e)}`
+			label: `${c} › ${W(e)}`
 		});
 	}
 	return r.sort((e, t) => {
@@ -1037,7 +1037,7 @@ var tt = o`
     flex: none;
     padding: 2px 10px;
     border-radius: 999px;
-    font-size: ${M};
+    font-size: ${P};
     color: var(--secondary-text-color);
     background: var(--secondary-background-color);
   }
@@ -1046,7 +1046,7 @@ var tt = o`
     background: color-mix(in srgb, var(--c) 16%, transparent);
   }
   .name {
-    font-size: ${Me};
+    font-size: ${Ae};
     font-weight: 500;
     color: var(--primary-text-color);
   }
@@ -1061,13 +1061,13 @@ var tt = o`
 function lt(e, t) {
 	if (!t) return;
 	let n = e.trim().toLowerCase(), r = Object.keys(t).find((e) => e.trim().toLowerCase() === n), i = r ? t[r] : void 0;
-	return i ? W(i) : void 0;
+	return i ? G(i) : void 0;
 }
 function ut(e, t) {
-	return lt(e, t) || (nt.test(e) ? z.success : it.test(e) ? z.failure : rt.test(e) ? z.pending : at.test(e) ? W("blue") : Ye(e));
+	return lt(e, t) || (nt.test(e) ? V.success : it.test(e) ? V.failure : rt.test(e) ? V.pending : at.test(e) ? G("blue") : Je(e));
 }
 function dt(e, t) {
-	return lt(e, t) || (ot.test(e) ? z.failure : st.test(e) ? z.pending : ct.test(e) ? "var(--disabled-text-color)" : "var(--divider-color)");
+	return lt(e, t) || (ot.test(e) ? V.failure : st.test(e) ? V.pending : ct.test(e) ? "var(--disabled-text-color)" : "var(--divider-color)");
 }
 // src/core/status.ts
 var ft = [
@@ -1096,20 +1096,20 @@ function ht(e) {
 		let e = n;
 		return {
 			tone: e,
-			color: z[e]
+			color: V[e]
 		};
 	}
-	return { color: W(t) };
+	return { color: G(t) };
 }
 function gt(e, t) {
-	let n = B(t), r = e[n.key];
-	if (r && !Ue(r.state)) return n.attribute ? r.attributes[n.attribute] : r.state;
+	let n = H(t), r = e[n.key];
+	if (r && !Ve(r.state)) return n.attribute ? r.attributes[n.attribute] : r.state;
 }
 function _t(e, t, n) {
 	if (e == null) return !1;
 	let r = String(e).toLowerCase(), i = String(n ?? "").toLowerCase();
 	if (t === "contains") return r.includes(i);
-	let a = L(String(e)), o = L(String(n));
+	let a = z(String(e)), o = z(String(n));
 	if (a !== null && o !== null) switch (t) {
 		case "=": return a === o;
 		case "!=": return a !== o;
@@ -1144,7 +1144,7 @@ function bt(e, t, n, r) {
 			mode: "dropdown",
 			options: n.map((n) => ({
 				value: n,
-				label: e ? F(e, `${t}_${n}`) : n
+				label: e ? L(e, `${t}_${n}`) : n
 			}))
 		} }
 	};
@@ -1153,13 +1153,13 @@ function xt(e, t, n = "layout") {
 	return bt(e, "layout", t, n);
 }
 function St(e, t, n = "fields", r = !1) {
-	let i = (t) => e ? P(e, t) : t, a = [
+	let i = (t) => e ? I(e, t) : t, a = [
 		"left",
 		"center",
 		"right"
 	].map((t) => ({
 		value: t,
-		label: e ? F(e, `align_${t}`) : t
+		label: e ? L(e, `align_${t}`) : t
 	}));
 	return {
 		name: n,
@@ -1213,13 +1213,13 @@ function wt(e, t) {
 		hasDevicePage: !1,
 		attributeUrls: []
 	};
-	let n = t.some((t) => R(e.devices[t]?.configuration_url)), r = /* @__PURE__ */ new Map();
+	let n = t.some((t) => B(e.devices[t]?.configuration_url)), r = /* @__PURE__ */ new Map();
 	for (let n of t) for (let t of q(e, n)) {
 		let [i, a] = t.value.split(":");
 		i && a && !r.has(t.value) && Object.values(e.entities).some((t) => {
 			if (t.device_id !== n || (t.translation_key || t.entity_id) !== i) return !1;
 			let r = e.states[t.entity_id]?.attributes[a];
-			return typeof r == "string" && R(r);
+			return typeof r == "string" && B(r);
 		}) && r.set(t.value, t);
 	}
 	return {
@@ -1228,7 +1228,7 @@ function wt(e, t) {
 	};
 }
 function Tt(e, t) {
-	let n = (t) => e ? P(e, t) : t;
+	let n = (t) => e ? I(e, t) : t;
 	return {
 		name: "badge",
 		selector: { object: {
@@ -1251,7 +1251,7 @@ function Tt(e, t) {
 	};
 }
 function Et(e, t, n) {
-	let r = (t) => e ? F(e, t) : t;
+	let r = (t) => e ? L(e, t) : t;
 	return {
 		name: "link",
 		selector: { select: {
@@ -1271,9 +1271,9 @@ function Et(e, t, n) {
 	};
 }
 function Dt(e, t) {
-	let n = (t) => e ? P(e, t) : t, r = pt.map((t) => ({
+	let n = (t) => e ? I(e, t) : t, r = pt.map((t) => ({
 		value: t,
-		label: e ? F(e, `state_${t}`) : t
+		label: e ? L(e, `state_${t}`) : t
 	}));
 	return {
 		name: "status",
@@ -1331,9 +1331,9 @@ function Ot(e, t) {
 		return typeof n[t] == "string" ? [n] : [];
 	}) : [];
 }
-var kt = class extends j {
+var kt = class extends N {
 	constructor(...e) {
-		super(...e), this.fieldListNames = [], this.ruleListNames = [], this.linkNames = [], this.noneNames = [], this.pairs = [], this.onByDefaultNames = [], this.singleFieldNames = [], this.labelNames = {}, this.computeLabel = (e) => this.hass ? P(this.hass, this.labelNames[e.name] ?? e.name) : e.name;
+		super(...e), this.fieldListNames = [], this.ruleListNames = [], this.linkNames = [], this.noneNames = [], this.pairs = [], this.onByDefaultNames = [], this.singleFieldNames = [], this.labelNames = {}, this.computeLabel = (e) => this.hass ? I(this.hass, this.labelNames[e.name] ?? e.name) : e.name;
 	}
 	static {
 		this.properties = {
@@ -1394,7 +1394,7 @@ var kt = class extends j {
 		}));
 	}
 	render() {
-		return !this.hass || !this.config ? E : w`<ha-form
+		return !this.hass || !this.config ? D : T`<ha-form
       .hass=${this.hass}
       .data=${this.formData()}
       .schema=${yt(this.schema(), this.pairs)}
@@ -1413,7 +1413,7 @@ var kt = class extends j {
 	badgeOptions() {
 		let { hass: e, config: t } = this, n = [{
 			value: "count",
-			label: e ? F(e, "badge_count") : "count"
+			label: e ? L(e, "badge_count") : "count"
 		}], r = t?.entity ? e?.states[t.entity]?.attributes : void 0;
 		for (let [e, t] of Object.entries(r ?? {})) e !== "friendly_name" && e !== "issues" && typeof t == "string" && t.trim() !== "" && n.push({
 			value: e,
@@ -1490,13 +1490,13 @@ function It(e, t) {
 }
 var Lt = {
 	tag: jt,
-	ctor: class extends I {
+	ctor: class extends R {
 		static {
 			this.requiredKeys = ["entity"];
 		}
 		static {
 			this.properties = {
-				...I.properties,
+				...R.properties,
 				showAll: { state: !0 },
 				openIssues: { state: !0 }
 			};
@@ -1506,7 +1506,7 @@ var Lt = {
 		}
 		static {
 			this.styles = [
-				...I.styles,
+				...R.styles,
 				tt,
 				o`
       .issues {
@@ -1531,7 +1531,7 @@ var Lt = {
       }
       .issue__id {
         flex: none;
-        font-size: ${M};
+        font-size: ${P};
         font-weight: 500;
         color: var(--secondary-text-color);
         text-decoration: none;
@@ -1574,7 +1574,7 @@ var Lt = {
       }
       .issue__chevron {
         flex: none;
-        font-size: ${M};
+        font-size: ${P};
         color: var(--secondary-text-color);
         transition: transform 0.15s;
       }
@@ -1582,7 +1582,7 @@ var Lt = {
         transform: rotate(90deg);
       }
       .badge {
-        font-size: ${M};
+        font-size: ${P};
         white-space: nowrap;
       }
       .detail {
@@ -1600,7 +1600,7 @@ var Lt = {
         flex-wrap: wrap;
         align-items: center;
         gap: 8px 12px;
-        font-size: ${M};
+        font-size: ${P};
         color: var(--secondary-text-color);
       }
       .detail__meta a {
@@ -1623,7 +1623,7 @@ var Lt = {
         justify-content: space-between;
         gap: 4px 12px;
         margin-top: 6px;
-        font-size: ${M};
+        font-size: ${P};
         color: var(--secondary-text-color);
       }
       .more {
@@ -1661,24 +1661,24 @@ var Lt = {
 		}
 		badge(e) {
 			let t = this.config?.badge;
-			if (!t) return E;
+			if (!t) return D;
 			let { key: n, color: r } = typeof t == "string" ? {
 				key: t,
 				color: void 0
 			} : t, i = n === "count" ? e.state : e.attributes[n], a = typeof i == "string" || typeof i == "number" ? String(i).trim() : "";
-			if (a === "" || a === "unknown" || a === "unavailable") return E;
-			let o = r ? W(r) : void 0;
-			return w`<span class="badge ${o ? "badge--colored" : ""}" style=${o ? `--c: ${o}` : ""}
+			if (a === "" || a === "unknown" || a === "unavailable") return D;
+			let o = r ? G(r) : void 0;
+			return T`<span class="badge ${o ? "badge--colored" : ""}" style=${o ? `--c: ${o}` : ""}
       >${a}</span
     >`;
 		}
 		renderIssue(e) {
-			let { hass: t, config: n } = this, r = n?.colors, i = this.openIssues.has(e.id), a = e.state ? w`<span class="badge badge--colored" style="--c: ${ut(e.state, r)}"
+			let { hass: t, config: n } = this, r = n?.colors, i = this.openIssues.has(e.id), a = e.state ? T`<span class="badge badge--colored" style="--c: ${ut(e.state, r)}"
           >${e.state}</span
-        >` : E, o = e.url ? w`<a class="issue__id" href=${e.url} target="_blank" rel="noopener noreferrer"
+        >` : D, o = e.url ? T`<a class="issue__id" href=${e.url} target="_blank" rel="noopener noreferrer"
           >${e.id}</a
-        >` : w`<span class="issue__id">${e.id}</span>`;
-			return w`<div
+        >` : T`<span class="issue__id">${e.id}</span>`;
+			return T`<div
       class="issue ${i ? "issue--open" : ""}"
       style="--p: ${e.priority ? dt(e.priority, r) : "var(--divider-color)"}"
     >
@@ -1694,32 +1694,32 @@ var Lt = {
           <span class="issue__chevron" aria-hidden="true">▸</span>
         </button>
       </div>
-      ${i ? w`<div class="detail">
+      ${i ? T`<div class="detail">
               <div class="detail__summary">${e.summary}</div>
               <div class="detail__meta">
-                ${e.priority ? w`<span
+                ${e.priority ? T`<span
                         class="badge badge--colored"
                         style="--c: ${dt(e.priority, r) === "var(--divider-color)" ? "var(--secondary-text-color)" : dt(e.priority, r)}"
-                        >${t ? F(t, "priority") : "Priority"}: ${e.priority}</span
-                      >` : E}
-                ${e.assignee ? w`<span class="assignee"
+                        >${t ? L(t, "priority") : "Priority"}: ${e.priority}</span
+                      >` : D}
+                ${e.assignee ? T`<span class="assignee"
                         ><ha-icon icon="mdi:account-outline"></ha-icon>${e.assignee}</span
-                      >` : E}
-                ${e.url ? w`<a href=${e.url} target="_blank" rel="noopener noreferrer"
-                        >${t ? F(t, "open_issue") : "Open issue"} ↗</a
-                      >` : E}
+                      >` : D}
+                ${e.url ? T`<a href=${e.url} target="_blank" rel="noopener noreferrer"
+                        >${t ? L(t, "open_issue") : "Open issue"} ↗</a
+                      >` : D}
               </div>
-            </div>` : E}
+            </div>` : D}
     </div>`;
 		}
 		renderFooter(e, t, n, r) {
 			let { hass: i, config: a } = this;
-			if (!i || !a) return E;
+			if (!i || !a) return D;
 			let o = a.expandable !== !1 && e.length > n, s = Math.max(0, t - e.length), c = this.showAll ? s : Math.max(0, t - n);
-			if (c === 0 && !(o && this.showAll)) return E;
-			let l = F(i, "more"), u = s > 0 ? It(e, r) : void 0, d = this.showAll ? F(i, "show_less") : `+${c} ${l}`;
-			return w`<div class="footer">
-      ${o ? w`<button
+			if (c === 0 && !(o && this.showAll)) return D;
+			let l = L(i, "more"), u = s > 0 ? It(e, r) : void 0, d = this.showAll ? L(i, "show_less") : `+${c} ${l}`;
+			return T`<div class="footer">
+      ${o ? T`<button
               class="more"
               aria-expanded=${this.showAll ? "true" : "false"}
               @click=${() => {
@@ -1727,26 +1727,26 @@ var Lt = {
 			}}
             >
               ${d}
-            </button>` : w`<span class="more more--static">+${c} ${l}</span>`}
-      ${this.showAll && s > 0 && o ? w`<span>+${s} ${l}</span>` : E}
-      ${u ? w`<a href=${u} target="_blank" rel="noopener noreferrer"
-              >${F(i, "open_in_youtrack")} ↗</a
-            >` : E}
+            </button>` : T`<span class="more more--static">+${c} ${l}</span>`}
+      ${this.showAll && s > 0 && o ? T`<span>+${s} ${l}</span>` : D}
+      ${u ? T`<a href=${u} target="_blank" rel="noopener noreferrer"
+              >${L(i, "open_in_youtrack")} ↗</a
+            >` : D}
     </div>`;
 		}
 		renderContent() {
 			let { hass: e, config: t } = this;
-			if (!e || !t) return w``;
+			if (!e || !t) return T``;
 			let n = e.states[t.entity];
 			if (!n) return this.renderMessage("entity_not_found", !0);
 			if (!Array.isArray(n.attributes.issues)) return this.renderMessage("no_issue_list");
-			let r = Pt(n.attributes), i = t.max_items ?? Mt, a = Math.max(L(n.state) ?? 0, r.length), o = this.showAll ? r : r.slice(0, i), s = t.name?.trim() || Ft(e, t.entity, n), c = this.badge(n);
-			return w`<ha-card>
-      ${t.show_title === !1 ? c === E ? E : w`<div class="header header--badge-only">${c}</div>` : w`<div class="header">
+			let r = Pt(n.attributes), i = t.max_items ?? Mt, a = Math.max(z(n.state) ?? 0, r.length), o = this.showAll ? r : r.slice(0, i), s = t.name?.trim() || Ft(e, t.entity, n), c = this.badge(n);
+			return T`<ha-card>
+      ${t.show_title === !1 ? c === D ? D : T`<div class="header header--badge-only">${c}</div>` : T`<div class="header">
               <div class="title"><span class="name">${s}</span></div>
               ${c}
             </div>`}
-      ${o.length === 0 ? w`<div class="message">${F(e, "no_issues")}</div>` : w`<div class="issues">${o.map((e) => this.renderIssue(e))}</div>`}
+      ${o.length === 0 ? T`<div class="message">${L(e, "no_issues")}</div>` : T`<div class="issues">${o.map((e) => this.renderIssue(e))}</div>`}
       ${this.renderFooter(r, a, i, n.attributes.query)}
     </ha-card>`;
 		}
@@ -1758,19 +1758,19 @@ var Lt = {
 };
 // src/core/parts/field-tile.ts
 function Rt(e, t) {
-	return t.icon ? w`<ha-icon icon=${t.icon}></ha-icon>` : t.attribute ? w`<ha-icon icon="mdi:information-outline"></ha-icon>` : w`<ha-state-icon .hass=${e} .stateObj=${t.stateObj}></ha-state-icon>`;
+	return t.icon ? T`<ha-icon icon=${t.icon}></ha-icon>` : t.attribute ? T`<ha-icon icon="mdi:information-outline"></ha-icon>` : T`<ha-state-icon .hass=${e} .stateObj=${t.stateObj}></ha-state-icon>`;
 }
 function zt(e, t, n = "tile") {
-	let r = w`<span class="field__value"
-      >${t.value}${t.unit ? w` <span class="field__unit">${t.unit}</span>` : E}</span
-    >${t.trend ? Ie(t.trend) : E}`;
-	return w`<div
+	let r = T`<span class="field__value"
+      >${t.value}${t.unit ? T` <span class="field__unit">${t.unit}</span>` : D}</span
+    >${t.trend ? Pe(t.trend) : D}`;
+	return T`<div
     class="field field--${n} ${t.tone ? "field--tone" : ""}"
     style="--c: ${t.color}"
     title=${t.label}
   >
     <span class="chip">${Rt(e, t)}</span>
-    ${n === "inline" ? w`<span class="field__text">${r}</span>` : w`<span class="field__text">
+    ${n === "inline" ? T`<span class="field__text">${r}</span>` : T`<span class="field__text">
             <span class="field__main">${r}</span>
             <span class="field__label">${t.label}</span>
           </span>`}
@@ -1806,7 +1806,7 @@ var Bt = o`
     gap: 6px;
   }
   .field__value {
-    font-size: ${Me};
+    font-size: ${Ae};
     font-weight: 500;
     line-height: 1.2;
     color: var(--primary-text-color);
@@ -1815,7 +1815,7 @@ var Bt = o`
     color: var(--c);
   }
   .field__unit {
-    font-size: ${M};
+    font-size: ${P};
     font-weight: 400;
     color: var(--secondary-text-color);
   }
@@ -1823,7 +1823,7 @@ var Bt = o`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: ${M};
+    font-size: ${P};
     font-weight: 400;
     color: var(--secondary-text-color);
   }
@@ -1845,6 +1845,9 @@ var Bt = o`
   .field--row .field__main {
     order: 2;
   }
+  .field--row .field__label {
+    font-size: ${Ae};
+  }
 `;
 // src/core/link.ts
 function Vt(e, t, n, r) {
@@ -1856,15 +1859,15 @@ function Vt(e, t, n, r) {
 function Ht(e, t, n) {
 	if (e === !0 || e === "device") {
 		let e = t?.configuration_url;
-		return R(e) ? e : void 0;
+		return B(e) ? e : void 0;
 	}
 	if (typeof e != "string") return;
 	let r = e.trim();
-	if (r.startsWith("https://")) return R(r) ? r : void 0;
-	let i = B(r);
+	if (r.startsWith("https://")) return B(r) ? r : void 0;
+	let i = H(r);
 	if (!i.attribute) return;
 	let a = n[i.key]?.attributes[i.attribute];
-	return typeof a == "string" && R(a) ? a : void 0;
+	return typeof a == "string" && B(a) ? a : void 0;
 }
 // src/core/resolver.ts
 function X(e, t, n) {
@@ -1894,10 +1897,10 @@ function Wt(e) {
 function Gt(e) {
 	if (e !== void 0 && !(Array.isArray(e) && e.every((e) => typeof e == "string" || typeof e == "object" && !!e && typeof e.key == "string"))) throw Error("`fields` must be a list of sensor keys or objects with a `key`");
 }
-var Kt = class extends I {
+var Kt = class extends R {
 	static {
 		this.styles = [
-			...I.styles,
+			...R.styles,
 			Bt,
 			tt,
 			o`
@@ -1939,11 +1942,11 @@ var Kt = class extends I {
 	}
 	renderBadge(e, t) {
 		let { hass: n, config: r } = this;
-		if (!n || !r?.badge) return E;
-		let i = B(r.badge), [a] = K(n, e, [i], t);
-		if (!a) return E;
-		let o = i.color ? W(i.color) : a.tone ? a.color : void 0;
-		return w`<span
+		if (!n || !r?.badge) return D;
+		let i = H(r.badge), [a] = K(n, e, [i], t);
+		if (!a) return D;
+		let o = i.color ? G(i.color) : a.tone ? a.color : void 0;
+		return T`<span
       class="badge ${o ? "badge--colored" : ""}"
       style=${o ? `--c: ${o}` : ""}
       title=${a.label}
@@ -1952,25 +1955,25 @@ var Kt = class extends I {
 	}
 	renderFields(e, t) {
 		let { hass: n } = this;
-		return !n || e.length === 0 ? E : t === "compact" ? w`<div class="inline-fields">
+		return !n || e.length === 0 ? D : t === "compact" ? T`<div class="inline-fields">
         ${e.map((e) => zt(n, e, "inline"))}
-      </div>` : t === "list" ? w`<div class="rows">${e.map((e) => zt(n, e, "row"))}</div>` : w`<div class="grid">${e.map((e) => zt(n, e, "tile"))}</div>`;
+      </div>` : t === "list" ? T`<div class="rows">${e.map((e) => zt(n, e, "row"))}</div>` : T`<div class="grid">${e.map((e) => zt(n, e, "tile"))}</div>`;
 	}
 	renderContent() {
 		let { hass: e, config: t } = this;
-		if (!e || !t) return w``;
+		if (!e || !t) return T``;
 		let n = this.deviceId(), r = n ? e.devices[n] : void 0;
 		if (!n || !r) return this.renderMessage("device_not_found", !0);
-		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = t.show_status !== !1, s = X(e, n, this.platform), c = Wt(t.layout), l = K(e, s, (t.fields?.length ? t.fields : this.defaultFields(c, s)).map(B), i), u = K(e, s, this.statusKeys.map((e) => ({ key: e })), i), d = o ? this.customStatus(s) : void 0, ee = d ? d.color : o ? et(u) : void 0, te = d ? d.tone === "failure" : u.some((e) => e.tone === "failure"), f = Vt(t.link, t.link_url, r, s), p = this.dotKey ? s[this.dotKey]?.state : void 0, ne = o ? d ? Fe(d.color) : p === void 0 ? E : Pe(p) : E, m = this.renderBadge(s, i);
-		return w`<ha-card
+		let i = r.name_by_user ?? r.name ?? n, a = t.name?.trim() || i, o = t.show_status !== !1, s = X(e, n, this.platform), c = Wt(t.layout), l = K(e, s, (t.fields?.length ? t.fields : this.defaultFields(c, s)).map(H), i), u = K(e, s, this.statusKeys.map((e) => ({ key: e })), i), d = o ? this.customStatus(s) : void 0, ee = d ? d.color : o ? et(u) : void 0, te = d ? d.tone === "failure" : u.some((e) => e.tone === "failure"), f = Vt(t.link, t.link_url, r, s), p = this.dotKey ? s[this.dotKey]?.state : void 0, ne = o ? d ? Ne(d.color) : p === void 0 ? D : Me(p) : D, m = this.renderBadge(s, i);
+		return T`<ha-card
       class=${te ? "alert" : ""}
       style=${ee ? `--hoc-accent: ${ee}` : ""}
     >
-      ${t.show_title === !1 ? m === E ? E : w`<div class="header header--badge-only">${m}</div>` : w`<div class="header">
+      ${t.show_title === !1 ? m === D ? D : T`<div class="header header--badge-only">${m}</div>` : T`<div class="header">
               <div class="title">
                 ${ne}
                 <span class="name"
-                  >${f ? w`<a href=${f} target="_blank" rel="noopener noreferrer"
+                  >${f ? T`<a href=${f} target="_blank" rel="noopener noreferrer"
                           >${a}</a
                         >` : a}</span
                 >
@@ -2110,7 +2113,7 @@ var nn = class extends kt {
 		let { hass: t, config: n } = this, r = n?.device;
 		if (e !== "fields" || !t || !r) return;
 		let i = Q(t, r), a = X(t, r, i?.platform);
-		return $t(i, Wt(n.layout), a).filter((e) => B(e).key in a);
+		return $t(i, Wt(n.layout), a).filter((e) => H(e).key in a);
 	}
 	finalizeConfig(e) {
 		e.link && delete e.link_url;
@@ -2214,7 +2217,7 @@ var nn = class extends kt {
 	schema() {
 		let { hass: e, config: t } = this, n = this.deviceIds(), r = this.columnOptions(n), { hasDevicePage: i, attributeUrls: a } = wt(e, n), o = !!e && $(e, t?.devices, t?.platform).some((e) => e.name.includes("/")), s = e ? tn(e) : [], c = [{
 			value: "none",
-			label: e ? F(e, "platform_none") : "none"
+			label: e ? L(e, "platform_none") : "none"
 		}, ...s];
 		return [
 			{
@@ -2252,7 +2255,7 @@ var nn = class extends kt {
 					custom_value: !0,
 					options: [{
 						value: "name",
-						label: e ? P(e, "name") : "Name"
+						label: e ? I(e, "name") : "Name"
 					}, ...r]
 				} }
 			},
@@ -2281,7 +2284,7 @@ var nn = class extends kt {
 function ln(e, t) {
 	if (e.align) return e.align;
 	if (e.key === "ci_state" && !e.attribute) return "left";
-	let n = t.flatMap((t) => t.views.get(V(e)) ?? []);
+	let n = t.flatMap((t) => t.views.get(U(e)) ?? []);
 	return n.length > 0 && n.every((e) => typeof e.raw == "number") ? "right" : "left";
 }
 function un(e, t) {
@@ -2299,10 +2302,10 @@ function dn(e, t, n, r) {
 var fn = [
 	{
 		tag: sn,
-		ctor: class extends I {
+		ctor: class extends R {
 			static {
 				this.styles = [
-					...I.styles,
+					...R.styles,
 					tt,
 					o`
       ha-card {
@@ -2324,7 +2327,7 @@ var fn = [
         background: var(--ha-card-background, var(--card-background-color));
         text-align: left;
         font-weight: 500;
-        font-size: ${M};
+        font-size: ${P};
         text-transform: uppercase;
         letter-spacing: 0.04em;
         color: var(--secondary-text-color);
@@ -2336,9 +2339,9 @@ var fn = [
       tbody tr + tr td {
         border-top: 1px solid var(--divider-color);
       }
-      .name {
+      td.name {
         font-weight: 500;
-        color: var(--primary-text-color);
+        color: var(--secondary-text-color);
       }
       .name__content {
         display: inline-flex;
@@ -2366,7 +2369,7 @@ var fn = [
         color: var(--c);
       }
       .cell__unit {
-        font-size: ${M};
+        font-size: ${P};
         font-weight: 400;
         color: var(--secondary-text-color);
       }
@@ -2396,64 +2399,64 @@ var fn = [
 			columnSpecs() {
 				let { hass: e, config: t } = this;
 				if (!e || !t) return [];
-				if (t.columns?.length) return t.columns.map(B);
+				if (t.columns?.length) return t.columns.map(H);
 				let n = $(e, t.devices, t.platform)[0], r = (t.platform ? Z[t.platform] : void 0) ?? (n ? Q(e, n.id) : void 0);
-				return r ? r.columns.map(B) : n ? Object.keys(X(e, n.id)).slice(0, cn).map((e) => ({ key: e })) : [];
+				return r ? r.columns.map(H) : n ? Object.keys(X(e, n.id)).slice(0, cn).map((e) => ({ key: e })) : [];
 			}
 			renderCell(e, t, n) {
 				let r = `text-align: ${n}`;
-				return e ? t.key === "ci_state" && !t.attribute ? w`<td style=${r}>${Pe(e.stateObj.state)}</td>` : w`<td style=${r}>
+				return e ? t.key === "ci_state" && !t.attribute ? T`<td style=${r}>${Me(e.stateObj.state)}</td>` : T`<td style=${r}>
       <span class="cell ${e.tone || t.color ? "cell--tone" : ""}" style="--c: ${e.color}"
-        >${e.value}${e.unit ? w`<span class="cell__unit">${e.unit}</span>` : E}${e.trend ? Ie(e.trend) : E}</span
+        >${e.value}${e.unit ? T`<span class="cell__unit">${e.unit}</span>` : D}${e.trend ? Pe(e.trend) : D}</span
       >
-    </td>` : w`<td style=${r}>—</td>`;
+    </td>` : T`<td style=${r}>—</td>`;
 			}
 			renderContent() {
 				let { hass: e, config: t } = this;
-				if (!e || !t) return w``;
+				if (!e || !t) return T``;
 				let n = this.columnSpecs(), r = t.sort_by ?? "name", i = t.sort_order === "desc" ? -1 : 1, a = this.rows(n).sort((e, t) => dn(e, t, r, i));
 				if (a.length === 0) return this.renderMessage(t.devices?.length || t.platform ? "no_devices" : "choose_devices");
 				let o = t.column_titles ?? "text", s = n.map((e) => ln(e, a)), c = n.map((t) => {
-					let n = V(t), r = a.map((e) => e.views.get(n)).find((e) => e !== void 0);
+					let n = U(t), r = a.map((e) => e.views.get(n)).find((e) => e !== void 0);
 					return {
-						text: t.name ?? r?.label ?? H(t.key),
+						text: t.name ?? r?.label ?? W(t.key),
 						icon: r ? Rt(e, t.icon ? {
 							...r,
 							icon: t.icon
-						} : r) : E,
-						color: t.title_color ? W(t.title_color) : void 0
+						} : r) : D,
+						color: t.title_color ? G(t.title_color) : void 0
 					};
 				}), l = t.name?.trim();
-				return w`<ha-card>
-      ${l ? w`<div class="header">
+				return T`<ha-card>
+      ${l ? T`<div class="header">
               <div class="title"><span class="name">${l}</span></div>
-            </div>` : E}
+            </div>` : D}
       <div class="scroll" style="max-height: ${t.max_height ?? 400}px">
         <table>
           <thead>
             <tr>
-              <th>${t.device_title?.trim() || F(e, "device")}</th>
-              ${c.map((e, t) => w`<th
+              <th>${t.device_title?.trim() || L(e, "device")}</th>
+              ${c.map((e, t) => T`<th
                     title=${e.text}
                     style=${[`text-align: ${s[t] ?? "left"}`, e.color ? `color: ${e.color}` : ""].filter(Boolean).join("; ")}
                   >
-                    ${o === "text" ? E : e.icon}${o === "icon" ? E : e.text}
+                    ${o === "text" ? D : e.icon}${o === "icon" ? D : e.text}
                   </th>`)}
             </tr>
           </thead>
           <tbody>
-            ${a.map((e) => w`<tr>
+            ${a.map((e) => T`<tr>
                   <td class="name">
                     <span class="name__content"
-                      >${t.show_status ? Fe(e.statusColor) : E}<span
+                      >${t.show_status ? Ne(e.statusColor) : D}<span
                         class="name__text"
-                        >${e.url ? w`<a href=${e.url} target="_blank" rel="noopener noreferrer"
+                        >${e.url ? T`<a href=${e.url} target="_blank" rel="noopener noreferrer"
                                 >${e.name}</a
                               >` : e.name}</span
                       ></span
                     >
                   </td>
-                  ${n.map((t, n) => this.renderCell(e.views.get(V(t)), t, s[n] ?? "left"))}
+                  ${n.map((t, n) => this.renderCell(e.views.get(U(t)), t, s[n] ?? "left"))}
                 </tr>`)}
           </tbody>
         </table>
