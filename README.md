@@ -37,6 +37,19 @@ One bundle with cards for [GitHub Pulse](https://github.com/JtheGunner/ha-github
 | 🧩  | [`hoc-device-card`](docs/cards/hoc-device-card.md)                   | any         | Any device, with ready-made defaults for GitHub repositories and profiles and YouTrack projects |
 | 📝  | [`hoc-youtrack-issues-card`](docs/cards/hoc-youtrack-issues-card.md) | YouTrack    | Issues of a query sensor                                                                        |
 
+<table>
+  <tr>
+    <td align="center" valign="top"><a href="docs/cards/hoc-device-card.md"><img src="docs/images/device-card-list.png" alt="Device card, list layout" width="320"></a><br><sub>Device card · list</sub></td>
+    <td align="center" valign="top"><a href="docs/cards/hoc-devices-card.md"><img src="docs/images/devices-card.png" alt="Devices card" width="320"></a><br><sub>Devices card</sub></td>
+    <td align="center" valign="top"><a href="docs/cards/hoc-youtrack-issues-card.md"><img src="docs/images/issues-card.png" alt="YouTrack issues card" width="320"></a><br><sub>Issues card</sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="docs/images/device-card-standard.png" alt="Device card, standard layout" width="320"><br><sub>Device card · standard</sub></td>
+    <td align="center" valign="top"><img src="docs/images/device-card-compact.png" alt="Device card, compact layout" width="320"><br><sub>Device card · compact</sub></td>
+    <td></td>
+  </tr>
+</table>
+
 > [!TIP]
 > Every card shows its values as coloured icon tiles, and you choose which sensors and attributes to show with `fields`; see the [device card](docs/cards/hoc-device-card.md#fields).
 

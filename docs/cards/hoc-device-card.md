@@ -4,6 +4,10 @@
 
 Any device of any integration: you choose which sensors and attributes to show. Devices of GitHub Pulse (repositories and your profile) and YouTrack (projects) start with ready-made fields and status.
 
+| `layout: list`                                              | `layout: standard`                                                  | `layout: compact`                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| ![Device card, list layout](../images/device-card-list.png) | ![Device card, standard layout](../images/device-card-standard.png) | ![Device card, compact layout](../images/device-card-compact.png) |
+
 ```yaml
 type: custom:hoc-device-card
 device: <device id>
