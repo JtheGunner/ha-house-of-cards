@@ -21,13 +21,11 @@ describe("HocBaseEditor", () => {
     editor.addEventListener("config-changed", (event) =>
       received.push((event as CustomEvent).detail.config),
     );
-    editor.shadowRoot
-      ?.querySelector("ha-form")
-      ?.dispatchEvent(
-        new CustomEvent("value-changed", {
-          detail: { value: { type: "custom:x", layout: "compact", device: "d1" } },
-        }),
-      );
+    editor.shadowRoot?.querySelector("ha-form")?.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: { value: { type: "custom:x", layout: "compact", device: "d1" } },
+      }),
+    );
 
     expect(received).toEqual([{ type: "custom:x", layout: "compact", device: "d1" }]);
   });

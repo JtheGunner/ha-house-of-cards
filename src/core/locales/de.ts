@@ -15,4 +15,11 @@ export const de: Record<LocaleKey, string> = {
   failing_ci: "CI fehlgeschlagen",
   review_requests: "Review-Anfragen",
   stale_pull_requests: "Veraltete Pull Requests",
+  visitors: "Besucher",
+  views: "Aufrufe",
+  workflow: "Workflow",
+  runs_today: "Läufe heute",
+  downloads: "Downloads",
+  days_since_commit: "Tage seit Commit",
+  days_since_release: "Tage seit Release",
 };

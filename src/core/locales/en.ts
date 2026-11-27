@@ -13,6 +13,13 @@ export const en = {
   failing_ci: "Failing CI",
   review_requests: "Review requests",
   stale_pull_requests: "Stale pull requests",
+  visitors: "Visitors",
+  views: "Views",
+  workflow: "Workflow",
+  runs_today: "Runs today",
+  downloads: "Downloads",
+  days_since_commit: "Days since commit",
+  days_since_release: "Days since release",
 } as const;
 
 export type LocaleKey = keyof typeof en;

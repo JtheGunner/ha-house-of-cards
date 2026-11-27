@@ -1,3 +1,5 @@
+import { repoCardDefinition } from "./cards/github-pulse/repo/card";
+
 export interface CardDefinition {
   tag: string;
   ctor: CustomElementConstructor;
@@ -22,7 +24,7 @@ declare global {
 }
 
 /** Every card of the bundle. New cards add one entry here. */
-export const cards: CardDefinition[] = [];
+export const cards: CardDefinition[] = [repoCardDefinition];
 
 function defineOnce(tag: string, ctor: CustomElementConstructor): void {
   if (!customElements.get(tag)) customElements.define(tag, ctor);
