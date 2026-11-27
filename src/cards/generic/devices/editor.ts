@@ -54,6 +54,7 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
       ...platforms,
     ];
     return [
+      { name: "name", selector: { text: {} } },
       { name: "platform", selector: { select: { mode: "dropdown", options: platformOptions } } },
       {
         name: "devices",
@@ -81,6 +82,7 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
       { name: "show_status", selector: { boolean: {} } },
       ...(config?.show_status ? [statusSelector(hass, options)] : []),
       choiceSelector(hass, "titles", ["text", "icon", "icon_text"], "column_titles"),
+      { name: "device_title", selector: { text: {} } },
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },
     ];
   }

@@ -55,6 +55,13 @@ describe("hoc-devices-card-editor", () => {
     expect(select.select.options[1]?.label).toBe("GitHub Pulse");
   });
 
+  it("offers a title and a title for the name column", async () => {
+    const { form } = await mountPlain({ platform: "github_pulse" });
+    const names = form.schema.map((item) => item.name);
+    expect(names).toContain("name");
+    expect(names).toContain("device_title");
+  });
+
   it("stores no platform when none is chosen", async () => {
     const { form, received } = await mountPlain({ platform: "youtrack" });
     form.dispatchEvent(

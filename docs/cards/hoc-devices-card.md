@@ -18,6 +18,8 @@ sort_order: desc
 
 | Option          | Default                                               | Description                                                                                                                                                   |
 | --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`          | none                                                  | A title above the table. Without it the card has no header.                                                                                                   |
+| `device_title`  | `Device`                                              | Title of the name column                                                                                                                                      |
 | `platform`      | none                                                  | An integration, such as `github_pulse` or `youtrack`. Lists every device of it.                                                                               |
 | `devices`       | none                                                  | List of devices. When set, only these are listed, of any integration.                                                                                         |
 | `columns`       | the integration's preset, else the first four sensors | Sensors and attributes to show                                                                                                                                |

@@ -464,4 +464,16 @@ describe("hoc-devices-card with other integrations", () => {
     const { names } = await mountTable({ platform: T, hide_owner: true });
     expect(names).toEqual(["DEV", "HHOC"]);
   });
+
+  it("shows no header without a title and one with it", async () => {
+    const plain = await mount(REPOS, { platform: P });
+    expect(plain.root.querySelector(".header")).toBeNull();
+    const titled = await mount(REPOS, { platform: P, name: "My repos" });
+    expect(titled.root.querySelector(".header .name")?.textContent?.trim()).toBe("My repos");
+  });
+
+  it("lets device_title replace the title of the name column", async () => {
+    const { root } = await mount(REPOS, { platform: P, device_title: "Repository" });
+    expect(root.querySelector("thead th")?.textContent?.trim()).toBe("Repository");
+  });
 });

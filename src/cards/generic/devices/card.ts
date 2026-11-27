@@ -14,6 +14,8 @@ import { t } from "../../../core/i18n";
 import { resolveLink } from "../../../core/link";
 import { colorDot, statusDot, trendArrow } from "../../../core/parts";
 import { fieldIcon } from "../../../core/parts/field-tile";
+import { headerStyles } from "../../../core/parts/header";
+import { fontSecondary } from "../../../core/parts/typography";
 import { listPlatforms, PRESETS, presetOfDevice, selectDevices } from "../../../core/presets";
 import { resolveDeviceEntities } from "../../../core/resolver";
 import { evaluateStatus, type StatusRule } from "../../../core/status";
@@ -34,6 +36,10 @@ export interface DevicesConfig extends BaseConfig {
   sort_by?: string;
   sort_order?: "asc" | "desc";
   max_height?: number;
+  /** A title above the table. Without one, the card has no header. */
+  name?: string;
+  /** Replaces the title of the name column, which is "Device". */
+  device_title?: string;
   /** Show the part after the last `/` of the name, such as `repo` instead of `owner/repo`. */
   hide_owner?: boolean;
   /** What the column titles show. Defaults to `text`. */
@@ -88,9 +94,13 @@ function compareRows(a: Row, b: Row, column: string, direction: 1 | -1): number 
 export class DevicesCard extends HocBaseCard<DevicesConfig> {
   static override styles = [
     ...HocBaseCard.styles,
+    headerStyles,
     css`
       ha-card {
         overflow: hidden;
+      }
+      .header {
+        margin-bottom: 4px;
       }
       .scroll {
         overflow: auto;
@@ -105,7 +115,7 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
         background: var(--ha-card-background, var(--card-background-color));
         text-align: left;
         font-weight: 500;
-        font-size: 0.8em;
+        font-size: ${fontSecondary};
         text-transform: uppercase;
         letter-spacing: 0.04em;
         color: var(--secondary-text-color);
@@ -147,7 +157,7 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
         color: var(--c);
       }
       .cell__unit {
-        font-size: 0.8em;
+        font-size: ${fontSecondary};
         font-weight: 400;
         color: var(--secondary-text-color);
       }
@@ -248,12 +258,20 @@ export class DevicesCard extends HocBaseCard<DevicesConfig> {
       };
     });
 
+    const title = config.name?.trim();
     return html`<ha-card>
+      ${
+        title
+          ? html`<div class="header">
+              <div class="title"><span class="name">${title}</span></div>
+            </div>`
+          : nothing
+      }
       <div class="scroll" style="max-height: ${config.max_height ?? 400}px">
         <table>
           <thead>
             <tr>
-              <th>${t(hass, "device")}</th>
+              <th>${config.device_title?.trim() || t(hass, "device")}</th>
               ${headers.map(
                 (header, index) =>
                   html`<th

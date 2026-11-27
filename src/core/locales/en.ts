@@ -42,6 +42,7 @@ export const en = {
   editor_columns: "Columns",
   editor_name: "Name",
   editor_show_title: "Show title",
+  editor_device_title: "Title of the name column",
   editor_show_status: "Show status",
   editor_sort_by: "Sort by",
   editor_sort_order: "Sort order",

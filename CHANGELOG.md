@@ -6,7 +6,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- `hoc-devices-card`: `name` adds a title above the table, and `device_title` replaces the title of the name column.
 - `show_title: false` hides the title of the device card and the issues card. A `badge` stays; the visual editor then hides the title name and link options.
+
+### Changed
+
+- Text sizes follow the Mushroom and tile cards: titles and values are 14px, labels, units, badges and details 12px (`--ha-font-size-m` and `--ha-font-size-s` when the theme sets them). Values are no longer bold and larger.
 
 ## [0.3.0] - 2026-11-27
 
