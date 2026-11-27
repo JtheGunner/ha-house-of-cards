@@ -23,9 +23,11 @@ sort_order: desc
 | `sort_by` | `name` | `name` or any column, such as `stars` or `latest_release:downloads` |
 | `sort_order` | `asc` | `asc` or `desc`. Missing values always sort last. |
 | `hide_owner` | `false` | Show `repo` instead of `owner/repo` |
+| `column_titles` | `text` | What the column titles show: `text`, `icon` or `icon_text`. Icons come from the sensor, or from `icon` in the column. |
+| `show_activity` | `false` | A dot before each repository name: green when it had commits this month, grey otherwise |
 | `max_height` | `400` | Height in pixels before the table scrolls |
 
-A column is a sensor key or `sensor:attribute`, exactly like `fields` of the [device card](hoc-device-card.md#fields); objects work too: `name` replaces the column title, `icon` adds an icon to the title, `color` tints the values, and `trend` adds a change arrow from another sensor. `sort_by` takes `name` or a column. In the visual editor you choose from every sensor and attribute of your repositories.
+A column is a sensor key or `sensor:attribute`, exactly like `fields` of the [device card](hoc-device-card.md#fields); objects work too: `name` replaces the column title, `icon` sets the icon used in the column title (see `column_titles`), `color` tints the values, and `trend` adds a change arrow from another sensor. `sort_by` takes `name` or a column. In the visual editor you choose from every sensor and attribute of your repositories.
 
 ## UI Lovelace Minimalist
 

@@ -16,7 +16,7 @@ layout: standard
 | `layout` | `standard` | `compact`, `standard` or `list` |
 | `name` | device name | Title shown in the header |
 | `link` | `false` | Make the title a link to the repository on GitHub (opens in a new tab) |
-| `show_release` | `false` | Show the latest release version as a badge on the right side of the header |
+| `show_release` | `false` | Show the latest release version as a badge on the right side of the title |
 | `show_status` | `true` | Show the CI dot and the status accent on the top edge |
 | `fields` | by device and layout | Sensors and attributes to show, see the [device card](hoc-device-card.md#fields). Replaces the layout's default fields. |
 

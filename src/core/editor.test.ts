@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { editorLabel } from "./i18n";
 import { fixtureHass } from "../../test/fixtures/hass";
 import type { BaseConfig } from "./base-card";
 import {
