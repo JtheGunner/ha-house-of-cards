@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Fixed
+
+- The device card keeps the theme's card shadow, as the devices card does. The status edge replaced it before.
+
 ## [0.3.0] - 2026-11-27
 
 ### Added

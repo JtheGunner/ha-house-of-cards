@@ -1872,7 +1872,10 @@ var Ut = class extends R {
 			$e,
 			o`
       ha-card {
-        box-shadow: inset 0 3px 0 var(--hoc-accent, transparent);
+        /* Keep the theme's card shadow; the inset line is the status edge. */
+        box-shadow:
+          var(--ha-card-box-shadow, 0 0 0 0 transparent),
+          inset 0 3px 0 var(--hoc-accent, transparent);
         overflow: hidden;
       }
       .grid {
