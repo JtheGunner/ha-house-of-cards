@@ -57,12 +57,7 @@ House of Cards is a small set of cards for the integrations you build yourself, 
 Any device, shown as coloured tiles in the layout you like: `compact`, `standard` or `list`. Add a badge to the title, link the name, and let rules colour the status. GitHub repositories and profiles and YouTrack projects start with ready-made fields.
 
 <p align="center">
-  <img src="docs/images/device-card-standard.png" alt="Device card, standard layout" width="48%">
-  &nbsp;
-  <img src="docs/images/device-card-list.png" alt="Device card, list layout" width="48%">
-</p>
-<p align="center">
-  <img src="docs/images/device-card-compact.png" alt="Device card, compact layout" width="48%">
+  <img src="docs/images/device-card-layouts.png" alt="Device card layouts: compact, standard and list" width="900">
 </p>
 
 ```yaml
