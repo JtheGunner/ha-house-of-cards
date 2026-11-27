@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { fixtureHass } from "../../test/fixtures/hass";
 import type { BaseConfig } from "./base-card";
-import { deviceSelector, fieldsSelectorFromOptions, HocBaseEditor, layoutSelector } from "./editor";
+import {
+  choiceSelector,
+  deviceSelector,
+  fieldsSelectorFromOptions,
+  HocBaseEditor,
+  layoutSelector,
+} from "./editor";
 
 class TestEditor extends HocBaseEditor<{ type: string; device?: string; layout?: string }> {
   protected schema() {
-    return [deviceSelector("github_pulse"), layoutSelector(["compact", "standard"])];
+    return [deviceSelector("github_pulse"), layoutSelector(undefined, ["compact", "standard"])];
   }
 }
 customElements.define("hoc-test-editor", TestEditor);
@@ -50,8 +56,14 @@ describe("selectors", () => {
     });
   });
   it("layoutSelector offers the given options", () => {
-    expect(layoutSelector(["compact", "list"]).selector).toEqual({
-      select: { mode: "dropdown", options: ["compact", "list"] },
+    expect(layoutSelector(undefined, ["compact", "list"]).selector).toEqual({
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "compact", label: "compact" },
+          { value: "list", label: "list" },
+        ],
+      },
     });
   });
 });
@@ -137,5 +149,26 @@ describe("editor labels", () => {
       }
     ).object.fields;
     expect(Object.values(fields).map((f) => f.label)).toEqual(["Sensor", "Name", "Icon", "Farbe"]);
+  });
+});
+
+describe("choice labels", () => {
+  it("translates layout and order values", () => {
+    const de = fixtureHass({ language: "de" });
+    const en = fixtureHass();
+    const labels = (item: { selector: unknown }) =>
+      (item.selector as { select: { options: { label: string }[] } }).select.options.map(
+        (o) => o.label,
+      );
+    expect(labels(layoutSelector(de, ["compact", "standard", "list"]))).toEqual([
+      "Kompakt",
+      "Standard",
+      "Liste",
+    ]);
+    expect(labels(layoutSelector(en, ["compact", "list"]))).toEqual(["Compact", "List"]);
+    expect(labels(choiceSelector(de, "order", ["asc", "desc"], "sort_order"))).toEqual([
+      "Aufsteigend",
+      "Absteigend",
+    ]);
   });
 });

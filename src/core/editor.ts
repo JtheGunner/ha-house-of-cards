@@ -1,6 +1,6 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import type { BaseConfig } from "./base-card";
-import { editorLabel } from "./i18n";
+import { editorLabel, t, type LocaleKey } from "./i18n";
 import { discoverFieldOptions, type FieldConfig, type FieldOption } from "./fields";
 import type { HomeAssistant } from "./types";
 
@@ -14,8 +14,26 @@ export function deviceSelector(integration: string, name = "device"): FormSchema
   return { name, selector: { device: { integration } } };
 }
 
-export function layoutSelector(options: string[], name = "layout"): FormSchemaItem {
+/** A dropdown whose values are labelled `<prefix>_<value>` in the Home Assistant language. */
+export function choiceSelector(
+  hass: HomeAssistant | undefined,
+  prefix: string,
+  values: string[],
+  name: string,
+): FormSchemaItem {
+  const options = values.map((value) => ({
+    value,
+    label: hass ? t(hass, `${prefix}_${value}` as LocaleKey) : value,
+  }));
   return { name, selector: { select: { mode: "dropdown", options } } };
+}
+
+export function layoutSelector(
+  hass: HomeAssistant | undefined,
+  options: string[],
+  name = "layout",
+): FormSchemaItem {
+  return choiceSelector(hass, "layout", options, name);
 }
 
 export function fieldsSelectorFromOptions(

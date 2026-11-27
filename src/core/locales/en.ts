@@ -50,6 +50,11 @@ export const en = {
   editor_sensor: "Sensor",
   editor_icon: "Icon",
   editor_color: "Color",
+  layout_compact: "Compact",
+  layout_standard: "Standard",
+  layout_list: "List",
+  order_asc: "Ascending",
+  order_desc: "Descending",
 } as const;
 
 export type LocaleKey = keyof typeof en;

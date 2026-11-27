@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Fixed
 
-- Labels in the visual editors follow the Home Assistant language (English, German) and start with a capital letter.
+- Labels in the visual editors follow the Home Assistant language (English, German) and start with a capital letter, including the layout and sort order choices.
 
 ## [0.2.1] - 2026-11-27
 

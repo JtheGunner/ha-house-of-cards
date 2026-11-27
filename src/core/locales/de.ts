@@ -52,4 +52,9 @@ export const de: Record<LocaleKey, string> = {
   editor_sensor: "Sensor",
   editor_icon: "Icon",
   editor_color: "Farbe",
+  layout_compact: "Kompakt",
+  layout_standard: "Standard",
+  layout_list: "Liste",
+  order_asc: "Aufsteigend",
+  order_desc: "Absteigend",
 };

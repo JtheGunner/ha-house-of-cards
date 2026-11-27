@@ -1,9 +1,11 @@
 import { discoverFieldOptions, type FieldOption } from "../../../core/fields";
 import {
+  choiceSelector,
   fieldsSelectorFromOptions,
   HocBaseEditor,
   type FormSchemaItem,
 } from "../../../core/editor";
+import { editorLabel } from "../../../core/i18n";
 import { findAccountDevices, listDevices } from "../../../core/resolver";
 import type { GithubReposConfig } from "./card";
 
@@ -37,11 +39,14 @@ export class GithubReposEditor extends HocBaseEditor<GithubReposConfig> {
           select: {
             mode: "dropdown",
             custom_value: true,
-            options: [{ value: "name", label: "Name" }, ...options],
+            options: [
+              { value: "name", label: this.hass ? editorLabel(this.hass, "name") : "Name" },
+              ...options,
+            ],
           },
         },
       },
-      { name: "sort_order", selector: { select: { mode: "dropdown", options: ["asc", "desc"] } } },
+      choiceSelector(this.hass, "order", ["asc", "desc"], "sort_order"),
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },
     ];
   }
