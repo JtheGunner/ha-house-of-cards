@@ -29,7 +29,7 @@ sort_order: desc
 
 A column is a sensor key or `sensor:attribute`, exactly like `fields` of the [device card](hoc-device-card.md#fields); objects work too: `name` replaces the column title, `icon` sets the icon used in the column title (see `column_titles`), `color` tints the values, `align` sets `left`, `center` or `right` for the column, and `trend` adds a change arrow from another sensor. `sort_by` takes `name` or a column. In the visual editor you choose from every sensor and attribute of your repositories.
 
-Without `align`, columns that hold only numbers are right-aligned and everything else is left-aligned, titles included. Icon-only titles are always centred.
+Without `align`, columns that hold only numbers are right-aligned and everything else is left-aligned, titles included.
 
 ## UI Lovelace Minimalist
 

@@ -292,7 +292,7 @@ describe("hoc-github-repos-card", () => {
   it("aligns icon-only titles like the column content", async () => {
     const { root } = await mount(REPOS, { column_titles: "icon", columns: ["stars"] });
     expect((root.querySelector("thead th:nth-child(2)") as HTMLElement).style.textAlign).toBe(
-      "center",
+      "right",
     );
     expect((root.querySelector("tbody td:nth-child(2)") as HTMLElement).style.textAlign).toBe(
       "right",
