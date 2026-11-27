@@ -20,6 +20,7 @@ export const EDITOR_OPTION_NAMES = [
   "show_activity",
   "column_titles",
   "align",
+  "title_color",
   "repositories",
   "sort_by",
   "sort_order",

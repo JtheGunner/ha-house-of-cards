@@ -309,4 +309,22 @@ describe("hoc-github-repos-card", () => {
       "left",
     );
   });
+
+  it("colours a column title with title_color, independent of the value colour", async () => {
+    const { root } = await mount(REPOS, {
+      columns: [
+        { key: "stars", title_color: "purple" },
+        { key: "commits_this_month", color: "pink" },
+        { key: "latest_release", title_color: "#ff0000" },
+      ],
+    });
+    const style = (n: number) =>
+      root.querySelector(`thead th:nth-child(${n})`)?.getAttribute("style");
+    expect(style(2)).toContain("color: var(--purple-color)");
+    expect(style(3)).not.toContain("color:");
+    expect(style(4)).toContain("color: #ff0000");
+    expect(root.querySelector("tbody td:nth-child(2) .cell")?.className).not.toContain(
+      "cell--tone",
+    );
+  });
 });

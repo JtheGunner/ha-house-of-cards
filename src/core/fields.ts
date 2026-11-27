@@ -14,6 +14,8 @@ export interface FieldSpec {
   trend?: string;
   /** Text alignment in tables. Without it numbers align right and text left. */
   align?: "left" | "center" | "right";
+  /** Colour of the column title in tables: a colour name or any CSS colour. */
+  title_color?: string;
 }
 
 export type FieldConfig = string | FieldSpec;
@@ -110,6 +112,11 @@ function hash(text: string): number {
 
 function paletteColor(name: string): string {
   return `var(--${name}-color)`;
+}
+
+/** A colour name such as `purple` becomes its theme variable; anything else is used as given. */
+export function colorValue(color: string): string {
+  return /^[a-z-]+$/.test(color) ? paletteColor(color) : color;
 }
 
 function resolveColor(spec: FieldSpec, tone: Tone | undefined): string {

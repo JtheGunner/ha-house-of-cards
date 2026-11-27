@@ -64,4 +64,5 @@ export const de: Record<LocaleKey, string> = {
   align_center: "Zentriert",
   align_right: "Rechts",
   editor_align: "Ausrichtung",
+  editor_title_color: "Titelfarbe",
 };

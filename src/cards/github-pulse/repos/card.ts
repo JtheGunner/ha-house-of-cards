@@ -2,6 +2,7 @@ import { css, html, nothing, type TemplateResult } from "lit";
 import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
 import {
   buildFieldViews,
+  colorValue,
   fieldId,
   humanize,
   parseField,
@@ -216,7 +217,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
       return {
         text: spec.name ?? view?.label ?? humanize(spec.key),
         icon: view ? fieldIcon(hass, spec.icon ? { ...view, icon: spec.icon } : view) : nothing,
-        color: spec.color ? view?.color : undefined,
+        color: spec.title_color ? colorValue(spec.title_color) : undefined,
       };
     });
 

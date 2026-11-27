@@ -68,6 +68,7 @@ export function fieldsSelectorFromOptions(
                   label: label("align"),
                   selector: { select: { mode: "dropdown", options: alignOptions } },
                 },
+                title_color: { label: label("title_color"), selector: { ui_color: {} } },
               }
             : {}),
         },

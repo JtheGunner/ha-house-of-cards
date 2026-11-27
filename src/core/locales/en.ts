@@ -62,6 +62,7 @@ export const en = {
   align_center: "Centre",
   align_right: "Right",
   editor_align: "Alignment",
+  editor_title_color: "Title colour",
 } as const;
 
 export type LocaleKey = keyof typeof en;
