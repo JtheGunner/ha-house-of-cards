@@ -1,5 +1,5 @@
-import { css, html, nothing, type TemplateResult } from "lit";
-import { isMissing, type Trend } from "../format";
+import { css, html, type TemplateResult } from "lit";
+import type { Trend } from "../format";
 
 export type DotTone = "success" | "failure" | "pending" | "neutral";
 
@@ -30,19 +30,6 @@ export function trendArrow(value: Trend): TemplateResult {
   return html`<span class="trend trend--${value.direction}">${symbol}${percent}</span>`;
 }
 
-export function statTile(label: string, value: string, unit?: string): TemplateResult {
-  return html`<div class="tile">
-    <div class="tile__value">
-      ${value}${unit ? html` <span class="tile__unit">${unit}</span>` : nothing}
-    </div>
-    <div class="tile__label">${label}</div>
-  </div>`;
-}
-
-export function releaseBadge(tag: string | undefined): TemplateResult | typeof nothing {
-  return tag && !isMissing(tag) ? html`<span class="badge">${tag}</span>` : nothing;
-}
-
 export const partsStyles = css`
   .dot {
     display: inline-block;
@@ -69,22 +56,5 @@ export const partsStyles = css`
   }
   .trend--down {
     color: var(--error-color);
-  }
-  .tile__value {
-    font-size: 1.2em;
-    font-weight: 500;
-    color: var(--primary-text-color);
-  }
-  .tile__unit,
-  .tile__label {
-    font-size: 0.8em;
-    color: var(--secondary-text-color);
-  }
-  .badge {
-    padding: 0 0.5em;
-    border-radius: var(--ha-card-border-radius, 12px);
-    background: var(--secondary-background-color);
-    font-size: 0.85em;
-    color: var(--secondary-text-color);
   }
 `;

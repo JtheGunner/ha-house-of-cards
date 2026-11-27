@@ -1,8 +1,20 @@
-import { deviceSelector, HocBaseEditor } from "../../../core/editor";
-import type { GithubProfileConfig } from "./card";
+import {
+  deviceSelector,
+  fieldsSelector,
+  HocBaseEditor,
+  layoutSelector,
+} from "../../../core/editor";
+import type { FieldsConfig } from "../../../core/fields-card";
+import { findAccountDevice } from "../../../core/resolver";
 
-export class GithubProfileEditor extends HocBaseEditor<GithubProfileConfig> {
+export class GithubProfileEditor extends HocBaseEditor<FieldsConfig> {
   protected schema() {
-    return [deviceSelector("github_pulse")];
+    const device =
+      this.config?.device ?? (this.hass ? findAccountDevice(this.hass, "github_pulse") : undefined);
+    return [
+      deviceSelector("github_pulse"),
+      layoutSelector(["compact", "standard", "list"]),
+      fieldsSelector(this.hass, device),
+    ];
   }
 }

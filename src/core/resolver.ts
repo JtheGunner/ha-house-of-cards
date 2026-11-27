@@ -5,18 +5,22 @@ export type ResolvedEntities = Record<string, HassEntityState | undefined>;
 /** Sensor that only the account-level device of github_pulse owns. */
 const ACCOUNT_MARKER_KEY = "contributions_this_month";
 
+/**
+ * The entities of one device keyed by `translation_key` (or by entity id when an entity has
+ * none). Without a platform, entities of every integration on the device are included.
+ */
 export function resolveDeviceEntities(
   hass: HomeAssistant,
   deviceId: string,
-  platform: string,
+  platform?: string,
 ): ResolvedEntities {
   const resolved: ResolvedEntities = {};
   for (const entry of Object.values(hass.entities)) {
-    if (entry.device_id !== deviceId || entry.platform !== platform || !entry.translation_key) {
+    if (entry.device_id !== deviceId || (platform !== undefined && entry.platform !== platform)) {
       continue;
     }
     const state = hass.states[entry.entity_id];
-    if (state) resolved[entry.translation_key] = state;
+    if (state) resolved[entry.translation_key || entry.entity_id] = state;
   }
   return resolved;
 }

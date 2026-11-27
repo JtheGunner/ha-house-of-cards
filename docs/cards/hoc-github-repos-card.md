@@ -1,6 +1,6 @@
 # GitHub repositories card
 
-<!-- drift: src/cards/github-pulse/repos/card.ts -->
+<!-- drift: src/cards/github-pulse/repos/card.ts, src/core/fields-card.ts, src/core/fields.ts -->
 
 Several repositories as a sortable table.
 
@@ -19,12 +19,12 @@ sort_order: desc
 | Option | Default | Description |
 |---|---|---|
 | `repositories` | all | List of repository devices, or `all`. An empty list also means all. |
-| `columns` | `ci_state`, `stars`, `commits_this_month`, `latest_release` | Columns to show |
-| `sort_by` | `name` | `name` or any column key |
+| `columns` | `ci_state`, `stars`, `commits_this_month`, `latest_release` | Sensors and attributes to show |
+| `sort_by` | `name` | `name` or any column, such as `stars` or `latest_release:downloads` |
 | `sort_order` | `asc` | `asc` or `desc`. Missing values always sort last. |
 | `max_height` | `400` | Height in pixels before the table scrolls |
 
-Column keys: `stars`, `forks`, `open_issues`, `open_pull_requests`, `commits_this_month`, `commits_vs_last_month`, `ci_state`, `latest_release`, `days_since_last_commit`. These keys are a stable part of the card's configuration.
+A column is a sensor key or `sensor:attribute`, exactly like `fields` of the [device card](hoc-device-card.md#fields); objects with `name`, `color` and `trend` work too. `sort_by` takes `name` or a column. In the visual editor you choose from every sensor and attribute of your repositories.
 
 ## UI Lovelace Minimalist
 

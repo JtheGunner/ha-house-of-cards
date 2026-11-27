@@ -146,4 +146,24 @@ describe("hoc-github-repo-card", () => {
     });
     expect(GithubRepoCard.getStubConfig(hass)).toEqual({ device: "d1" });
   });
+
+  it("shows exactly the fields chosen in the config, including attributes", async () => {
+    const entities = ALWAYS_ON.map((e) =>
+      e.translationKey === "latest_release"
+        ? { ...e, attributes: { url: "https://x/r", name: "First" } }
+        : e,
+    );
+    const { text } = await mount(entities, { fields: ["forks", "latest_release:name"] });
+    expect(text).toContain("Forks");
+    expect(text).toContain("First");
+    expect(text).not.toContain("Stars");
+  });
+
+  it("colours the card accent red while CI fails", async () => {
+    const entities = ALWAYS_ON.map((e) =>
+      e.translationKey === "ci_state" ? { ...e, state: "failure" } : e,
+    );
+    const { root } = await mount(entities);
+    expect(root.querySelector("ha-card")?.getAttribute("style")).toContain("--error-color");
+  });
 });

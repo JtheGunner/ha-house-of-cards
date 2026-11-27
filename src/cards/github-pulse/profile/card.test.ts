@@ -6,8 +6,17 @@ import { GithubProfileCard, profileCardDefinition } from "./card";
 beforeAll(() => registerCards([profileCardDefinition]));
 
 const P = "github_pulse";
+const UNITS: Record<string, string> = { current_streak: "d", longest_streak: "d" };
+
 function sensor(translationKey: string, state?: string, deviceId = "account"): FixtureEntity {
-  return { platform: P, deviceId, translationKey, state };
+  const unit = UNITS[translationKey];
+  return {
+    platform: P,
+    deviceId,
+    translationKey,
+    state,
+    attributes: unit ? { unit_of_measurement: unit } : {},
+  };
 }
 
 const PROFILE = [

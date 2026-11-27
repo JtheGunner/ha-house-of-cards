@@ -146,4 +146,46 @@ describe("hoc-github-repos-card", () => {
     );
     expect(names).toEqual(["alpha"]);
   });
+
+  it("shows any sensor or attribute as a column and sorts by it", async () => {
+    const hass = fixtureHass({
+      devices: [
+        { id: "a", name: "alpha" },
+        { id: "b", name: "bravo" },
+      ],
+      entities: [
+        {
+          platform: P,
+          deviceId: "a",
+          translationKey: "latest_release",
+          state: "v1",
+          attributes: { downloads: 5 },
+        },
+        {
+          platform: P,
+          deviceId: "b",
+          translationKey: "latest_release",
+          state: "v2",
+          attributes: { downloads: 50 },
+        },
+        { platform: P, deviceId: "a", translationKey: "forks", state: "7" },
+        { platform: P, deviceId: "b", translationKey: "forks", state: "3" },
+      ],
+    });
+    const card = document.createElement("hoc-github-repos-card") as GithubReposCard;
+    card.setConfig({
+      type: "custom:hoc-github-repos-card",
+      columns: ["forks", "latest_release:downloads"],
+      sort_by: "latest_release:downloads",
+      sort_order: "desc",
+    } as never);
+    card.hass = hass;
+    document.body.append(card);
+    await card.updateComplete;
+    const root = card.shadowRoot as ShadowRoot;
+    const names = [...root.querySelectorAll("tbody tr .name")].map((el) => el.textContent?.trim());
+    const headers = [...root.querySelectorAll("thead th")].map((th) => th.textContent?.trim());
+    expect(names).toEqual(["bravo", "alpha"]);
+    expect(headers).toEqual(["Repository", "Forks", "Release › Downloads"]);
+  });
 });
