@@ -17,16 +17,17 @@ fields:
     color: orange
 ```
 
-| Option         | Default                                              | Description                                                                        |
-| -------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `device`       | required                                             | Any device. Pick it in the visual editor.                                          |
-| `layout`       | `standard`                                           | `compact` (icons and values in a row), `standard` (tiles) or `list` (rows)         |
-| `fields`       | the integration's preset, else the first six sensors | What to show, see below. An empty list restores the defaults.                      |
-| `name`         | device name                                          | Title shown in the header                                                          |
-| `link`         | `false`                                              | Make the title a link to the device's page (https only, opens in a new tab)        |
-| `show_status`  | `true`                                               | Show the status dot and accent edge                                                |
-| `show_release` | `false`                                              | GitHub devices: show the latest release in the header, on the far side of the name |
-| `status`       | the preset's status                                  | Rules that decide the status, see [Status](#status)                                |
+| Option        | Default                                              | Description                                                                                                                                                   |
+| ------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `device`      | required                                             | Any device. Pick it in the visual editor.                                                                                                                     |
+| `layout`      | `standard`                                           | `compact` (icons and values in a row), `standard` (tiles) or `list` (rows)                                                                                    |
+| `fields`      | the integration's preset, else the first six sensors | What to show, see below. An empty list restores the defaults.                                                                                                 |
+| `name`        | device name                                          | Title shown in the header                                                                                                                                     |
+| `link`        | none                                                 | Link the title: `device` for the device's page, or `sensor:attribute` for a URL held in an attribute (https only, opens in a new tab). `true` means `device`. |
+| `link_url`    | none                                                 | Link the title to this https URL. Wins over `link`.                                                                                                           |
+| `show_status` | `true`                                               | Show the status dot and accent edge                                                                                                                           |
+| `badge`       | none                                                 | A value shown as a badge on the far side of the title, see [Badge](#badge)                                                                                    |
+| `status`      | the preset's status                                  | Rules that decide the status, see [Status](#status)                                                                                                           |
 
 ## Fields
 
@@ -47,6 +48,20 @@ In the visual editor you pick from every sensor and attribute of the device. In 
 | `trend`     | Key of another sensor holding a percentage, shown as an arrow                                                                                |
 
 Name, unit and icon come from Home Assistant. Sensors that are disabled or have no value are left out.
+
+## Badge
+
+`badge` shows one sensor or attribute next to the title, for example the latest release of a repository:
+
+```yaml
+badge: latest_release
+# or, with a colour:
+badge:
+  key: latest_release
+  color: purple
+```
+
+The badge is grey unless you set a `color` (a palette name, a Home Assistant colour name or any CSS colour). It is left out while its sensor has no value.
 
 ## Presets
 

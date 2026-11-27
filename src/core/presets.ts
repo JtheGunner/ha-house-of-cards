@@ -13,8 +13,6 @@ export interface Preset {
   dotKey?: string;
   /** Sensors whose tone colours the accent edge when the card defines no status. */
   statusKeys?: string[];
-  /** Sensor shown as a badge in the header when `show_release` is on. */
-  badgeKey?: string;
 }
 
 export const GITHUB_PLATFORM = "github_pulse";
@@ -61,7 +59,6 @@ export const PRESETS: Record<string, Preset> = {
       },
     },
     dotKey: "ci_state",
-    badgeKey: "latest_release",
   },
   [YOUTRACK_PLATFORM]: {
     platform: YOUTRACK_PLATFORM,

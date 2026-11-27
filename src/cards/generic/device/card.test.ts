@@ -159,3 +159,79 @@ describe("hoc-device-card status", () => {
     expect(root.querySelector(".alert")).toBeNull();
   });
 });
+
+describe("hoc-device-card badge and link", () => {
+  const RELEASE = sensor("any_integration", "release", "v1.4.0", {
+    url: "https://x/r",
+    name: "First",
+  });
+  const OPEN = sensor("any_integration", "open", "9", { unit_of_measurement: "issues" });
+
+  it("shows no badge by default", async () => {
+    const { root } = await mount([RELEASE]);
+    expect(root.querySelector(".badge")).toBeNull();
+  });
+
+  it("shows any sensor as a badge on the far side of the title", async () => {
+    const { root } = await mount([RELEASE, OPEN], { badge: "release" });
+    expect(root.querySelector(".header .badge")?.textContent?.trim()).toBe("v1.4.0");
+    const header = root.querySelector(".header");
+    expect([...(header?.children ?? [])].map((c) => c.className.split(" ")[0])).toEqual([
+      "title",
+      "badge",
+    ]);
+    const unit = await mount([OPEN], { badge: "open" });
+    expect(unit.root.querySelector(".badge")?.textContent?.trim()).toBe("9 issues");
+  });
+
+  it("shows an attribute as a badge", async () => {
+    const { root } = await mount([RELEASE], { badge: "release:name" });
+    expect(root.querySelector(".badge")?.textContent?.trim()).toBe("First");
+  });
+
+  it("stays grey without a colour and takes a colour from the config", async () => {
+    const plain = await mount([RELEASE], { badge: "release" });
+    expect(plain.root.querySelector(".badge")?.getAttribute("style") ?? "").toBe("");
+    const named = await mount([RELEASE], { badge: { key: "release", color: "purple" } });
+    expect(named.root.querySelector(".badge")?.getAttribute("style")).toContain(
+      "var(--purple-color)",
+    );
+    const css = await mount([RELEASE], { badge: { key: "release", color: "#ff8800" } });
+    expect(css.root.querySelector(".badge")?.getAttribute("style")).toContain("#ff8800");
+  });
+
+  it("omits the badge while its sensor has no value", async () => {
+    const { root } = await mount([{ ...RELEASE, state: "unknown" }], { badge: "release" });
+    expect(root.querySelector(".badge")).toBeNull();
+  });
+
+  it("links the title to a fixed https URL", async () => {
+    const { root } = await mount([RELEASE], { link_url: "https://example.com/p" });
+    expect(root.querySelector(".name a")?.getAttribute("href")).toBe("https://example.com/p");
+  });
+
+  it("links the title to a URL held in an attribute", async () => {
+    const { root } = await mount([RELEASE], { link: "release:url" });
+    expect(root.querySelector(".name a")?.getAttribute("href")).toBe("https://x/r");
+  });
+
+  it("lets link_url win over link", async () => {
+    const { root } = await mount([RELEASE], {
+      link: "release:url",
+      link_url: "https://example.com/p",
+    });
+    expect(root.querySelector(".name a")?.getAttribute("href")).toBe("https://example.com/p");
+  });
+
+  it("never links to anything but https", async () => {
+    for (const bad of ["http://x", "javascript:alert(1)", "//x", "release:name", "release:gone"]) {
+      const { root } = await mount([RELEASE], { link_url: bad, link: bad });
+      expect(root.querySelector(".name a"), bad).toBeNull();
+    }
+  });
+
+  it("shows no link without any link option", async () => {
+    const { root } = await mount([RELEASE]);
+    expect(root.querySelector(".name a")).toBeNull();
+  });
+});

@@ -51,3 +51,13 @@ export function relativeTime(iso: string, now: Date, language: string): string {
   }
   return formatter.format(seconds, "second");
 }
+
+/** True for an absolute https URL; anything else (http, javascript:, relative) is rejected. */
+export function isHttps(url: string | null | undefined): url is string {
+  if (typeof url !== "string" || !url.startsWith("https://")) return false;
+  try {
+    return new URL(url).protocol === "https:";
+  } catch {
+    return false;
+  }
+}

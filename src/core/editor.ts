@@ -87,6 +87,45 @@ export function fieldsSelector(
   return fieldsSelectorFromOptions(hass, options, name);
 }
 
+/** The badge in the title: one sensor or attribute and an optional colour. */
+export function badgeSelector(
+  hass: HomeAssistant | undefined,
+  options: FieldOption[],
+): FormSchemaItem {
+  const label = (key: string) => (hass ? editorLabel(hass, key) : key);
+  return {
+    name: "badge",
+    selector: {
+      object: {
+        label_field: "key",
+        fields: {
+          key: {
+            label: label("sensor"),
+            required: true,
+            selector: { select: { mode: "dropdown", options } },
+          },
+          color: { label: label("color"), selector: { ui_color: {} } },
+        },
+      },
+    },
+  };
+}
+
+/** What the title links to: nothing, the device page or a URL held in an attribute. */
+export function linkSelector(
+  hass: HomeAssistant | undefined,
+  hasDevicePage: boolean,
+  attributeUrls: FieldOption[],
+): FormSchemaItem {
+  const text = (key: LocaleKey) => (hass ? t(hass, key) : key);
+  const options = [
+    { value: "none", label: text("link_none") },
+    ...(hasDevicePage ? [{ value: "device", label: text("link_device") }] : []),
+    ...attributeUrls,
+  ];
+  return { name: "link", selector: { select: { mode: "dropdown", options } } };
+}
+
 /** Rules of a card's status, edited as objects like the field lists. */
 export function statusSelector(
   hass: HomeAssistant | undefined,
@@ -166,6 +205,12 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
   /** Names of options that hold status rules; entries without a `field` are dropped. */
   protected ruleListNames: string[] = [];
 
+  /** Names of link options shown as a dropdown; `none` is stored as no value. */
+  protected linkNames: string[] = [];
+
+  /** Names of options that hold one field (a string or an object with a `key`). */
+  protected singleFieldNames: string[] = [];
+
   protected abstract schema(): FormSchemaItem[];
 
   private formData(): Record<string, unknown> {
@@ -173,6 +218,16 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     for (const name of this.fieldListNames) {
       const list = data[name];
       if (Array.isArray(list)) data[name] = (list as FieldConfig[]).map(toFormEntry);
+    }
+    for (const name of this.singleFieldNames) {
+      const single = data[name];
+      if (typeof single === "string" || (typeof single === "object" && single !== null)) {
+        data[name] = toFormEntry(single as FieldConfig);
+      }
+    }
+    for (const name of this.linkNames) {
+      if (data[name] === true) data[name] = "device";
+      else if (data[name] === undefined || data[name] === false) data[name] = "none";
     }
     return data;
   }
@@ -188,6 +243,15 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       const entries = cleanEntries(config[name], "key");
       if (entries.length > 0) config[name] = entries;
       else delete config[name];
+    }
+    for (const name of this.singleFieldNames) {
+      if (!(name in config)) continue;
+      const [entry] = cleanEntries([config[name]], "key");
+      if (entry) config[name] = entry;
+      else delete config[name];
+    }
+    for (const name of this.linkNames) {
+      if (config[name] === "none" || config[name] === false) delete config[name];
     }
     for (const name of this.ruleListNames) {
       if (!(name in config)) continue;

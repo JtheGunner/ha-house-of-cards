@@ -176,20 +176,18 @@ describe("hoc-device-card with the GitHub Pulse preset", () => {
     expect(text).not.toContain("ha-github-pulse");
   });
 
-  it("links the name to the repository only when link is on", async () => {
+  it("links the name to the repository page only when link is device", async () => {
     const off = await mount(ALWAYS_ON, {}, "d1", "https://github.com/o/r");
     expect(off.root.querySelector(".name a")).toBeNull();
-    const on = await mount(ALWAYS_ON, { link: true }, "d1", "https://github.com/o/r");
+    const on = await mount(ALWAYS_ON, { link: "device" }, "d1", "https://github.com/o/r");
     const anchor = on.root.querySelector(".name a");
     expect(anchor?.getAttribute("href")).toBe("https://github.com/o/r");
     expect(anchor?.getAttribute("rel")).toContain("noopener");
   });
 
-  it("does not link to non-https urls or when the device has none", async () => {
-    const bad = await mount(ALWAYS_ON, { link: true }, "d1", "javascript:alert(1)");
-    expect(bad.root.querySelector(".name a")).toBeNull();
-    const none = await mount(ALWAYS_ON, { link: true });
-    expect(none.root.querySelector(".name a")).toBeNull();
+  it("still accepts the old link: true for the device page", async () => {
+    const on = await mount(ALWAYS_ON, { link: true }, "d1", "https://github.com/o/r");
+    expect(on.root.querySelector(".name a")?.getAttribute("href")).toBe("https://github.com/o/r");
   });
 
   it("hides the status dot and accent when show_status is off", async () => {
@@ -201,27 +199,6 @@ describe("hoc-device-card with the GitHub Pulse preset", () => {
     expect(root.querySelector("ha-card")?.getAttribute("style") ?? "").not.toContain(
       "--error-color",
     );
-  });
-
-  it("shows the release version next to the name only when show_release is on", async () => {
-    const off = await mount(ALWAYS_ON);
-    expect(off.root.querySelector(".header .release")).toBeNull();
-    const on = await mount(ALWAYS_ON, { show_release: true });
-    expect(on.root.querySelector(".header .release")?.textContent?.trim()).toBe("v1.4.0");
-  });
-
-  it("omits the release badge when the release sensor has no value", async () => {
-    const entities = ALWAYS_ON.map((e) =>
-      e.translationKey === "latest_release" ? { ...e, state: "unknown" } : e,
-    );
-    const { root } = await mount(entities, { show_release: true });
-    expect(root.querySelector(".header .release")).toBeNull();
-  });
-
-  it("puts name and badge on opposite sides of the header", async () => {
-    const { root } = await mount(ALWAYS_ON, { show_release: true });
-    const header = root.querySelector(".header");
-    expect([...(header?.children ?? [])].map((c) => c.className)).toEqual(["title", "release"]);
   });
 
   it("shows the profile fields when the device is the account device", async () => {

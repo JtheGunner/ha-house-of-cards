@@ -8,7 +8,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Status of the device card: `status` is a list of rules (sensor or `sensor:attribute`, condition, value, resulting status). The first match wins and replaces the integration's default status. Rules are edited in the visual editor and only shown while `show_status` is on.
 - Presets: the device card knows GitHub Pulse and YouTrack devices and starts with their fields and status, including the GitHub profile for the account device.
-- `show_release` on the device card (GitHub devices): shows the latest release version on the far side of the header. Off by default.
+- `badge` on the device card: shows any sensor or attribute as a badge on the far side of the title. It is grey by default and takes a `color`.
+- `link` on the device card accepts `device` (the device's page) or `sensor:attribute` (a URL held in an attribute); `link_url` sets any https URL. `link: true` keeps meaning the device page.
 - Per-column `title_color` in the repositories table colours the column title; `color` tints the values.
 - Per-column `align` in the repositories table. By default number columns align right, text columns left; the column title follows.
 - `link` on the repositories table: repository names link to GitHub. Off by default.
@@ -19,7 +20,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Changed
 
-- **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. Update `type:` in existing dashboards; `device`, `layout`, `fields`, `name`, `link`, `show_status` and `show_release` keep working.
+- **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. Update `type:` in existing dashboards; `device`, `layout`, `fields`, `name`, `link` and `show_status` keep working.
 - Every card offers a live preview in the card picker.
 
 ### Fixed

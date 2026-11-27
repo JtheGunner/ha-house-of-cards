@@ -1,6 +1,5 @@
 import { HocFieldsCard, type FieldsConfig, type FieldsLayout } from "../../../core/fields-card";
 import type { FieldConfig } from "../../../core/fields";
-import { isMissing } from "../../../core/format";
 import { presetOfDevice, type Preset } from "../../../core/presets";
 import type { ResolvedEntities } from "../../../core/resolver";
 import type { HomeAssistant } from "../../../core/types";
@@ -12,8 +11,6 @@ const DEFAULT_FIELD_COUNT = 6;
 
 export interface DeviceCardConfig extends FieldsConfig {
   device: string;
-  /** Show the preset's badge (for GitHub the latest release) on the far side of the header. */
-  show_release?: boolean;
 }
 
 /**
@@ -39,13 +36,6 @@ export class DeviceCard extends HocFieldsCard<DeviceCardConfig> {
   protected override get statusKeys(): string[] {
     const preset = this.preset();
     return [...(preset?.dotKey ? [preset.dotKey] : []), ...(preset?.statusKeys ?? [])];
-  }
-
-  protected override headerBadge(entities: ResolvedEntities): string | undefined {
-    const key = this.preset()?.badgeKey;
-    if (this.config?.show_release !== true || !key) return undefined;
-    const state = entities[key]?.state;
-    return state === undefined || isMissing(state) ? undefined : state;
   }
 
   protected defaultFields(layout: FieldsLayout, entities: ResolvedEntities): FieldConfig[] {
