@@ -33,6 +33,23 @@ export const en = {
   downloads: "Downloads",
   days_since_commit: "Days since commit",
   days_since_release: "Days since release",
+  editor_device: "Device",
+  editor_layout: "Layout",
+  editor_fields: "Fields",
+  editor_columns: "Columns",
+  editor_name: "Name",
+  editor_link: "Link name to page",
+  editor_show_status: "Show status",
+  editor_repositories: "Repositories",
+  editor_sort_by: "Sort by",
+  editor_sort_order: "Sort order",
+  editor_max_height: "Maximum height",
+  editor_max_items: "Maximum items",
+  editor_show_when_clean: "Show when all clear",
+  editor_entity: "Entity",
+  editor_sensor: "Sensor",
+  editor_icon: "Icon",
+  editor_color: "Color",
 } as const;
 
 export type LocaleKey = keyof typeof en;

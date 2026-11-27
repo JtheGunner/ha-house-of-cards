@@ -60,7 +60,7 @@ describe("field list editing", () => {
   class FieldEditor extends HocBaseEditor<BaseConfig & { fields?: unknown[] }> {
     protected override fieldListNames = ["fields"];
     protected schema() {
-      return [fieldsSelectorFromOptions([{ value: "stars", label: "Stars" }])];
+      return [fieldsSelectorFromOptions(undefined, [{ value: "stars", label: "Stars" }])];
     }
   }
   customElements.define("hoc-field-test-editor", FieldEditor);
@@ -83,7 +83,7 @@ describe("field list editing", () => {
   }
 
   it("offers name, icon and colour per field", () => {
-    const schema = fieldsSelectorFromOptions([{ value: "stars", label: "Stars" }]);
+    const schema = fieldsSelectorFromOptions(undefined, [{ value: "stars", label: "Stars" }]);
     const fields = (schema.selector as { object: { fields: Record<string, unknown> } }).object
       .fields;
     expect(Object.keys(fields)).toEqual(["key", "name", "icon", "color"]);
@@ -116,5 +116,26 @@ describe("field list editing", () => {
       }),
     );
     expect(received[0]?.fields).toEqual([{ key: "stars", icon: "mdi:star" }]);
+  });
+});
+
+describe("editor labels", () => {
+  it("labels options and field parts in the Home Assistant language, capitalised", async () => {
+    const editor = document.createElement("hoc-test-editor") as TestEditor;
+    editor.hass = fixtureHass({ language: "de" });
+    editor.setConfig({ type: "custom:x" });
+    document.body.append(editor);
+    await editor.updateComplete;
+    const form = editor.shadowRoot?.querySelector("ha-form") as unknown as {
+      computeLabel: (item: { name: string }) => string;
+    };
+    expect(form.computeLabel({ name: "device" })).toBe("Gerät");
+    const hass = fixtureHass({ language: "de" });
+    const fields = (
+      fieldsSelectorFromOptions(hass, []).selector as {
+        object: { fields: Record<string, { label: string }> };
+      }
+    ).object.fields;
+    expect(Object.values(fields).map((f) => f.label)).toEqual(["Sensor", "Name", "Icon", "Farbe"]);
   });
 });

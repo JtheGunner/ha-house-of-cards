@@ -1,5 +1,6 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import type { BaseConfig } from "./base-card";
+import { editorLabel } from "./i18n";
 import { discoverFieldOptions, type FieldConfig, type FieldOption } from "./fields";
 import type { HomeAssistant } from "./types";
 
@@ -17,7 +18,12 @@ export function layoutSelector(options: string[], name = "layout"): FormSchemaIt
   return { name, selector: { select: { mode: "dropdown", options } } };
 }
 
-export function fieldsSelectorFromOptions(options: FieldOption[], name = "fields"): FormSchemaItem {
+export function fieldsSelectorFromOptions(
+  hass: HomeAssistant | undefined,
+  options: FieldOption[],
+  name = "fields",
+): FormSchemaItem {
+  const label = (key: string) => (hass ? editorLabel(hass, key) : key);
   return {
     name,
     selector: {
@@ -26,13 +32,13 @@ export function fieldsSelectorFromOptions(options: FieldOption[], name = "fields
         label_field: "key",
         fields: {
           key: {
-            label: "Sensor",
+            label: label("sensor"),
             required: true,
             selector: { select: { mode: "dropdown", custom_value: true, options } },
           },
-          name: { label: "Name", selector: { text: {} } },
-          icon: { label: "Icon", selector: { icon: {} } },
-          color: { label: "Color", selector: { ui_color: {} } },
+          name: { label: label("name"), selector: { text: {} } },
+          icon: { label: label("icon"), selector: { icon: {} } },
+          color: { label: label("color"), selector: { ui_color: {} } },
         },
       },
     },
@@ -45,7 +51,7 @@ export function fieldsSelector(
   name = "fields",
 ): FormSchemaItem {
   const options = hass && deviceId ? discoverFieldOptions(hass, deviceId) : [];
-  return fieldsSelectorFromOptions(options, name);
+  return fieldsSelectorFromOptions(hass, options, name);
 }
 
 function toFormEntry(item: FieldConfig): Record<string, unknown> {
@@ -92,7 +98,8 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     return data;
   }
 
-  protected computeLabel = (item: FormSchemaItem): string => item.name.replace(/_/g, " ");
+  protected computeLabel = (item: FormSchemaItem): string =>
+    this.hass ? editorLabel(this.hass, item.name) : item.name;
 
   protected valueChanged(event: CustomEvent<{ value: C }>): void {
     event.stopPropagation();
