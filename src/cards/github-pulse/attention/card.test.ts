@@ -107,4 +107,51 @@ describe("hoc-github-attention-card", () => {
     const { root } = await mount(CALM, { show_when_clean: false });
     expect(root.querySelector("ha-card")).toBeNull();
   });
+
+  it("says unavailable instead of all clear when no ci state is readable", async () => {
+    const { text } = await mount([
+      sensor("r1", "ci_state", "unavailable"),
+      sensor("r2", "ci_state", "unknown"),
+    ]);
+    expect(text).toBe("Unavailable");
+  });
+
+  it("shows the error state when the configured account device is gone", async () => {
+    const { text } = await mount(CALM, { device: "deleted" });
+    expect(text).toContain("Device not found");
+  });
+
+  it("does not treat a second account device as a repository", () => {
+    const hass = fixtureHass({
+      devices: [
+        { id: "acc1", name: "GitHub one" },
+        { id: "acc2", name: "GitHub two" },
+        { id: "r1", name: "alpha" },
+      ],
+      entities: [
+        sensor("acc1", "contributions_this_month", "1"),
+        sensor("acc2", "contributions_this_month", "2"),
+        sensor("acc2", "ci_state", "failure"),
+        sensor("r1", "ci_state", "failure"),
+      ],
+    });
+    expect(collectAttention(hass, {}).failingRepos).toEqual(["alpha"]);
+  });
+
+  it("only checks repositories of the account's config entry", () => {
+    const hass = build([sensor("r1", "ci_state", "failure"), sensor("r2", "ci_state", "failure")]);
+    hass.devices["account"] = { id: "account", name: "GitHub octocat", config_entries: ["e1"] };
+    hass.devices["r1"] = { id: "r1", name: "alpha", config_entries: ["e1"] };
+    hass.devices["r2"] = { id: "r2", name: "bravo", config_entries: ["e2"] };
+    expect(collectAttention(hass, {}).failingRepos).toEqual(["alpha"]);
+  });
+
+  it("editor offers the account device picker", async () => {
+    const { GithubAttentionEditor } = await import("./editor");
+    const editor = new GithubAttentionEditor();
+    const names = (editor as unknown as { schema(): { name: string }[] })
+      .schema()
+      .map((i) => i.name);
+    expect(names).toContain("device");
+  });
 });

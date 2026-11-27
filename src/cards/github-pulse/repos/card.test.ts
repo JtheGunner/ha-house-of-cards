@@ -42,7 +42,11 @@ async function mount(repos: Repo[], config: Record<string, unknown> = {}) {
     ],
   });
   const card = document.createElement("hoc-github-repos-card") as GithubReposCard;
-  card.setConfig({ type: "custom:hoc-github-repos-card", repositories: "all", ...config } as never);
+  card.setConfig({
+    type: "custom:hoc-github-repos-card",
+    ...("repositories" in config ? {} : { repositories: "all" }),
+    ...config,
+  } as never);
   card.hass = hass;
   document.body.append(card);
   await card.updateComplete;
@@ -112,5 +116,34 @@ describe("hoc-github-repos-card", () => {
   it("renders a column without a sensor as an em dash", async () => {
     const { text } = await mount([{ id: "r9", name: "solo" }], { columns: ["stars"] });
     expect(text).toContain("—");
+  });
+
+  it("works from the card picker without any option", async () => {
+    const { names } = await mount(REPOS, { repositories: undefined });
+    expect(names).toEqual(["alpha", "bravo", "charlie"]);
+  });
+
+  it("excludes every account device, not only the first", async () => {
+    const hass = fixtureHass({
+      devices: [
+        { id: "acc1", name: "GitHub one" },
+        { id: "acc2", name: "GitHub two" },
+        { id: "r1", name: "alpha" },
+      ],
+      entities: [
+        { platform: P, deviceId: "acc1", translationKey: "contributions_this_month", state: "1" },
+        { platform: P, deviceId: "acc2", translationKey: "contributions_this_month", state: "2" },
+        ...repoEntities({ id: "r1", name: "alpha", stars: "1" }),
+      ],
+    });
+    const card = document.createElement("hoc-github-repos-card") as GithubReposCard;
+    card.setConfig({ type: "custom:hoc-github-repos-card" } as never);
+    card.hass = hass;
+    document.body.append(card);
+    await card.updateComplete;
+    const names = [...(card.shadowRoot as ShadowRoot).querySelectorAll("tbody tr .name")].map(
+      (el) => el.textContent?.trim(),
+    );
+    expect(names).toEqual(["alpha"]);
   });
 });

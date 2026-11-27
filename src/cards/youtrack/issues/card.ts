@@ -1,5 +1,6 @@
 import { css, html, type TemplateResult } from "lit";
 import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
+import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
 import { YoutrackIssuesEditor } from "./editor";
 
@@ -65,6 +66,15 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
       }
     `,
   ];
+
+  static getStubConfig(hass: HomeAssistant): Partial<YoutrackIssuesConfig> {
+    const entry = Object.values(hass.entities).find(
+      (candidate) =>
+        candidate.platform === "youtrack" &&
+        Array.isArray(hass.states[candidate.entity_id]?.attributes["issues"]),
+    );
+    return entry ? { entity: entry.entity_id } : {};
+  }
 
   static getConfigElement(): HTMLElement {
     return document.createElement(`${ISSUES_CARD_TAG}-editor`);

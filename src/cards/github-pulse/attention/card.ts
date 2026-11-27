@@ -3,7 +3,8 @@ import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
 import { parseNumber } from "../../../core/format";
 import { t } from "../../../core/i18n";
 import { statusDot } from "../../../core/parts";
-import { findAccountDevice, listDevices, resolveDeviceEntities } from "../../../core/resolver";
+import { isMissing } from "../../../core/format";
+import { findAccountDevices, listDevices, resolveDeviceEntities } from "../../../core/resolver";
 import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
 import { PLATFORM } from "../repo/card";
@@ -21,15 +22,25 @@ export interface Attention {
   failingRepos: string[];
   reviewRequests: number;
   stalePullRequests: number;
+  /** False when nothing readable backs the result, so "clean" would be a guess. */
+  known: boolean;
 }
 
 const FAILING = new Set(["failure", "error"]);
+
+function sharesConfigEntry(hass: HomeAssistant, a: string | undefined, b: string): boolean {
+  const left = a ? hass.devices[a]?.config_entries : undefined;
+  const right = hass.devices[b]?.config_entries;
+  if (!left || !right) return true;
+  return left.some((entry) => right.includes(entry));
+}
 
 export function collectAttention(
   hass: HomeAssistant,
   config: Partial<GithubAttentionConfig>,
 ): Attention {
-  const account = config.device ?? findAccountDevice(hass, PLATFORM);
+  const accounts = findAccountDevices(hass, PLATFORM);
+  const account = config.device ?? accounts[0];
   const wanted =
     config.repositories === undefined ||
     config.repositories === "all" ||
@@ -37,19 +48,26 @@ export function collectAttention(
       ? null
       : new Set(config.repositories);
 
+  let readableCi = false;
   const failingRepos = listDevices(hass, PLATFORM)
-    .filter((device) => device.id !== account && (wanted === null || wanted.has(device.id)))
+    .filter((device) => !accounts.includes(device.id) && device.id !== account)
+    .filter((device) => wanted === null || wanted.has(device.id))
+    .filter((device) => sharesConfigEntry(hass, account, device.id))
     .filter((device) => {
       const state = resolveDeviceEntities(hass, device.id, PLATFORM)["ci_state"]?.state;
+      if (!isMissing(state)) readableCi = true;
       return state !== undefined && FAILING.has(state);
     })
     .map((device) => device.name);
 
   const entities = account ? resolveDeviceEntities(hass, account, PLATFORM) : {};
+  const review = parseNumber(entities["review_requests"]?.state);
+  const stale = parseNumber(entities["stale_pull_requests"]?.state);
   return {
     failingRepos,
-    reviewRequests: parseNumber(entities["review_requests"]?.state) ?? 0,
-    stalePullRequests: parseNumber(entities["stale_pull_requests"]?.state) ?? 0,
+    reviewRequests: review ?? 0,
+    stalePullRequests: stale ?? 0,
+    known: readableCi || review !== null || stale !== null,
   };
 }
 
@@ -77,7 +95,11 @@ export class GithubAttentionCard extends HocBaseCard<GithubAttentionConfig> {
   protected renderContent(): TemplateResult | typeof nothing {
     const { hass, config } = this;
     if (!hass || !config) return nothing;
+    if (config.device && !hass.devices[config.device]) {
+      return this.renderMessage("device_not_found", true);
+    }
     const attention = collectAttention(hass, config);
+    if (!attention.known) return this.renderMessage("unavailable");
     const clean =
       attention.failingRepos.length === 0 &&
       attention.reviewRequests === 0 &&

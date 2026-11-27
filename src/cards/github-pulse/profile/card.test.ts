@@ -75,4 +75,13 @@ describe("hoc-github-profile-card", () => {
     const { text } = await mount([sensor("stars", "1", "repo")]);
     expect(text).toContain("Device not found");
   });
+
+  it("omits the top language when its state is unknown", async () => {
+    const entities = PROFILE.map((e) =>
+      e.translationKey === "top_language" ? { ...e, state: "unknown" } : e,
+    );
+    const { text } = await mount(entities);
+    expect(text).not.toContain("unknown");
+    expect(text).not.toContain("Top language");
+  });
 });

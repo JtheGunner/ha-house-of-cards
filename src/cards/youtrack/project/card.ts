@@ -3,7 +3,8 @@ import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
 import { formatCount } from "../../../core/format";
 import { t, type LocaleKey } from "../../../core/i18n";
 import { statTile } from "../../../core/parts";
-import { resolveDeviceEntities } from "../../../core/resolver";
+import { listDevices, resolveDeviceEntities } from "../../../core/resolver";
+import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
 import { YoutrackProjectEditor } from "./editor";
 
@@ -43,6 +44,11 @@ export class YoutrackProjectCard extends HocBaseCard<YoutrackProjectConfig> {
       }
     `,
   ];
+
+  static getStubConfig(hass: HomeAssistant): Partial<YoutrackProjectConfig> {
+    const first = listDevices(hass, YOUTRACK_PLATFORM)[0];
+    return first ? { device: first.id } : {};
+  }
 
   static getConfigElement(): HTMLElement {
     return document.createElement(`${PROJECT_CARD_TAG}-editor`);

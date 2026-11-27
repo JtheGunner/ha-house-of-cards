@@ -13,6 +13,7 @@ export interface HassEntityRegistryEntry {
 }
 
 export interface HassDevice {
+  config_entries?: string[];
   id: string;
   name?: string | null;
   name_by_user?: string | null;

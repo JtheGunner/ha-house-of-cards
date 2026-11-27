@@ -115,4 +115,35 @@ describe("hoc-github-repo-card", () => {
       /device/,
     );
   });
+
+  it("hides the release badge and workflow tile for unknown or unavailable values", async () => {
+    const entities = [
+      ...ALWAYS_ON.filter((e) => e.translationKey !== "latest_release"),
+      sensor("latest_release", "unknown"),
+      sensor("actions_last_result", "unavailable"),
+    ];
+    const { root, text } = await mount(entities, { layout: "detailed" });
+    expect(root.querySelector(".badge")).toBeNull();
+    expect(text).not.toMatch(/unknown|unavailable/);
+    expect(text).not.toContain("Workflow");
+  });
+
+  it("offers a stub config with the first repository device", () => {
+    const hass = fixtureHass({
+      devices: [
+        { id: "d1", name: "ha-github-pulse" },
+        { id: "account", name: "GitHub octocat" },
+      ],
+      entities: [
+        sensor("stars", "1"),
+        {
+          platform: P,
+          deviceId: "account",
+          translationKey: "contributions_this_month",
+          state: "9",
+        },
+      ],
+    });
+    expect(GithubRepoCard.getStubConfig(hass)).toEqual({ device: "d1" });
+  });
 });

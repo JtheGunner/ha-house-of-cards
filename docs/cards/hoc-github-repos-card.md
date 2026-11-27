@@ -16,7 +16,7 @@ sort_order: desc
 
 | Option | Default | Description |
 |---|---|---|
-| `repositories` | required | List of repository devices, or `all`. An empty list also means all. |
+| `repositories` | all | List of repository devices, or `all`. An empty list also means all. |
 | `columns` | `ci_state`, `stars`, `commits_this_month`, `latest_release` | Columns to show |
 | `sort_by` | `name` | `name` or any column key |
 | `sort_order` | `asc` | `asc` or `desc`. Missing values always sort last. |

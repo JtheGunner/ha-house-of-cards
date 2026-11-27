@@ -1,5 +1,5 @@
 import { css, html, nothing, type TemplateResult } from "lit";
-import type { Trend } from "../format";
+import { isMissing, type Trend } from "../format";
 
 export type DotTone = "success" | "failure" | "pending" | "neutral";
 
@@ -40,7 +40,7 @@ export function statTile(label: string, value: string, unit?: string): TemplateR
 }
 
 export function releaseBadge(tag: string | undefined): TemplateResult | typeof nothing {
-  return tag ? html`<span class="badge">${tag}</span>` : nothing;
+  return tag && !isMissing(tag) ? html`<span class="badge">${tag}</span>` : nothing;
 }
 
 export const partsStyles = css`

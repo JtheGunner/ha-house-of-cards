@@ -1,6 +1,6 @@
 import { css, html, nothing, type TemplateResult } from "lit";
 import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
-import { formatCount, parseNumber, trend } from "../../../core/format";
+import { formatCount, isMissing, parseNumber, trend } from "../../../core/format";
 import { t, type LocaleKey } from "../../../core/i18n";
 import { statTile, trendArrow } from "../../../core/parts";
 import { findAccountDevice, resolveDeviceEntities } from "../../../core/resolver";
@@ -19,12 +19,13 @@ interface Tile {
   label: LocaleKey;
   format: (state: string) => string;
   unit?: string;
+  text?: boolean;
 }
 
 const TILES: Tile[] = [
   { key: "current_streak", label: "current_streak", format: formatCount, unit: "d" },
   { key: "longest_streak", label: "longest_streak", format: formatCount, unit: "d" },
-  { key: "top_language", label: "top_language", format: (state) => state },
+  { key: "top_language", label: "top_language", format: (state) => state, text: true },
 ];
 
 export class GithubProfileCard extends HocBaseCard<GithubProfileConfig> {
@@ -77,7 +78,7 @@ export class GithubProfileCard extends HocBaseCard<GithubProfileConfig> {
       <div class="grid">
         ${TILES.map((tile) => {
           const state = entities[tile.key]?.state;
-          return state === undefined
+          return state === undefined || (tile.text && isMissing(state))
             ? nothing
             : statTile(t(hass, tile.label), tile.format(state), tile.unit);
         })}

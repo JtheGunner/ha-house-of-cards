@@ -2,7 +2,8 @@ import { css, html, nothing, type TemplateResult } from "lit";
 import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
 import { t } from "../../../core/i18n";
 import { releaseBadge, statTile, statusDot, trendArrow } from "../../../core/parts";
-import { resolveDeviceEntities } from "../../../core/resolver";
+import { findAccountDevices, listDevices, resolveDeviceEntities } from "../../../core/resolver";
+import type { HomeAssistant } from "../../../core/types";
 import type { CardDefinition } from "../../../registry";
 import { GithubRepoEditor } from "./editor";
 import { repoFields, type Layout } from "./fields";
@@ -39,6 +40,12 @@ export class GithubRepoCard extends HocBaseCard<GithubRepoConfig> {
       }
     `,
   ];
+
+  static getStubConfig(hass: HomeAssistant): Partial<GithubRepoConfig> {
+    const accounts = new Set(findAccountDevices(hass, PLATFORM));
+    const first = listDevices(hass, PLATFORM).find((device) => !accounts.has(device.id));
+    return first ? { device: first.id } : {};
+  }
 
   static getConfigElement(): HTMLElement {
     return document.createElement(`${REPO_CARD_TAG}-editor`);

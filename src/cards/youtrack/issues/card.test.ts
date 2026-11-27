@@ -75,4 +75,21 @@ describe("hoc-youtrack-issues-card", () => {
     const { text } = await mount(undefined);
     expect(text).toContain("Entity not found");
   });
+
+  it("offers a stub config with the first sensor that carries issues", () => {
+    const hass = fixtureHass({
+      devices: [{ id: "p1", name: "HHOC" }],
+      entities: [
+        {
+          platform: "youtrack",
+          deviceId: "p1",
+          translationKey: "",
+          state: "3",
+          attributes: { issues: [] },
+        },
+      ],
+    });
+    const entityId = Object.keys(hass.entities)[0];
+    expect(YoutrackIssuesCard.getStubConfig(hass)).toEqual({ entity: entityId });
+  });
 });

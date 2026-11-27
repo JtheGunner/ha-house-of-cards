@@ -63,4 +63,9 @@ describe("hoc-youtrack-project-card", () => {
     const { text } = await mount(COUNTS, "deleted");
     expect(text).toContain("Device not found");
   });
+
+  it("offers a stub config with the first project device", () => {
+    const hass = fixtureHass({ devices: [{ id: "p1", name: "HHOC" }], entities: COUNTS });
+    expect(YoutrackProjectCard.getStubConfig(hass)).toEqual({ device: "p1" });
+  });
 });

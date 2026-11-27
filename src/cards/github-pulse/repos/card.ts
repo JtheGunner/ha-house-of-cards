@@ -1,10 +1,10 @@
 import { css, html, type TemplateResult } from "lit";
 import { HocBaseCard, type BaseConfig } from "../../../core/base-card";
-import { parseNumber, trend } from "../../../core/format";
+import { isMissing, parseNumber, trend } from "../../../core/format";
 import { t } from "../../../core/i18n";
 import { statusDot, trendArrow } from "../../../core/parts";
 import {
-  findAccountDevice,
+  findAccountDevices,
   listDevices,
   resolveDeviceEntities,
   type ResolvedEntities,
@@ -38,7 +38,7 @@ export const DEFAULT_COLUMNS: ColumnKey[] = [
 ];
 
 export interface GithubReposConfig extends BaseConfig {
-  repositories: string[] | "all";
+  repositories?: string[] | "all";
   columns?: ColumnKey[];
   sort_by?: ColumnKey | "name";
   sort_order?: "asc" | "desc";
@@ -51,13 +51,12 @@ interface Row {
   entities: ResolvedEntities;
 }
 
-const NO_VALUE = new Set(["unavailable", "unknown", ""]);
 const TEXT_COLUMNS = new Set<string>(["ci_state", "latest_release"]);
 
 function sortValue(row: Row, key: ColumnKey | "name"): number | string | null {
   if (key === "name") return row.name;
   const state = row.entities[key]?.state;
-  if (state === undefined || NO_VALUE.has(state)) return null;
+  if (state === undefined || isMissing(state)) return null;
   return TEXT_COLUMNS.has(key) ? state : parseNumber(state);
 }
 
@@ -75,8 +74,6 @@ function compareRows(a: Row, b: Row, key: ColumnKey | "name", direction: 1 | -1)
 }
 
 export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
-  static override requiredKeys = ["repositories"];
-
   static override styles = [
     ...HocBaseCard.styles,
     css`
@@ -111,10 +108,12 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
   private rows(): Row[] {
     const { hass, config } = this;
     if (!hass || !config) return [];
-    const account = findAccountDevice(hass, PLATFORM);
-    const devices = listDevices(hass, PLATFORM).filter((device) => device.id !== account);
+    const accounts = new Set(findAccountDevices(hass, PLATFORM));
+    const devices = listDevices(hass, PLATFORM).filter((device) => !accounts.has(device.id));
     const wanted =
-      config.repositories === "all" || config.repositories.length === 0
+      config.repositories === undefined ||
+      config.repositories === "all" ||
+      config.repositories.length === 0
         ? null
         : new Set(config.repositories);
     return devices
@@ -128,7 +127,7 @@ export class GithubReposCard extends HocBaseCard<GithubReposConfig> {
 
   private renderCell(row: Row, key: ColumnKey): TemplateResult {
     const state = row.entities[key]?.state;
-    if (state === undefined || NO_VALUE.has(state)) return html`<td>—</td>`;
+    if (state === undefined || isMissing(state)) return html`<td>—</td>`;
     if (key === "ci_state") return html`<td>${statusDot(state)}</td>`;
     if (key === "commits_vs_last_month") {
       return html`<td>${trendArrow(trend(parseNumber(state)))}</td>`;

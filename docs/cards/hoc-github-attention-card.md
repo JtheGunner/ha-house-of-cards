@@ -14,6 +14,8 @@ show_when_clean: true
 | `show_when_clean` | `true` | `false` hides the card completely while nothing needs attention |
 | `device` | account device | Account device for review requests and stale pull requests |
 
+Without readable data (for example while GitHub Pulse is unavailable) the card shows "Unavailable" instead of "All clear". If you run several GitHub accounts, pick the account device so only its repositories are checked.
+
 "Stale" uses the threshold of the GitHub Pulse sensor; the card adds none. The review-request and stale-pull-request sensors are optional in GitHub Pulse; enable them to see their counts.
 
 ## UI Lovelace Minimalist

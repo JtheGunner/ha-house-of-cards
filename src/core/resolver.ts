@@ -34,6 +34,21 @@ export function listDevices(hass: HomeAssistant, platform: string): { id: string
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/** Every account-level device (one per GitHub Pulse config entry). */
+export function findAccountDevices(
+  hass: HomeAssistant,
+  platform: string,
+  markerKey: string = ACCOUNT_MARKER_KEY,
+): string[] {
+  const ids = new Set<string>();
+  for (const entry of Object.values(hass.entities)) {
+    if (entry.platform === platform && entry.translation_key === markerKey && entry.device_id) {
+      ids.add(entry.device_id);
+    }
+  }
+  return [...ids];
+}
+
 export function findAccountDevice(
   hass: HomeAssistant,
   platform: string,

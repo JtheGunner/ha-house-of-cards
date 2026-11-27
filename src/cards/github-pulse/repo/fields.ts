@@ -1,4 +1,4 @@
-import { formatCount, parseNumber, trend, type Trend } from "../../../core/format";
+import { formatCount, isMissing, parseNumber, trend, type Trend } from "../../../core/format";
 import type { LocaleKey } from "../../../core/i18n";
 import type { ResolvedEntities } from "../../../core/resolver";
 
@@ -79,6 +79,7 @@ export function buildField(entities: ResolvedEntities, key: FieldKey): Field | u
   const state = entities[key]?.state;
   if (state === undefined) return undefined;
   const { label, kind } = DEFINITIONS[key];
+  if (kind === "text" && isMissing(state)) return undefined;
   const field: Field = { key, label, value: state };
   if (kind === "count") field.value = formatCount(state);
   if (kind === "days") {

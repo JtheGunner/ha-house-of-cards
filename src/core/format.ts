@@ -13,6 +13,13 @@ export function trend(value: number | null): Trend {
   return { direction: value > 0 ? "up" : "down", percent: value };
 }
 
+const MISSING_STATES = new Set(["unknown", "unavailable", ""]);
+
+/** True when a state carries no usable value (no entity, `unknown`, `unavailable`). */
+export function isMissing(state: string | undefined): boolean {
+  return state === undefined || MISSING_STATES.has(state);
+}
+
 export function parseNumber(state: string | undefined): number | null {
   if (state === undefined || state.trim() === "") return null;
   const value = Number(state);
