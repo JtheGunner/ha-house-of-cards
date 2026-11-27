@@ -16,6 +16,7 @@ export const EDITOR_OPTION_NAMES = [
   "link",
   "link_url",
   "badge",
+  "expandable",
   "show_status",
   "hide_owner",
   "column_titles",

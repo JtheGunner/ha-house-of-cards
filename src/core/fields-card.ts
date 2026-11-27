@@ -9,6 +9,7 @@ import {
   type FieldView,
 } from "./fields";
 import { fieldStyles, fieldTile } from "./parts/field-tile";
+import { headerStyles } from "./parts/header";
 import { resolveLink } from "./link";
 import { colorDot, statusDot } from "./parts";
 import { resolveDeviceEntities, type ResolvedEntities } from "./resolver";
@@ -61,45 +62,11 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
   static override styles = [
     ...HocBaseCard.styles,
     fieldStyles,
+    headerStyles,
     css`
       ha-card {
         box-shadow: inset 0 3px 0 var(--hoc-accent, transparent);
         overflow: hidden;
-      }
-      .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-      }
-      .title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        min-width: 0;
-      }
-      .badge {
-        flex: none;
-        padding: 2px 10px;
-        border-radius: 999px;
-        font-size: 0.85em;
-        color: var(--secondary-text-color);
-        background: var(--secondary-background-color);
-      }
-      .badge--colored {
-        color: var(--c);
-        background: color-mix(in srgb, var(--c) 16%, transparent);
-      }
-      .name {
-        font-weight: 500;
-        color: var(--primary-text-color);
-      }
-      .name a {
-        color: inherit;
-        text-decoration: none;
-      }
-      .name a:hover {
-        text-decoration: underline;
       }
       .grid {
         display: grid;
