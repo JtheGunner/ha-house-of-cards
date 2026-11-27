@@ -24,11 +24,9 @@
 House of Cards is a small set of cards for the integrations you build yourself, such as [GitHub Pulse](https://github.com/JtheGunner/ha-github-pulse) and [YouTrack](https://github.com/JtheGunner/ha-youtrack). Two generic cards show **any device**, and you pick the sensors and attributes in the visual editor. Integrations bring presets with sensible defaults, so a GitHub repository or a YouTrack project looks right from the first click.
 
 - 🛠 **Visual editor for every option**, no YAML needed
-- 🧩 **Any device or integration**, not only the two it ships presets for
 - 🎨 **Coloured icon tiles, badges and status rules** you define yourself
 - 🌓 **Light and dark theme**: only Home Assistant theme variables, text sizes like Mushroom
 - 🌎 **English and German**, following your Home Assistant language
-- 🚀 **No dependencies**: one file, works in the classic dashboard and [UI Lovelace Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
 
 ---
 
@@ -47,6 +45,18 @@ House of Cards is a small set of cards for the integrations you build yourself, 
 2. Add it as a resource under _Settings_ → _Dashboards_ → _Resources_: URL `/local/ha-house-of-cards.js`, type **JavaScript Module**.
 
 </details>
+
+---
+
+## 🗂 Overview
+
+|     | Card                                                                 | Shows                                                            | Integration |
+| --- | -------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------- |
+| 🧩  | [`hoc-device-card`](docs/cards/hoc-device-card.md)                   | One device as tiles, in the layout `compact`, `standard`, `list` | any         |
+| 📋  | [`hoc-devices-card`](docs/cards/hoc-devices-card.md)                 | Several devices as a sortable table                              | any         |
+| 📝  | [`hoc-youtrack-issues-card`](docs/cards/hoc-youtrack-issues-card.md) | The issues of a query sensor                                     | YouTrack    |
+
+GitHub Pulse repositories and profiles and YouTrack projects come with ready-made defaults in the device and devices cards.
 
 ---
 
