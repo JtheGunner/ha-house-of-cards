@@ -10,6 +10,26 @@ export interface FormSchemaItem {
   name: string;
   selector: Record<string, unknown>;
   required?: boolean;
+  /** A `grid` lays its `schema` out side by side. */
+  type?: "grid";
+  schema?: FormSchemaItem[];
+}
+
+/** Puts the second option of each pair next to the first in one row, when both are in the schema. */
+export function groupPairs(schema: FormSchemaItem[], pairs: [string, string][]): FormSchemaItem[] {
+  const result: FormSchemaItem[] = [];
+  for (let index = 0; index < schema.length; index++) {
+    const item = schema[index] as FormSchemaItem;
+    const next = schema[index + 1];
+    if (next && pairs.some(([first, second]) => item.name === first && next.name === second)) {
+      // A grid has no `selector`: ha-form would render it as a selector and show nothing.
+      result.push({ name: "", type: "grid", schema: [item, next] } as unknown as FormSchemaItem);
+      index++;
+    } else {
+      result.push(item);
+    }
+  }
+  return result;
 }
 
 export function deviceSelector(integration: string, name = "device"): FormSchemaItem {
@@ -236,6 +256,8 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
 
   /** Names of dropdowns with a `none` entry that is stored as no value. */
   protected noneNames: string[] = [];
+  /** Options shown side by side: the second sits right of the first when both are present. */
+  protected pairs: [string, string][] = [];
   /** Switches that are on while the option is unset, so the form shows what the card does. */
   protected onByDefaultNames: string[] = [];
 
@@ -278,8 +300,11 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     return data;
   }
 
+  /** Labels that differ from the shared one, as `option name` to `label name`. */
+  protected labelNames: Record<string, string> = {};
+
   protected computeLabel = (item: FormSchemaItem): string =>
-    this.hass ? editorLabel(this.hass, item.name) : item.name;
+    this.hass ? editorLabel(this.hass, this.labelNames[item.name] ?? item.name) : item.name;
 
   protected valueChanged(event: CustomEvent<{ value: C }>): void {
     event.stopPropagation();
@@ -325,7 +350,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     return html`<ha-form
       .hass=${this.hass}
       .data=${this.formData()}
-      .schema=${this.schema()}
+      .schema=${groupPairs(this.schema(), this.pairs)}
       .computeLabel=${this.computeLabel}
       @value-changed=${this.valueChanged}
     ></ha-form>`;

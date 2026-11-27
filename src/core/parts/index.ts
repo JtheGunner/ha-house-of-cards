@@ -1,5 +1,6 @@
 import { css, html, type TemplateResult } from "lit";
 import type { Trend } from "../format";
+import { fontSecondary } from "./typography";
 
 export type DotTone = "success" | "failure" | "pending" | "neutral";
 
@@ -55,7 +56,7 @@ export const partsStyles = css`
     background: var(--warning-color);
   }
   .trend {
-    font-size: 0.85em;
+    font-size: ${fontSecondary};
     color: var(--secondary-text-color);
   }
   .trend--up {
