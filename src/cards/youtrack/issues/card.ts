@@ -20,6 +20,8 @@ export interface BadgeSpec {
 
 export interface YoutrackIssuesConfig extends BaseConfig {
   entity: string;
+  /** Hide the title; a badge, if set, stays. */
+  show_title?: boolean;
   /** Replaces the title, which is the project and the name of the query. */
   name?: string;
   max_items?: number;
@@ -402,12 +404,19 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
     const total = Math.max(parseNumber(state.state) ?? 0, listed.length);
     const visible = this.showAll ? listed : listed.slice(0, max);
     const title = config.name?.trim() || defaultTitle(hass, config.entity, state);
+    const badge = this.badge(state);
 
     return html`<ha-card>
-      <div class="header">
-        <div class="title"><span class="name">${title}</span></div>
-        ${this.badge(state)}
-      </div>
+      ${
+        config.show_title === false
+          ? badge === nothing
+            ? nothing
+            : html`<div class="header header--badge-only">${badge}</div>`
+          : html`<div class="header">
+              <div class="title"><span class="name">${title}</span></div>
+              ${badge}
+            </div>`
+      }
       ${
         visible.length === 0
           ? html`<div class="message">${t(hass, "no_issues")}</div>`

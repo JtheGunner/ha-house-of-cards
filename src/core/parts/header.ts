@@ -8,6 +8,9 @@ export const headerStyles = css`
     justify-content: space-between;
     gap: 8px;
   }
+  .header--badge-only {
+    justify-content: flex-end;
+  }
   .title {
     display: flex;
     align-items: center;

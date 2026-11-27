@@ -236,6 +236,8 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
 
   /** Names of dropdowns with a `none` entry that is stored as no value. */
   protected noneNames: string[] = [];
+  /** Switches that are on while the option is unset, so the form shows what the card does. */
+  protected onByDefaultNames: string[] = [];
 
   /** Names of options that hold one field (a string or an object with a `key`). */
   protected singleFieldNames: string[] = [];
@@ -272,6 +274,7 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       else if (data[name] === undefined || data[name] === false) data[name] = "none";
     }
     for (const name of this.noneNames) data[name] ??= "none";
+    for (const name of this.onByDefaultNames) data[name] ??= true;
     return data;
   }
 

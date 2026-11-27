@@ -51,11 +51,19 @@ describe("hoc-youtrack-issues-card editor", () => {
     const { form } = await mountEditor();
     expect(form.schema.map((item) => item.name)).toEqual([
       "entity",
+      "show_title",
       "name",
       "badge",
       "max_items",
       "expandable",
     ]);
+  });
+
+  it("hides the name field while the title is hidden", async () => {
+    const { form } = await mountEditor({ show_title: false });
+    const names = form.schema.map((item) => item.name);
+    expect(names).toContain("show_title");
+    expect(names).not.toContain("name");
   });
 
   it("offers the number of matches and text attributes of the sensor as badge", async () => {

@@ -13,6 +13,7 @@ export const EDITOR_OPTION_NAMES = [
   "fields",
   "columns",
   "name",
+  "show_title",
   "link",
   "link_url",
   "badge",

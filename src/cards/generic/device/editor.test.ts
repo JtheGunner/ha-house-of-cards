@@ -110,6 +110,14 @@ describe("hoc-device-card editor", () => {
     ]);
   });
 
+  it("hides name and link options while the title is hidden", async () => {
+    const { form } = await mountEditor("other", { show_title: false });
+    const names = form.schema.map((item) => item.name);
+    expect(names).toContain("show_title");
+    expect(names).toContain("badge");
+    for (const hidden of ["name", "link", "link_url"]) expect(names).not.toContain(hidden);
+  });
+
   it("hides the status rules while the status is switched off", async () => {
     const { form } = await mountEditor("other", { show_status: false });
     expect(form.schema.map((item) => item.name)).not.toContain("status");
