@@ -67,7 +67,3 @@ status:
     value: 0
     state: failure
 ```
-
-## UI Lovelace Minimalist
-
-Place the card in a view or a grid. It inherits the theme's colours and radius.

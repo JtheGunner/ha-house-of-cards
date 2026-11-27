@@ -110,4 +110,4 @@ A rule is skipped while its sensor is missing, unknown or unavailable.
 
 ## Colours
 
-Each field gets a stable colour from the palette. Statuses override it with the theme colours: success and failure states (such as CI), overdue or critical counts, and rising or falling trends turn green or red. Colours come from theme variables, so the cards follow your theme, including UI Lovelace Minimalist.
+Each field gets a stable colour from the palette. Statuses override it with the theme colours: success and failure states (such as CI), overdue or critical counts, and rising or falling trends turn green or red. Colours come from theme variables, so the cards follow your theme.
