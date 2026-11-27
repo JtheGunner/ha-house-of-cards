@@ -24,6 +24,7 @@ export interface HomeAssistant {
   entities: Record<string, HassEntityRegistryEntry>;
   devices: Record<string, HassDevice>;
   locale: { language: string };
+  formatEntityState?: (stateObj: HassEntityState) => string;
   callService?: (
     domain: string,
     service: string,

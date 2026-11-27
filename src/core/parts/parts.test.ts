@@ -1,6 +1,6 @@
 import { render } from "lit";
 import { describe, expect, it } from "vitest";
-import { dotTone, releaseBadge, statTile, statusDot, trendArrow } from "./index";
+import { dotTone, statusDot, trendArrow } from "./index";
 
 function text(template: unknown): string {
   const container = document.createElement("div");
@@ -37,15 +37,5 @@ describe("trendArrow", () => {
   });
   it("shows a flat marker", () => {
     expect(text(trendArrow({ direction: "flat", percent: 0.5 }))).toBe("▬");
-  });
-});
-
-describe("statTile and releaseBadge", () => {
-  it("renders label, value and unit", () => {
-    expect(text(statTile("Stars", "12", "★"))).toBe("12 ★ Stars");
-  });
-  it("renders nothing for a missing release tag", () => {
-    expect(text(releaseBadge(undefined))).toBe("");
-    expect(text(releaseBadge("v1.4.0"))).toBe("v1.4.0");
   });
 });

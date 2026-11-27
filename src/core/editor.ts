@@ -1,5 +1,6 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import type { BaseConfig } from "./base-card";
+import { discoverFieldOptions } from "./fields";
 import type { HomeAssistant } from "./types";
 
 export interface FormSchemaItem {
@@ -14,6 +15,18 @@ export function deviceSelector(integration: string, name = "device"): FormSchema
 
 export function layoutSelector(options: string[], name = "layout"): FormSchemaItem {
   return { name, selector: { select: { mode: "dropdown", options } } };
+}
+
+export function fieldsSelector(
+  hass: HomeAssistant | undefined,
+  deviceId: string | undefined,
+  name = "fields",
+): FormSchemaItem {
+  const options = hass && deviceId ? discoverFieldOptions(hass, deviceId) : [];
+  return {
+    name,
+    selector: { select: { multiple: true, mode: "list", custom_value: true, options } },
+  };
 }
 
 export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {

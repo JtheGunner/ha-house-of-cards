@@ -37,8 +37,12 @@ One bundle with cards for [GitHub Pulse](https://github.com/JtheGunner/ha-github
 | 📋 | [`hoc-github-repos-card`](docs/cards/hoc-github-repos-card.md) | GitHub Pulse | Several repositories as a sortable table |
 | 👤 | [`hoc-github-profile-card`](docs/cards/hoc-github-profile-card.md) | GitHub Pulse | Account activity, streaks, top language |
 | 🔔 | [`hoc-github-attention-card`](docs/cards/hoc-github-attention-card.md) | GitHub Pulse | Failing CI, review requests, stale pull requests |
+| 🧩 | [`hoc-device-card`](docs/cards/hoc-device-card.md) | any | Any device: pick the sensors and attributes to show |
 | 🗂️ | [`hoc-youtrack-project-card`](docs/cards/hoc-youtrack-project-card.md) | YouTrack | Issue counts of one project |
 | 📝 | [`hoc-youtrack-issues-card`](docs/cards/hoc-youtrack-issues-card.md) | YouTrack | Issues of a query sensor |
+
+> [!TIP]
+> Every card shows its values as coloured icon tiles, and you choose which sensors and attributes to show with `fields`; see the [device card](docs/cards/hoc-device-card.md#fields).
 
 > [!NOTE]
 > Optional sensors are disabled by default in the integrations. A card shows a field only if its sensor is enabled.
