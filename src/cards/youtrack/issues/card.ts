@@ -5,6 +5,7 @@ import { parseNumber } from "../../../core/format";
 import { t } from "../../../core/i18n";
 import { headerStyles } from "../../../core/parts/header";
 import type { HassEntityState, HomeAssistant } from "../../../core/types";
+import { fontSecondary } from "../../../core/parts/typography";
 import type { CardDefinition } from "../../../registry";
 import { priorityColor, stateColor, type ColorOverrides } from "./colors";
 import { YoutrackIssuesEditor } from "./editor";
@@ -20,6 +21,8 @@ export interface BadgeSpec {
 
 export interface YoutrackIssuesConfig extends BaseConfig {
   entity: string;
+  /** Hide the title; a badge, if set, stays. */
+  show_title?: boolean;
   /** Replaces the title, which is the project and the name of the query. */
   name?: string;
   max_items?: number;
@@ -135,7 +138,7 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
       }
       .issue__id {
         flex: none;
-        font-size: 0.85em;
+        font-size: ${fontSecondary};
         font-weight: 500;
         color: var(--secondary-text-color);
         text-decoration: none;
@@ -178,7 +181,7 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
       }
       .issue__chevron {
         flex: none;
-        font-size: 0.8em;
+        font-size: ${fontSecondary};
         color: var(--secondary-text-color);
         transition: transform 0.15s;
       }
@@ -186,7 +189,7 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
         transform: rotate(90deg);
       }
       .badge {
-        font-size: 0.78em;
+        font-size: ${fontSecondary};
         white-space: nowrap;
       }
       .detail {
@@ -204,7 +207,7 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
         flex-wrap: wrap;
         align-items: center;
         gap: 8px 12px;
-        font-size: 0.85em;
+        font-size: ${fontSecondary};
         color: var(--secondary-text-color);
       }
       .detail__meta a {
@@ -227,7 +230,7 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
         justify-content: space-between;
         gap: 4px 12px;
         margin-top: 6px;
-        font-size: 0.85em;
+        font-size: ${fontSecondary};
         color: var(--secondary-text-color);
       }
       .more {
@@ -402,12 +405,19 @@ export class YoutrackIssuesCard extends HocBaseCard<YoutrackIssuesConfig> {
     const total = Math.max(parseNumber(state.state) ?? 0, listed.length);
     const visible = this.showAll ? listed : listed.slice(0, max);
     const title = config.name?.trim() || defaultTitle(hass, config.entity, state);
+    const badge = this.badge(state);
 
     return html`<ha-card>
-      <div class="header">
-        <div class="title"><span class="name">${title}</span></div>
-        ${this.badge(state)}
-      </div>
+      ${
+        config.show_title === false
+          ? badge === nothing
+            ? nothing
+            : html`<div class="header header--badge-only">${badge}</div>`
+          : html`<div class="header">
+              <div class="title"><span class="name">${title}</span></div>
+              ${badge}
+            </div>`
+      }
       ${
         visible.length === 0
           ? html`<div class="message">${t(hass, "no_issues")}</div>`

@@ -1,4 +1,5 @@
 import { css } from "lit";
+import { fontPrimary, fontSecondary } from "./typography";
 
 /** The card header shared by the cards: title with optional dot, and a badge on the far side. */
 export const headerStyles = css`
@@ -7,6 +8,9 @@ export const headerStyles = css`
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+  }
+  .header--badge-only {
+    justify-content: flex-end;
   }
   .title {
     display: flex;
@@ -18,7 +22,7 @@ export const headerStyles = css`
     flex: none;
     padding: 2px 10px;
     border-radius: 999px;
-    font-size: 0.85em;
+    font-size: ${fontSecondary};
     color: var(--secondary-text-color);
     background: var(--secondary-background-color);
   }
@@ -27,6 +31,7 @@ export const headerStyles = css`
     background: color-mix(in srgb, var(--c) 16%, transparent);
   }
   .name {
+    font-size: ${fontPrimary};
     font-weight: 500;
     color: var(--primary-text-color);
   }

@@ -167,6 +167,17 @@ describe("hoc-device-card badge and link", () => {
   });
   const OPEN = sensor("any_integration", "open", "9", { unit_of_measurement: "issues" });
 
+  it("hides the title with show_title: false and keeps the badge", async () => {
+    const hidden = await mount([RELEASE], { show_title: false });
+    expect(hidden.root.querySelector(".header")).toBeNull();
+    expect(hidden.root.querySelector(".name")).toBeNull();
+    const badged = await mount([RELEASE], { show_title: false, badge: "release" });
+    expect(badged.root.querySelector(".name")).toBeNull();
+    expect(badged.root.querySelector(".header--badge-only .badge")?.textContent?.trim()).toBe(
+      "v1.4.0",
+    );
+  });
+
   it("shows no badge by default", async () => {
     const { root } = await mount([RELEASE]);
     expect(root.querySelector(".badge")).toBeNull();

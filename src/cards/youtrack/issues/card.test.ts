@@ -126,6 +126,14 @@ describe("hoc-youtrack-issues-card title and badge", () => {
     expect(text(root, ".header .name")).toBe("My bugs");
   });
 
+  it("hides the title with show_title: false and keeps the badge", async () => {
+    const hidden = await mount(attributes(), { show_title: false });
+    expect(hidden.root.querySelector(".header")).toBeNull();
+    const badged = await mount(attributes(), { show_title: false, badge: "count" }, ENTITY, "7");
+    expect(badged.root.querySelector(".name")).toBeNull();
+    expect(text(badged.root, ".header--badge-only .badge")).toBe("7");
+  });
+
   it("shows no badge by default", async () => {
     const { root } = await mount(attributes());
     expect(root.querySelector(".header .badge")).toBeNull();

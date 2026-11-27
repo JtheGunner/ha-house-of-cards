@@ -32,6 +32,8 @@ export interface FieldsConfig extends BaseConfig {
   link?: boolean | string;
   /** Link the title to this https URL while `link` gives no target. */
   link_url?: string;
+  /** Hide the title; a badge, if set, stays. */
+  show_title?: boolean;
   /** A value shown as a coloured badge next to the title: a sensor, `sensor:attribute` or an object. */
   badge?: FieldConfig;
   /** Show the status dot and the accent edge. On by default. */
@@ -194,19 +196,27 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
       class=${alert ? "alert" : ""}
       style=${accent ? `--hoc-accent: ${accent}` : ""}
     >
-      <div class="header">
-        <div class="title">
-          ${dot}
-          <span class="name"
-            >${
-              linkTarget
-                ? html`<a href=${linkTarget} target="_blank" rel="noopener noreferrer">${name}</a>`
-                : name
-            }</span
-          >
-        </div>
-        ${badge}
-      </div>
+      ${
+        config.show_title === false
+          ? badge === nothing
+            ? nothing
+            : html`<div class="header header--badge-only">${badge}</div>`
+          : html`<div class="header">
+              <div class="title">
+                ${dot}
+                <span class="name"
+                  >${
+                    linkTarget
+                      ? html`<a href=${linkTarget} target="_blank" rel="noopener noreferrer"
+                          >${name}</a
+                        >`
+                      : name
+                  }</span
+                >
+              </div>
+              ${badge}
+            </div>`
+      }
       ${this.renderFields(views, layout)}
     </ha-card>`;
   }

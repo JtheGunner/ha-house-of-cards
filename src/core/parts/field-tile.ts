@@ -2,6 +2,7 @@ import { css, html, nothing, type TemplateResult } from "lit";
 import type { FieldView } from "../fields";
 import type { HomeAssistant } from "../types";
 import { trendArrow } from "./index";
+import { fontPrimary, fontSecondary } from "./typography";
 
 export type FieldDisplay = "tile" | "inline" | "row";
 
@@ -67,8 +68,8 @@ export const fieldStyles = css`
     gap: 6px;
   }
   .field__value {
-    font-size: 1.15em;
-    font-weight: 600;
+    font-size: ${fontPrimary};
+    font-weight: 500;
     line-height: 1.2;
     color: var(--primary-text-color);
   }
@@ -76,7 +77,7 @@ export const fieldStyles = css`
     color: var(--c);
   }
   .field__unit {
-    font-size: 0.7em;
+    font-size: ${fontSecondary};
     font-weight: 400;
     color: var(--secondary-text-color);
   }
@@ -84,7 +85,8 @@ export const fieldStyles = css`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 0.8em;
+    font-size: ${fontSecondary};
+    font-weight: 400;
     color: var(--secondary-text-color);
   }
   .field--inline .chip {
@@ -104,5 +106,8 @@ export const fieldStyles = css`
   }
   .field--row .field__main {
     order: 2;
+  }
+  .field--row .field__label {
+    font-size: ${fontPrimary};
   }
 `;

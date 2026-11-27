@@ -16,6 +16,12 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
   protected override fieldListNames = ["columns"];
   protected override ruleListNames = ["status"];
   protected override linkNames = ["link"];
+  protected override pairs: [string, string][] = [
+    ["name", "device_title"],
+    ["sort_by", "sort_order"],
+    ["link", "shorten_names"],
+  ];
+  protected override labelNames = { name: "title" };
   protected override noneNames = ["platform"];
 
   /** The same device twice would tie two entries together, so duplicates are dropped. */
@@ -48,12 +54,18 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
     const ids = this.deviceIds();
     const options = this.columnOptions(ids);
     const { hasDevicePage, attributeUrls } = linkSources(hass, ids);
+    const hasPathNames =
+      !!hass &&
+      selectDevices(hass, config?.devices, config?.platform).some((d) => d.name.includes("/"));
     const platforms = hass ? listPlatforms(hass) : [];
     const platformOptions = [
       { value: "none", label: hass ? t(hass, "platform_none") : "none" },
       ...platforms,
     ];
     return [
+      { name: "name", selector: { text: {} } },
+      { name: "device_title", selector: { text: {} } },
+      choiceSelector(hass, "titles", ["text", "icon", "icon_text"], "column_titles"),
       { name: "platform", selector: { select: { mode: "dropdown", options: platformOptions } } },
       {
         name: "devices",
@@ -76,11 +88,12 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
         },
       },
       choiceSelector(hass, "order", ["asc", "desc"], "sort_order"),
-      { name: "hide_owner", selector: { boolean: {} } },
       linkSelector(hass, hasDevicePage, attributeUrls),
+      ...(hasPathNames || config?.shorten_names
+        ? [{ name: "shorten_names", selector: { boolean: {} } }]
+        : []),
       { name: "show_status", selector: { boolean: {} } },
       ...(config?.show_status ? [statusSelector(hass, options)] : []),
-      choiceSelector(hass, "titles", ["text", "icon", "icon_text"], "column_titles"),
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },
     ];
   }
