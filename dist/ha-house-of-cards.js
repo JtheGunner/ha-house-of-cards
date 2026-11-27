@@ -2190,7 +2190,7 @@ var nn = class extends kt {
 		super(...e), this.fieldListNames = ["columns"], this.ruleListNames = ["status"], this.linkNames = ["link"], this.pairs = [
 			["name", "device_title"],
 			["sort_by", "sort_order"],
-			["shorten_names", "link"]
+			["link", "shorten_names"]
 		], this.labelNames = { name: "title" }, this.noneNames = ["platform"];
 	}
 	valueChanged(e) {
@@ -2257,11 +2257,11 @@ var nn = class extends kt {
 				} }
 			},
 			bt(e, "order", ["asc", "desc"], "sort_order"),
+			Et(e, i, a),
 			...o || t?.shorten_names ? [{
 				name: "shorten_names",
 				selector: { boolean: {} }
 			}] : [],
-			Et(e, i, a),
 			{
 				name: "show_status",
 				selector: { boolean: {} }

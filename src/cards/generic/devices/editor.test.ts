@@ -74,7 +74,7 @@ describe("hoc-devices-card-editor", () => {
     expect(rows).toEqual([
       ["name", "device_title"],
       ["sort_by", "sort_order"],
-      ["shorten_names", "link"],
+      ["link", "shorten_names"],
     ]);
   });
 

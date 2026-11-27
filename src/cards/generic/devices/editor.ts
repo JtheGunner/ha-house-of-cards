@@ -19,7 +19,7 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
   protected override pairs: [string, string][] = [
     ["name", "device_title"],
     ["sort_by", "sort_order"],
-    ["shorten_names", "link"],
+    ["link", "shorten_names"],
   ];
   protected override labelNames = { name: "title" };
   protected override noneNames = ["platform"];
@@ -88,10 +88,10 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
         },
       },
       choiceSelector(hass, "order", ["asc", "desc"], "sort_order"),
+      linkSelector(hass, hasDevicePage, attributeUrls),
       ...(hasPathNames || config?.shorten_names
         ? [{ name: "shorten_names", selector: { boolean: {} } }]
         : []),
-      linkSelector(hass, hasDevicePage, attributeUrls),
       { name: "show_status", selector: { boolean: {} } },
       ...(config?.show_status ? [statusSelector(hass, options)] : []),
       { name: "max_height", selector: { number: { min: 100, max: 2000, mode: "box" } } },
