@@ -31,9 +31,11 @@
 ### Task 1: Action helpers and gesture tracker
 
 **Files:**
+
 - Create: `src/core/actions.ts`, `src/core/actions.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `type ActionKind = "none" | "more-info" | "fire-dom-event"`
   - `interface CardAction { action: ActionKind; entity?: string; [key: string]: unknown }`
@@ -58,10 +60,12 @@
 ### Task 2: Devices card uses the actions
 
 **Files:**
+
 - Modify: `src/cards/generic/devices/card.ts` (`DevicesConfig`, `Row`, `rows()`, title cell in `renderContent()`, styles)
 - Test: `src/cards/generic/devices/card.test.ts`
 
 **Interfaces:**
+
 - Consumes: everything from Task 1.
 - Produces: `DevicesConfig.tap_action?: CardAction`, `DevicesConfig.hold_action?: CardAction`; `Row` gains `context: ActionContext`.
 
@@ -80,10 +84,12 @@
 ### Task 3: Editor support
 
 **Files:**
+
 - Modify: `src/core/editor.ts` (`HocBaseEditor`: `actionNames`, `formData()`, `valueChanged()`; new `actionSelector`), `src/core/i18n.ts` (`EDITOR_OPTION_NAMES` + `tap_action`, `hold_action`), `src/core/locales/en.ts`, `src/core/locales/de.ts`, `src/cards/generic/devices/editor.ts`
 - Test: `src/cards/generic/devices/editor.test.ts`
 
 **Interfaces:**
+
 - Produces: `actionSelector(hass: HomeAssistant | undefined, name: string, current: CardAction | undefined): FormSchemaItem` — options `none`, `more-info`, plus `fire-dom-event` only while `current?.action === "fire-dom-event"`; `HocBaseEditor.actionNames: string[]` (protected, default `[]`).
 - Locale keys: `editor_tap_action` ("Tap action" / "Tipp-Aktion"), `editor_hold_action` ("Hold action" / "Halten-Aktion"), `action_none` ("None" / "Keine"), `action_more_info` ("More info" / "Mehr Infos"), `action_fire_dom_event` ("Custom popup (YAML)" / "Eigenes Popup (YAML)").
 
@@ -100,6 +106,7 @@
 ### Task 4: Documentation
 
 **Files:**
+
 - Modify: `docs/cards/hoc-devices-card.md` (add `src/core/actions.ts` to the drift comment, two rows in the options table, an "Actions" section), `CHANGELOG.md` (Unreleased → Added), `README.md` only if its devices section lists options.
 - Test: `src/docs.test.ts` (existing)
 

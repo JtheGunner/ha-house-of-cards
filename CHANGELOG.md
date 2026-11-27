@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+
+- `hoc-devices-card`: `tap_action` and `hold_action` open a popup from the name of a row: the standard `more-info` popup or a custom `browser_mod` popup through `fire-dom-event`, with `{{ entity }}`, `{{ device_id }}` and `{{ device_name }}` filled in per row. A `tap_action` replaces the link; the visual editor offers `more-info`.
+
 ## [0.3.1] - 2026-11-27
 
 ### Added

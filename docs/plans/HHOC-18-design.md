@@ -35,7 +35,7 @@ type: custom:hoc-devices-card
 platform: github_pulse
 tap_action:
   action: more-info
-  entity: ci_state            # sensor key of the row's device; optional
+  entity: ci_state # sensor key of the row's device; optional
 hold_action:
   action: fire-dom-event
   browser_mod:
