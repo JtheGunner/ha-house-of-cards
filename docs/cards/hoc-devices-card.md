@@ -4,6 +4,8 @@
 
 Several devices as a sortable table. List the devices of one integration, or pick any devices. GitHub Pulse (repositories) and YouTrack (projects) come with ready-made columns and status.
 
+![Devices card](../images/devices-card.png)
+
 ```yaml
 type: custom:hoc-devices-card
 platform: github_pulse

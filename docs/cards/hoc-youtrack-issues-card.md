@@ -4,6 +4,8 @@
 
 The issues of a YouTrack **query sensor**, with coloured states and priorities. Click an issue to see its details, and the card to see all of its issues.
 
+![YouTrack issues card](../images/issues-card.png)
+
 ```yaml
 type: custom:hoc-youtrack-issues-card
 entity: sensor.my_open_bugs
