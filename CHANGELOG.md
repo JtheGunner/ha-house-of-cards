@@ -13,6 +13,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Text sizes follow the Mushroom and tile cards: titles and values are 14px, labels, units, badges and details 12px (`--ha-font-size-m` and `--ha-font-size-s` when the theme sets them). Values are no longer bold and larger.
 
+### Fixed
+
+- The device card keeps the theme's card shadow, as the devices card does. The status edge replaced it before.
+
 ## [0.3.0] - 2026-11-27
 
 ### Added
