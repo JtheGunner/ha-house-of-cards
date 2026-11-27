@@ -1132,7 +1132,6 @@ function yt(e, t) {
 		a && t.some(([e, t]) => i.name === e && a.name === t) ? (n.push({
 			name: "",
 			type: "grid",
-			selector: {},
 			schema: [i, a]
 		}), r++) : n.push(i);
 	}

@@ -78,6 +78,13 @@ describe("hoc-devices-card-editor", () => {
     ]);
   });
 
+  it("builds rows as plain grids without a selector", async () => {
+    const { form } = await mountPlain({ platform: "github_pulse" });
+    const grid = form.schema.find((item) => item.schema) as unknown as Record<string, unknown>;
+    expect(grid["type"]).toBe("grid");
+    expect(grid).not.toHaveProperty("selector");
+  });
+
   it("keeps an option alone when its partner is not offered", async () => {
     const { form } = await mountPlain({ platform: "github_pulse" });
     const rows = form.schema.filter((item) => item.schema).length;

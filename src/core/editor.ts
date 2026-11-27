@@ -22,7 +22,8 @@ export function groupPairs(schema: FormSchemaItem[], pairs: [string, string][]):
     const item = schema[index] as FormSchemaItem;
     const next = schema[index + 1];
     if (next && pairs.some(([first, second]) => item.name === first && next.name === second)) {
-      result.push({ name: "", type: "grid", selector: {}, schema: [item, next] });
+      // A grid has no `selector`: ha-form would render it as a selector and show nothing.
+      result.push({ name: "", type: "grid", schema: [item, next] } as unknown as FormSchemaItem);
       index++;
     } else {
       result.push(item);
