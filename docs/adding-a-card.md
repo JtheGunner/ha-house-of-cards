@@ -13,3 +13,7 @@ A card is one folder plus one registry entry.
 7. Run `npm test`, `npm run lint`, `npm run typecheck` and `npm run build`, and commit the rebuilt `dist/`.
 
 Style only with Home Assistant theme variables so the card follows the active theme.
+
+## Adding an integration to the device card
+
+If your integration has a typical set of sensors, add a preset to `src/core/presets.ts` instead of a new card. A preset is plain data: the default fields per layout, the sensor whose state drives the header dot, the sensors that colour the accent, and an optional badge sensor. The device card picks it by the integration of the chosen device.

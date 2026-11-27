@@ -45,11 +45,17 @@ describe("registerCards", () => {
 });
 
 describe("cards", () => {
-  it("contains every GitHub card with a unique tag", () => {
+  it("contains the generic cards with a unique tag", () => {
     const tags = cards.map((card) => card.tag);
-    expect(tags).toEqual(expect.arrayContaining(["hoc-github-card", "hoc-github-repos-card"]));
-    expect(tags).not.toContain("hoc-github-profile-card");
-    expect(tags).not.toContain("hoc-github-attention-card");
+    expect(tags).toEqual(expect.arrayContaining(["hoc-device-card", "hoc-github-repos-card"]));
+    for (const removed of [
+      "hoc-github-card",
+      "hoc-github-profile-card",
+      "hoc-github-attention-card",
+      "hoc-youtrack-project-card",
+    ]) {
+      expect(tags).not.toContain(removed);
+    }
     expect(new Set(tags).size).toBe(tags.length);
   });
 

@@ -15,7 +15,7 @@ import { statusDot, trendArrow } from "../../../core/parts";
 import { fieldIcon } from "../../../core/parts/field-tile";
 import { findAccountDevices, listDevices, resolveDeviceEntities } from "../../../core/resolver";
 import type { CardDefinition } from "../../../registry";
-import { PLATFORM } from "../github/card";
+import { GITHUB_PLATFORM as PLATFORM } from "../../../core/presets";
 import { GithubReposEditor } from "./editor";
 
 export const REPOS_CARD_TAG = "hoc-github-repos-card";

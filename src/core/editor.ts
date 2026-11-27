@@ -1,6 +1,7 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import type { BaseConfig } from "./base-card";
 import { editorLabel, t, type LocaleKey } from "./i18n";
+import { STATUS_OPERATORS, STATUS_STATES } from "./status";
 import { discoverFieldOptions, type FieldConfig, type FieldOption } from "./fields";
 import type { HomeAssistant } from "./types";
 
@@ -86,20 +87,67 @@ export function fieldsSelector(
   return fieldsSelectorFromOptions(hass, options, name);
 }
 
+/** Rules of a card's status, edited as objects like the field lists. */
+export function statusSelector(
+  hass: HomeAssistant | undefined,
+  options: FieldOption[],
+): FormSchemaItem {
+  const label = (key: string) => (hass ? editorLabel(hass, key) : key);
+  const states = STATUS_STATES.map((value) => ({
+    value,
+    label: hass ? t(hass, `state_${value}` as LocaleKey) : value,
+  }));
+  return {
+    name: "status",
+    selector: {
+      object: {
+        multiple: true,
+        label_field: "field",
+        fields: {
+          field: {
+            label: label("field"),
+            required: true,
+            selector: { select: { mode: "dropdown", custom_value: true, options } },
+          },
+          operator: {
+            label: label("operator"),
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: STATUS_OPERATORS.map((value) => ({ value, label: value })),
+              },
+            },
+          },
+          value: { label: label("value"), selector: { text: {} } },
+          state: {
+            label: label("state"),
+            required: true,
+            selector: { select: { mode: "dropdown", custom_value: true, options: states } },
+          },
+        },
+      },
+    },
+  };
+}
+
+export function statusTemplateSelector(): FormSchemaItem {
+  return { name: "status_template", selector: { template: {} } };
+}
+
 function toFormEntry(item: FieldConfig): Record<string, unknown> {
   if (typeof item === "string") return { key: item };
   const { attribute, ...rest } = item;
   return attribute ? { ...rest, key: `${item.key}:${attribute}` } : { ...rest };
 }
 
-function cleanEntries(value: unknown): Record<string, unknown>[] {
+function cleanEntries(value: unknown, requiredKey: string): Record<string, unknown>[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((entry) => {
     if (typeof entry !== "object" || entry === null) return [];
     const kept = Object.fromEntries(
       Object.entries(entry).filter(([, v]) => v !== undefined && v !== null && v !== ""),
     );
-    return typeof kept["key"] === "string" ? [kept] : [];
+    return typeof kept[requiredKey] === "string" ? [kept] : [];
   });
 }
 
@@ -118,6 +166,9 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
 
   /** Names of options that hold a list of fields; they are edited as objects and dropped when empty. */
   protected fieldListNames: string[] = [];
+
+  /** Names of options that hold status rules; entries without a `field` are dropped. */
+  protected ruleListNames: string[] = [];
 
   protected abstract schema(): FormSchemaItem[];
 
@@ -138,9 +189,18 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
     const config = { ...this.config, ...event.detail.value } as Record<string, unknown>;
     for (const name of this.fieldListNames) {
       if (!(name in config)) continue;
-      const entries = cleanEntries(config[name]);
+      const entries = cleanEntries(config[name], "key");
       if (entries.length > 0) config[name] = entries;
       else delete config[name];
+    }
+    for (const name of this.ruleListNames) {
+      if (!(name in config)) continue;
+      const entries = cleanEntries(config[name], "field");
+      if (entries.length > 0) config[name] = entries;
+      else delete config[name];
+    }
+    if (typeof config["status_template"] === "string" && config["status_template"].trim() === "") {
+      delete config["status_template"];
     }
     this.dispatchEvent(
       new CustomEvent("config-changed", {

@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { fixtureHass, type FixtureEntity } from "../../../../test/fixtures/hass";
 import { registerCards } from "../../../registry";
-import { projectCardDefinition, YoutrackProjectCard } from "./card";
+import { DeviceCard, deviceCardDefinition } from "./card";
 
-beforeAll(() => registerCards([projectCardDefinition]));
+beforeAll(() => registerCards([deviceCardDefinition]));
 
 function sensor(translationKey: string, state?: string): FixtureEntity {
   return { platform: "youtrack", deviceId: "p1", translationKey, state };
@@ -20,8 +20,8 @@ const CALM_FLAGS = [sensor("has_overdue", "off"), sensor("has_critical_open", "o
 
 async function mount(entities: FixtureEntity[], device = "p1") {
   const hass = fixtureHass({ devices: [{ id: "p1", name: "HHOC" }], entities });
-  const card = document.createElement("hoc-youtrack-project-card") as YoutrackProjectCard;
-  card.setConfig({ type: "custom:hoc-youtrack-project-card", device } as never);
+  const card = document.createElement("hoc-device-card") as DeviceCard;
+  card.setConfig({ type: "custom:hoc-device-card", device } as never);
   card.hass = hass;
   document.body.append(card);
   await card.updateComplete;
@@ -29,7 +29,7 @@ async function mount(entities: FixtureEntity[], device = "p1") {
   return { root, text: root.textContent?.replace(/\s+/g, " ") ?? "" };
 }
 
-describe("hoc-youtrack-project-card", () => {
+describe("hoc-device-card with the YouTrack preset", () => {
   it("shows the project name and the counts", async () => {
     const { text } = await mount([...COUNTS, ...CALM_FLAGS]);
     expect(text).toContain("HHOC");
@@ -62,10 +62,5 @@ describe("hoc-youtrack-project-card", () => {
   it("renders the error state when the device does not exist", async () => {
     const { text } = await mount(COUNTS, "deleted");
     expect(text).toContain("Device not found");
-  });
-
-  it("offers a stub config with the first project device", () => {
-    const hass = fixtureHass({ devices: [{ id: "p1", name: "HHOC" }], entities: COUNTS });
-    expect(YoutrackProjectCard.getStubConfig(hass)).toEqual({ device: "p1" });
   });
 });

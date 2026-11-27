@@ -6,7 +6,9 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
-- `show_release` on the GitHub card: shows the latest release version on the far side of the header. Off by default.
+- Status of the device card: `status` is a list of rules (sensor or `sensor:attribute`, condition, value, resulting status) and `status_template` is a Home Assistant template that returns `success`, `pending`, `failure`, `none` or a colour. Both are available in the visual editor. They replace the integration's default status; the template wins over the rules and is rendered with the `device_id`.
+- Presets: the device card knows GitHub Pulse and YouTrack devices and starts with their fields and status, including the GitHub profile for the account device.
+- `show_release` on the device card (GitHub devices): shows the latest release version on the far side of the header. Off by default.
 - Per-column `title_color` in the repositories table colours the column title; `color` tints the values.
 - Per-column `align` in the repositories table. By default number columns align right, text columns left; the column title follows.
 - `link` on the repositories table: repository names link to GitHub. Off by default.
@@ -17,7 +19,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Changed
 
-- **Breaking:** `hoc-github-repo-card` is now `hoc-github-card` and also shows your GitHub profile when you pick the account device. Update `type:` in existing dashboards.
+- **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. Update `type:` in existing dashboards; `device`, `layout`, `fields`, `name`, `link`, `show_status` and `show_release` keep working.
 - Every card offers a live preview in the card picker.
 
 ### Fixed
@@ -28,7 +30,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Removed
 
-- **Breaking:** `hoc-github-profile-card` (use `hoc-github-card` with the account device) and `hoc-github-attention-card`.
+- **Breaking:** `hoc-github-profile-card` (use `hoc-device-card` with the account device) and `hoc-github-attention-card`.
 
 ## [0.2.2] - 2026-11-27
 

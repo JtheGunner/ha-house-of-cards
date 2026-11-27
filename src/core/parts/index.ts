@@ -21,6 +21,13 @@ export function statusDot(state: string | undefined): TemplateResult {
   return html`<span class="dot dot--${dotTone(state)}" aria-hidden="true"></span>`;
 }
 
+/** A dot in an explicit colour; neutral grey without one. */
+export function colorDot(color: string | undefined): TemplateResult {
+  return color
+    ? html`<span class="dot" style="background: ${color}" aria-hidden="true"></span>`
+    : html`<span class="dot dot--neutral" aria-hidden="true"></span>`;
+}
+
 export function trendArrow(value: Trend): TemplateResult {
   const symbol = { up: "▲", down: "▼", flat: "▬" }[value.direction];
   const percent =

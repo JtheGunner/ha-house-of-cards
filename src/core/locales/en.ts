@@ -63,6 +63,16 @@ export const en = {
   align_right: "Right",
   editor_align: "Alignment",
   editor_title_color: "Title colour",
+  editor_status: "Status rules",
+  editor_status_template: "Status template",
+  editor_field: "Sensor",
+  editor_operator: "Condition",
+  editor_value: "Value",
+  editor_state: "Status",
+  state_success: "OK",
+  state_pending: "Warning",
+  state_failure: "Error",
+  state_none: "No status",
 } as const;
 
 export type LocaleKey = keyof typeof en;

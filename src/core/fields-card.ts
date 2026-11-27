@@ -8,8 +8,9 @@ import {
   type FieldView,
 } from "./fields";
 import { fieldStyles, fieldTile } from "./parts/field-tile";
-import { statusDot } from "./parts";
+import { colorDot, statusDot } from "./parts";
 import { resolveDeviceEntities, type ResolvedEntities } from "./resolver";
+import { evaluateStatus, parseStatusState, type Status, type StatusRule } from "./status";
 
 export type FieldsLayout = "compact" | "standard" | "list";
 
@@ -23,6 +24,10 @@ export interface FieldsConfig extends BaseConfig {
   link?: boolean;
   /** Show the status dot and the accent edge. On by default. */
   show_status?: boolean;
+  /** Rules that decide the status; the first match wins. Replaces the integration's default. */
+  status?: StatusRule[];
+  /** A Home Assistant template whose result sets the status. Wins over `status`. */
+  status_template?: string;
 }
 
 function assertFields(fields: unknown): void {
@@ -101,6 +106,73 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
     `,
   ];
 
+  static override properties = {
+    ...HocBaseCard.properties,
+    templateResult: { state: true },
+  };
+
+  declare templateResult: string | undefined;
+
+  private templateKey: string | undefined;
+  private unsubscribe: Promise<() => void> | undefined;
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.syncTemplate();
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.stopTemplate();
+  }
+
+  protected override updated(): void {
+    this.syncTemplate();
+  }
+
+  private stopTemplate(): void {
+    const pending = this.unsubscribe;
+    this.unsubscribe = undefined;
+    this.templateKey = undefined;
+    pending?.then((stop) => stop()).catch(() => undefined);
+  }
+
+  /** Keeps one live subscription to the rendered `status_template` of the current device. */
+  private syncTemplate(): void {
+    const template = this.config?.status_template?.trim();
+    const connection = this.hass?.connection;
+    const deviceId = this.deviceId();
+    const key = template && connection && deviceId ? `${deviceId}\n${template}` : undefined;
+    if (key === this.templateKey) return;
+    this.stopTemplate();
+    this.templateResult = undefined;
+    if (!key || !connection || !template) return;
+    this.templateKey = key;
+    this.unsubscribe = connection.subscribeMessage<{ result: unknown }>(
+      (message) => {
+        this.templateResult = String(message.result ?? "");
+      },
+      {
+        type: "render_template",
+        template,
+        variables: { device_id: deviceId },
+        report_errors: false,
+      },
+    );
+    this.unsubscribe.catch(() => {
+      this.templateResult = undefined;
+    });
+  }
+
+  /** The status the card defines itself, or undefined to use the integration's default. */
+  private customStatus(entities: ResolvedEntities): Status | undefined {
+    if (this.config?.status_template?.trim()) {
+      return this.templateResult === undefined ? {} : parseStatusState(this.templateResult);
+    }
+    if (this.config?.status?.length) return evaluateStatus(this.config.status, entities);
+    return undefined;
+  }
+
   /** The integration whose entities this card reads; none means every entity of the device. */
   protected abstract get platform(): string | undefined;
 
@@ -166,9 +238,19 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
       this.statusKeys.map((key) => ({ key })),
       deviceName,
     );
-    const accent = showStatus ? accentColor(statusViews) : undefined;
-    const alert = statusViews.some((view) => view.tone === "failure");
+    const custom = showStatus ? this.customStatus(entities) : undefined;
+    const accent = custom ? custom.color : showStatus ? accentColor(statusViews) : undefined;
+    const alert = custom
+      ? custom.tone === "failure"
+      : statusViews.some((view) => view.tone === "failure");
     const dotState = this.dotKey ? entities[this.dotKey]?.state : undefined;
+    const dot = !showStatus
+      ? nothing
+      : custom
+        ? colorDot(custom.color)
+        : dotState !== undefined
+          ? statusDot(dotState)
+          : nothing;
 
     const badge = this.headerBadge?.(entities);
 
@@ -178,7 +260,7 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
     >
       <div class="header">
         <div class="title">
-          ${showStatus && dotState !== undefined ? statusDot(dotState) : nothing}
+          ${dot}
           <span class="name"
             >${
               linkTarget
