@@ -1,1 +1,5 @@
-export function registerCards(): void {}
+import { registerCards } from "./registry";
+
+export { registerCards };
+
+registerCards();
