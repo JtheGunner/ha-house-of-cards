@@ -4,19 +4,6 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
-### Added
-
-- `hoc-devices-card`: `name` adds a title above the table, and `device_title` replaces the title of the name column.
-- `show_title: false` hides the title of the device card and the issues card. A `badge` stays; the visual editor then hides the title name and link options.
-
-### Changed
-
-- Text sizes follow the Mushroom and tile cards: titles and values are 14px, labels, units, badges and details 12px (`--ha-font-size-m` and `--ha-font-size-s` when the theme sets them). Values are no longer bold and larger.
-
-### Fixed
-
-- The device card keeps the theme's card shadow, as the devices card does. The status edge replaced it before.
-
 ## [0.3.0] - 2026-11-27
 
 ### Added
@@ -30,16 +17,20 @@ All notable changes to this project are documented here. The format follows [Kee
 - Presets: the device card knows GitHub Pulse and YouTrack devices and starts with their fields and status, including the GitHub profile for the account device.
 - `badge` on the device card: shows any sensor or attribute as a badge on the far side of the title. It is grey by default and takes a `color`.
 - `link` on the device card accepts `device` (the device's page) or `sensor:attribute` (a URL held in an attribute); `link_url` sets any https URL while `link` gives no target; the visual editor hides it once a link source is chosen. `link: true` keeps meaning the device page.
+- `hoc-devices-card`: `name` adds a title above the table, and `device_title` replaces the title of the name column.
+- `show_title: false` hides the title of the device card and the issues card. A `badge` stays; the visual editor then hides the title name and link options.
 
 ### Changed
 
 - The YouTrack issues card tells you when the chosen sensor lists no issues, and its editor offers only sensors that do.
-- **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. `hoc-github-repos-card` is now `hoc-devices-card` with `platform: github_pulse` instead of `repositories: all`, `devices` instead of a repository list and `show_status` instead of `show_activity`. Update `type:` and these options in existing dashboards.
+- **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. `hoc-github-repos-card` is now `hoc-devices-card` with `platform: github_pulse` instead of `repositories: all`, `devices` instead of a repository list and `show_status` instead of `show_activity` and `shorten_names` instead of `hide_owner`. Update `type:` and these options in existing dashboards.
 - Every card offers a live preview in the card picker.
+- Text sizes follow the Mushroom and tile cards: titles and values are 14px, labels, units, badges and details 12px (`--ha-font-size-m` and `--ha-font-size-s` when the theme sets them). Values are no longer bold and larger.
 
 ### Fixed
 
 - Selecting a device twice in the table no longer ties two entries together; duplicates are dropped.
+- The device card keeps the theme's card shadow, as the devices card does. The status edge replaced it before.
 
 ### Removed
 
