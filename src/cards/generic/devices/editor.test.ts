@@ -63,7 +63,7 @@ describe("hoc-devices-card-editor", () => {
     expect(names).toContain("device_title");
     expect(names.indexOf("device_title")).toBe(names.indexOf("name") + 1);
     const labelOf = (name: string) => form.computeLabel({ name, selector: {} });
-    expect(labelOf("name")).toBe("Titel");
+    expect(labelOf("name")).toBe("Title");
   });
 
   it("stores no platform when none is chosen", async () => {
