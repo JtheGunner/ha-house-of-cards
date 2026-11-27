@@ -57,4 +57,5 @@ export const de: Record<LocaleKey, string> = {
   layout_list: "Liste",
   order_asc: "Aufsteigend",
   order_desc: "Absteigend",
+  editor_show_release: "Release-Version anzeigen",
 };

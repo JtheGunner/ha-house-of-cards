@@ -15,6 +15,7 @@ export class GithubRepoEditor extends HocBaseEditor<GithubRepoConfig> {
       layoutSelector(this.hass, ["compact", "standard", "list"]),
       { name: "name", selector: { text: {} } },
       { name: "link", selector: { boolean: {} } },
+      { name: "show_release", selector: { boolean: {} } },
       { name: "show_status", selector: { boolean: {} } },
       fieldsSelector(this.hass, this.config?.device),
     ];
