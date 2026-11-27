@@ -7,10 +7,15 @@ import {
 import type { YoutrackProjectConfig } from "./card";
 
 export class YoutrackProjectEditor extends HocBaseEditor<YoutrackProjectConfig> {
+  protected override fieldListNames = ["fields"];
+
   protected schema() {
     return [
       { ...deviceSelector("youtrack"), required: true },
       layoutSelector(["compact", "standard", "list"]),
+      { name: "name", selector: { text: {} } },
+      { name: "link", selector: { boolean: {} } },
+      { name: "show_status", selector: { boolean: {} } },
       fieldsSelector(this.hass, this.config?.device),
     ];
   }

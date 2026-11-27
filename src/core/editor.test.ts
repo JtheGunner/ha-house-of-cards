@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fixtureHass } from "../../test/fixtures/hass";
-import { deviceSelector, HocBaseEditor, layoutSelector } from "./editor";
+import type { BaseConfig } from "./base-card";
+import { deviceSelector, fieldsSelectorFromOptions, HocBaseEditor, layoutSelector } from "./editor";
 
 class TestEditor extends HocBaseEditor<{ type: string; device?: string; layout?: string }> {
   protected schema() {
@@ -49,8 +50,71 @@ describe("selectors", () => {
     });
   });
   it("layoutSelector offers the given options", () => {
-    expect(layoutSelector(["compact", "detailed"]).selector).toEqual({
-      select: { mode: "dropdown", options: ["compact", "detailed"] },
+    expect(layoutSelector(["compact", "list"]).selector).toEqual({
+      select: { mode: "dropdown", options: ["compact", "list"] },
     });
+  });
+});
+
+describe("field list editing", () => {
+  class FieldEditor extends HocBaseEditor<BaseConfig & { fields?: unknown[] }> {
+    protected override fieldListNames = ["fields"];
+    protected schema() {
+      return [fieldsSelectorFromOptions([{ value: "stars", label: "Stars" }])];
+    }
+  }
+  customElements.define("hoc-field-test-editor", FieldEditor);
+
+  async function mountEditor(config: Record<string, unknown>) {
+    const editor = document.createElement("hoc-field-test-editor") as FieldEditor;
+    editor.hass = fixtureHass();
+    editor.setConfig({ type: "custom:x", ...config } as never);
+    const received: Record<string, unknown>[] = [];
+    editor.addEventListener("config-changed", (e) =>
+      received.push((e as CustomEvent).detail.config),
+    );
+    document.body.append(editor);
+    await editor.updateComplete;
+    const form = editor.shadowRoot?.querySelector("ha-form") as unknown as {
+      data: Record<string, unknown>;
+      dispatchEvent: (e: Event) => boolean;
+    };
+    return { form, received };
+  }
+
+  it("offers name, icon and colour per field", () => {
+    const schema = fieldsSelectorFromOptions([{ value: "stars", label: "Stars" }]);
+    const fields = (schema.selector as { object: { fields: Record<string, unknown> } }).object
+      .fields;
+    expect(Object.keys(fields)).toEqual(["key", "name", "icon", "color"]);
+  });
+
+  it("shows string entries as objects in the form", async () => {
+    const { form } = await mountEditor({
+      fields: ["stars", "latest_release:url", { key: "forks", name: "F" }],
+    });
+    expect(form.data.fields).toEqual([
+      { key: "stars" },
+      { key: "latest_release:url" },
+      { key: "forks", name: "F" },
+    ]);
+  });
+
+  it("drops the option when the last field is removed", async () => {
+    const { form, received } = await mountEditor({ fields: ["stars"] });
+    form.dispatchEvent(new CustomEvent("value-changed", { detail: { value: { fields: [] } } }));
+    expect(received[0]).not.toHaveProperty("fields");
+  });
+
+  it("removes empty strings and rows without a key", async () => {
+    const { form, received } = await mountEditor({});
+    form.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: { fields: [{ key: "stars", name: "", icon: "mdi:star" }, { name: "x" }] },
+        },
+      }),
+    );
+    expect(received[0]?.fields).toEqual([{ key: "stars", icon: "mdi:star" }]);
   });
 });

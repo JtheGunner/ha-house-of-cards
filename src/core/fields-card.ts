@@ -11,12 +11,18 @@ import { fieldStyles, fieldTile } from "./parts/field-tile";
 import { statusDot } from "./parts";
 import { resolveDeviceEntities, type ResolvedEntities } from "./resolver";
 
-export type FieldsLayout = "compact" | "standard" | "detailed" | "list";
+export type FieldsLayout = "compact" | "standard" | "list";
 
 export interface FieldsConfig extends BaseConfig {
   device?: string;
   fields?: FieldConfig[];
   layout?: FieldsLayout;
+  /** Replaces the device name in the header. */
+  name?: string;
+  /** Link the name to the device's configuration URL (https only). Off by default. */
+  link?: boolean;
+  /** Show the status dot and the accent edge. On by default. */
+  show_status?: boolean;
 }
 
 function assertFields(fields: unknown): void {
@@ -55,6 +61,13 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
         flex: 1;
         font-weight: 500;
         color: var(--primary-text-color);
+      }
+      .name a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .name a:hover {
+        text-decoration: underline;
       }
       .grid {
         display: grid;
@@ -119,19 +132,24 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
     const device = deviceId ? hass.devices[deviceId] : undefined;
     if (!deviceId || !device) return this.renderMessage("device_not_found", true);
 
-    const name = device.name_by_user ?? device.name ?? deviceId;
+    const deviceName = device.name_by_user ?? device.name ?? deviceId;
+    const name = config.name?.trim() || deviceName;
+    const url = device.configuration_url;
+    const linkTarget = config.link === true && url?.startsWith("https://") ? url : undefined;
+    const showStatus = config.show_status !== false;
     const entities = resolveDeviceEntities(hass, deviceId, this.platform);
-    const layout = config.layout ?? "standard";
-    const specs = (config.fields ?? this.defaultFields(layout, entities)).map(parseField);
-    const views = buildFieldViews(hass, entities, specs, name);
+    const layout: FieldsLayout =
+      config.layout === "compact" || config.layout === "list" ? config.layout : "standard";
+    const chosen = config.fields?.length ? config.fields : this.defaultFields(layout, entities);
+    const views = buildFieldViews(hass, entities, chosen.map(parseField), deviceName);
 
     const statusViews = buildFieldViews(
       hass,
       entities,
       this.statusKeys.map((key) => ({ key })),
-      name,
+      deviceName,
     );
-    const accent = accentColor(statusViews);
+    const accent = showStatus ? accentColor(statusViews) : undefined;
     const alert = statusViews.some((view) => view.tone === "failure");
     const dotState = this.dotKey ? entities[this.dotKey]?.state : undefined;
 
@@ -140,8 +158,14 @@ export abstract class HocFieldsCard<C extends FieldsConfig> extends HocBaseCard<
       style=${accent ? `--hoc-accent: ${accent}` : ""}
     >
       <div class="header">
-        ${dotState !== undefined ? statusDot(dotState) : nothing}
-        <span class="name">${name}</span>
+        ${showStatus && dotState !== undefined ? statusDot(dotState) : nothing}
+        <span class="name"
+          >${
+            linkTarget
+              ? html`<a href=${linkTarget} target="_blank" rel="noopener noreferrer">${name}</a>`
+              : name
+          }</span
+        >
       </div>
       ${this.renderFields(views, layout)}
     </ha-card>`;
