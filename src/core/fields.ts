@@ -119,12 +119,17 @@ export function colorValue(color: string): string {
   return /^[a-z-]+$/.test(color) ? paletteColor(color) : color;
 }
 
+/** A stable palette colour for any text, so the same name always gets the same colour. */
+export function paletteColorFor(text: string): string {
+  return paletteColor(PALETTE[hash(text) % PALETTE.length] ?? "blue");
+}
+
 function resolveColor(spec: FieldSpec, tone: Tone | undefined): string {
   if (spec.color) {
     return /^[a-z-]+$/.test(spec.color) ? paletteColor(spec.color) : spec.color;
   }
   if (tone) return TONE_COLORS[tone];
-  return paletteColor(PALETTE[hash(spec.key) % PALETTE.length] ?? "blue");
+  return paletteColorFor(spec.key);
 }
 
 function baseLabel(

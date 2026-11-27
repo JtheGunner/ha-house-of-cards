@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- YouTrack issues card: a title (project and query name, `name` replaces it), an optional `badge` for the number of matches or an attribute, coloured state badges and priority edges (`colors` overrides them), a `+N more` line that expands to every issue (`expandable`), a link to the same search in YouTrack for issues the sensor does not list, and a detail view per issue with its full summary, priority and assignee.
 - `hoc-devices-card`: a sortable table of several devices, for any integration. Use `platform` to list every device of an integration or `devices` to pick them. GitHub Pulse and YouTrack bring default columns and status.
 - Columns take `name`, `icon`, `color`, `title_color` and `align` (numbers right, text left by default); `column_titles` shows titles as text, icon or both.
 - `show_status` and `status` rules show a dot before each name; `link` links the names to the device page or to a URL in an attribute; `hide_owner` shortens `owner/repo` to `repo`.
@@ -17,6 +18,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Changed
 
+- The YouTrack issues card tells you when the chosen sensor lists no issues, and its editor offers only sensors that do.
 - **Breaking:** `hoc-github-repo-card` and `hoc-youtrack-project-card` are now `hoc-device-card`, which also shows your GitHub profile for the account device. `hoc-github-repos-card` is now `hoc-devices-card` with `platform: github_pulse` instead of `repositories: all`, `devices` instead of a repository list and `show_status` instead of `show_activity`. Update `type:` and these options in existing dashboards.
 - Every card offers a live preview in the card picker.
 
