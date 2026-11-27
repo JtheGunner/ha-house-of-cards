@@ -84,6 +84,65 @@ describe("hoc-devices-card", () => {
     expect(headers).toEqual(["Device", "CI", "Stars", "Commits this month", "Release"]);
   });
 
+  describe("with localized entity names", () => {
+    const Y = "youtrack";
+    async function mountYouTrack(columns?: unknown[], sortBy?: string) {
+      const hass = fixtureHass({
+        language: "de",
+        devices: [
+          { id: "p1", name: "Alpha" },
+          { id: "p2", name: "Beta" },
+        ],
+        entities: [
+          {
+            platform: Y,
+            deviceId: "p1",
+            translationKey: "issues_open",
+            state: "9",
+            attributes: { friendly_name: "Alpha Offene Issues" },
+          },
+          {
+            platform: Y,
+            deviceId: "p2",
+            translationKey: "issues_open",
+            state: "2",
+            attributes: { friendly_name: "Beta Offene Issues" },
+          },
+        ],
+      });
+      const card = document.createElement("hoc-devices-card") as DevicesCard;
+      card.setConfig({
+        type: "custom:hoc-devices-card",
+        platform: Y,
+        ...(columns ? { columns } : {}),
+        ...(sortBy ? { sort_by: sortBy, sort_order: "asc" } : {}),
+      } as never);
+      card.hass = hass;
+      document.body.append(card);
+      await card.updateComplete;
+      const root = card.shadowRoot as ShadowRoot;
+      return {
+        headers: [...root.querySelectorAll("thead th")].map((th) => th.textContent?.trim()),
+        names: [...root.querySelectorAll("tbody tr .name")].map((el) => el.textContent?.trim()),
+      };
+    }
+
+    it("titles a column with the Home Assistant entity name, not the short label", async () => {
+      const { headers } = await mountYouTrack(["issues_open"]);
+      expect(headers).toEqual(["Gerät", "Offene Issues"]);
+    });
+
+    it("lets a configured column name win", async () => {
+      const { headers } = await mountYouTrack([{ key: "issues_open", name: "Offen" }]);
+      expect(headers).toEqual(["Gerät", "Offen"]);
+    });
+
+    it("still sorts by the stored English key", async () => {
+      const { names } = await mountYouTrack(["issues_open"], "issues_open");
+      expect(names).toEqual(["Beta", "Alpha"]);
+    });
+  });
+
   it("sorts by a column ascending and descending", async () => {
     const asc = await mount(REPOS, { sort_by: "commits_this_month", sort_order: "asc" });
     expect(asc.names).toEqual(["alpha", "bravo", "charlie"]);
