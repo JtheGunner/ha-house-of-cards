@@ -20,15 +20,7 @@ export interface HassDevice {
   name_by_user?: string | null;
 }
 
-export interface HassConnection {
-  subscribeMessage<T>(
-    callback: (message: T) => void,
-    message: Record<string, unknown>,
-  ): Promise<() => void>;
-}
-
 export interface HomeAssistant {
-  connection?: HassConnection;
   states: Record<string, HassEntityState>;
   entities: Record<string, HassEntityRegistryEntry>;
   devices: Record<string, HassDevice>;

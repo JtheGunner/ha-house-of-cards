@@ -22,7 +22,6 @@ export const EDITOR_OPTION_NAMES = [
   "align",
   "title_color",
   "status",
-  "status_template",
   "field",
   "operator",
   "value",

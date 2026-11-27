@@ -122,16 +122,12 @@ export function statusSelector(
           state: {
             label: label("state"),
             required: true,
-            selector: { select: { mode: "dropdown", custom_value: true, options: states } },
+            selector: { select: { mode: "dropdown", options: states } },
           },
         },
       },
     },
   };
-}
-
-export function statusTemplateSelector(): FormSchemaItem {
-  return { name: "status_template", selector: { template: {} } };
 }
 
 function toFormEntry(item: FieldConfig): Record<string, unknown> {
@@ -198,9 +194,6 @@ export abstract class HocBaseEditor<C extends BaseConfig> extends LitElement {
       const entries = cleanEntries(config[name], "field");
       if (entries.length > 0) config[name] = entries;
       else delete config[name];
-    }
-    if (typeof config["status_template"] === "string" && config["status_template"].trim() === "") {
-      delete config["status_template"];
     }
     this.dispatchEvent(
       new CustomEvent("config-changed", {

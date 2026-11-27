@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
-- Status of the device card: `status` is a list of rules (sensor or `sensor:attribute`, condition, value, resulting status) and `status_template` is a Home Assistant template that returns `success`, `pending`, `failure`, `none` or a colour. Both are available in the visual editor. They replace the integration's default status; the template wins over the rules and is rendered with the `device_id`.
+- Status of the device card: `status` is a list of rules (sensor or `sensor:attribute`, condition, value, resulting status). The first match wins and replaces the integration's default status. Rules are edited in the visual editor and only shown while `show_status` is on.
 - Presets: the device card knows GitHub Pulse and YouTrack devices and starts with their fields and status, including the GitHub profile for the account device.
 - `show_release` on the device card (GitHub devices): shows the latest release version on the far side of the header. Off by default.
 - Per-column `title_color` in the repositories table colours the column title; `color` tints the values.

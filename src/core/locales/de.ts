@@ -66,7 +66,6 @@ export const de: Record<LocaleKey, string> = {
   editor_align: "Ausrichtung",
   editor_title_color: "Titelfarbe",
   editor_status: "Status-Regeln",
-  editor_status_template: "Status-Template",
   editor_field: "Sensor",
   editor_operator: "Bedingung",
   editor_value: "Wert",

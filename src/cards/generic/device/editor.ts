@@ -3,7 +3,6 @@ import {
   HocBaseEditor,
   layoutSelector,
   statusSelector,
-  statusTemplateSelector,
 } from "../../../core/editor";
 import { discoverFieldOptions } from "../../../core/fields";
 import { presetOfDevice } from "../../../core/presets";
@@ -25,8 +24,7 @@ export class DeviceCardEditor extends HocBaseEditor<DeviceCardConfig> {
       { name: "link", selector: { boolean: {} } },
       ...(hasBadge ? [{ name: "show_release", selector: { boolean: {} } }] : []),
       { name: "show_status", selector: { boolean: {} } },
-      statusSelector(this.hass, options),
-      statusTemplateSelector(),
+      ...(this.config?.show_status !== false ? [statusSelector(this.hass, options)] : []),
       fieldsSelector(this.hass, device),
     ];
   }

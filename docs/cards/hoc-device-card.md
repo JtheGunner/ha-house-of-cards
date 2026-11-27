@@ -17,17 +17,16 @@ fields:
     color: orange
 ```
 
-| Option            | Default                                              | Description                                                                        |
-| ----------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `device`          | required                                             | Any device. Pick it in the visual editor.                                          |
-| `layout`          | `standard`                                           | `compact` (icons and values in a row), `standard` (tiles) or `list` (rows)         |
-| `fields`          | the integration's preset, else the first six sensors | What to show, see below. An empty list restores the defaults.                      |
-| `name`            | device name                                          | Title shown in the header                                                          |
-| `link`            | `false`                                              | Make the title a link to the device's page (https only, opens in a new tab)        |
-| `show_status`     | `true`                                               | Show the status dot and accent edge                                                |
-| `show_release`    | `false`                                              | GitHub devices: show the latest release in the header, on the far side of the name |
-| `status`          | the preset's status                                  | Rules that decide the status, see [Status](#status)                                |
-| `status_template` | none                                                 | A template that decides the status, see [Status](#status)                          |
+| Option         | Default                                              | Description                                                                        |
+| -------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `device`       | required                                             | Any device. Pick it in the visual editor.                                          |
+| `layout`       | `standard`                                           | `compact` (icons and values in a row), `standard` (tiles) or `list` (rows)         |
+| `fields`       | the integration's preset, else the first six sensors | What to show, see below. An empty list restores the defaults.                      |
+| `name`         | device name                                          | Title shown in the header                                                          |
+| `link`         | `false`                                              | Make the title a link to the device's page (https only, opens in a new tab)        |
+| `show_status`  | `true`                                               | Show the status dot and accent edge                                                |
+| `show_release` | `false`                                              | GitHub devices: show the latest release in the header, on the far side of the name |
+| `status`       | the preset's status                                  | Rules that decide the status, see [Status](#status)                                |
 
 ## Fields
 
@@ -60,9 +59,9 @@ Name, unit and icon come from Home Assistant. Sensors that are disabled or have 
 
 ## Status
 
-The status colours the accent edge and the dot in the header. Without `status` and `status_template` the preset's default applies. Set `show_status: false` to hide it.
+Rules decide the status. It colours the accent edge and the dot in the header. Without `status` the preset's default applies. Set `show_status: false` to hide it.
 
-**Rules.** The first rule that matches decides. If none matches, the status is neutral (grey dot, no accent).
+The first rule that matches decides. If none matches, the status is neutral (grey dot, no accent).
 
 ```yaml
 status:
@@ -88,16 +87,6 @@ status:
 | `state`    | `success`, `pending`, `failure`, `none`, a palette or Home Assistant colour name or any CSS colour                     |
 
 A rule is skipped while its sensor is missing, unknown or unavailable.
-
-**Template.** `status_template` is a Home Assistant template. Its result is one of the `state` values above and updates live. The template gets the variable `device_id`.
-
-```yaml
-status_template: >-
-  {% set open = states('sensor.hhoc_open_issues') | int(0) %}
-  {{ 'failure' if open > 20 else 'pending' if open > 10 else 'success' }}
-```
-
-With a template, the dot stays grey until the first result arrives. The template wins over `status`.
 
 ## Colours
 

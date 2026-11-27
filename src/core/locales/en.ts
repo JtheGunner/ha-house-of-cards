@@ -64,7 +64,6 @@ export const en = {
   editor_align: "Alignment",
   editor_title_color: "Title colour",
   editor_status: "Status rules",
-  editor_status_template: "Status template",
   editor_field: "Sensor",
   editor_operator: "Condition",
   editor_value: "Value",
