@@ -16,6 +16,11 @@ export class DevicesEditor extends HocBaseEditor<DevicesConfig> {
   protected override fieldListNames = ["columns"];
   protected override ruleListNames = ["status"];
   protected override linkNames = ["link"];
+  protected override pairs: [string, string][] = [
+    ["name", "device_title"],
+    ["sort_by", "sort_order"],
+    ["shorten_names", "link"],
+  ];
   protected override labelNames = { name: "title" };
   protected override noneNames = ["platform"];
 

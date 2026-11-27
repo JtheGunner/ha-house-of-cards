@@ -6,6 +6,16 @@ import type { DevicesEditor } from "./editor";
 
 beforeAll(() => registerCards([devicesCardDefinition]));
 
+interface SchemaEntry {
+  name: string;
+  selector: Record<string, unknown>;
+  schema?: SchemaEntry[];
+}
+
+/** The schema without its rows, so a test finds an option wherever it is placed. */
+const flat = (form: { schema: SchemaEntry[] }): SchemaEntry[] =>
+  form.schema.flatMap((item) => item.schema ?? [item]);
+
 describe("hoc-devices-card-editor", () => {
   it("never stores the same repository twice", async () => {
     const editor = document.createElement("hoc-devices-card-editor") as DevicesEditor;
@@ -41,7 +51,7 @@ describe("hoc-devices-card-editor", () => {
     document.body.append(editor);
     await editor.updateComplete;
     const form = editor.shadowRoot?.querySelector("ha-form") as unknown as {
-      schema: { name: string; selector: Record<string, unknown> }[];
+      schema: SchemaEntry[];
       computeLabel: (item: { name: string; selector: Record<string, unknown> }) => string;
     } & HTMLElement;
     return { form, received };
@@ -49,16 +59,35 @@ describe("hoc-devices-card-editor", () => {
 
   it("offers the integrations that own devices, plus a choice for none", async () => {
     const { form } = await mountPlain({});
-    const select = form.schema.find((item) => item.name === "platform")?.selector as {
+    const select = flat(form).find((item) => item.name === "platform")?.selector as {
       select: { options: { value: string; label: string }[] };
     };
     expect(select.select.options.map((o) => o.value)).toEqual(["none", "github_pulse", "youtrack"]);
     expect(select.select.options[1]?.label).toBe("GitHub Pulse");
   });
 
+  it("places related options side by side", async () => {
+    const { form } = await mountPlain({ platform: "github_pulse" }, "owner/alpha");
+    const rows = form.schema
+      .filter((item) => item.schema)
+      .map((item) => item.schema?.map((entry) => entry.name));
+    expect(rows).toEqual([
+      ["name", "device_title"],
+      ["sort_by", "sort_order"],
+      ["shorten_names", "link"],
+    ]);
+  });
+
+  it("keeps an option alone when its partner is not offered", async () => {
+    const { form } = await mountPlain({ platform: "github_pulse" });
+    const rows = form.schema.filter((item) => item.schema).length;
+    expect(rows).toBe(2);
+    expect(flat(form).map((item) => item.name)).toContain("link");
+  });
+
   it("offers a title and a title for the name column", async () => {
     const { form } = await mountPlain({ platform: "github_pulse" });
-    const names = form.schema.map((item) => item.name);
+    const names = flat(form).map((item) => item.name);
     expect(names).toContain("name");
     expect(names).toContain("device_title");
     expect(names.indexOf("device_title")).toBe(names.indexOf("name") + 1);
@@ -68,9 +97,9 @@ describe("hoc-devices-card-editor", () => {
 
   it("offers shorten_names only when a listed name contains a slash", async () => {
     const plain = await mountPlain({ platform: "github_pulse" });
-    expect(plain.form.schema.map((item) => item.name)).not.toContain("shorten_names");
+    expect(flat(plain.form).map((item) => item.name)).not.toContain("shorten_names");
     const slashed = await mountPlain({ platform: "github_pulse" }, "owner/alpha");
-    expect(slashed.form.schema.map((item) => item.name)).toContain("shorten_names");
+    expect(flat(slashed.form).map((item) => item.name)).toContain("shorten_names");
   });
 
   it("stores no platform when none is chosen", async () => {
@@ -83,14 +112,14 @@ describe("hoc-devices-card-editor", () => {
 
   it("shows the status rules only while the status dot is on", async () => {
     const off = await mountPlain({ platform: "github_pulse" });
-    expect(off.form.schema.map((item) => item.name)).not.toContain("status");
+    expect(flat(off.form).map((item) => item.name)).not.toContain("status");
     const on = await mountPlain({ platform: "github_pulse", show_status: true });
-    expect(on.form.schema.map((item) => item.name)).toContain("status");
+    expect(flat(on.form).map((item) => item.name)).toContain("status");
   });
 
   it("limits the device picker to the chosen integration", async () => {
     const { form } = await mountPlain({ platform: "youtrack" });
-    const devices = form.schema.find((item) => item.name === "devices")?.selector as {
+    const devices = flat(form).find((item) => item.name === "devices")?.selector as {
       device: { integration?: string; multiple: boolean };
     };
     expect(devices.device).toEqual({ multiple: true, integration: "youtrack" });
@@ -98,7 +127,7 @@ describe("hoc-devices-card-editor", () => {
 
   it("offers the device page as a link source", async () => {
     const { form } = await mountPlain({ platform: "github_pulse" });
-    const link = form.schema.find((item) => item.name === "link")?.selector as {
+    const link = flat(form).find((item) => item.name === "link")?.selector as {
       select: { options: { value: string }[] };
     };
     expect(link.select.options.map((o) => o.value)).toEqual(["none", "device"]);
