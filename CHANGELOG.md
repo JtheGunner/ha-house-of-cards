@@ -4,9 +4,15 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-28
+
 ### Added
 
 - `hoc-devices-card`: `tap_action` and `hold_action` open a popup from the device name of each row (not the card header): the standard `more-info` popup or a custom `browser_mod` popup through `fire-dom-event`, with `{{ entity }}`, `{{ device_id }}` and `{{ device_name }}` filled in per row. A `tap_action` replaces the link; the visual editor offers `more-info`.
+
+### Fixed
+
+- `hoc-devices-card`: column titles show the entity name Home Assistant displays in your language instead of the English sensor key. `columns` and `sort_by` keep the English keys.
 
 ## [0.3.1] - 2026-11-27
 
@@ -91,7 +97,8 @@ All notable changes to this project are documented here. The format follows [Kee
 - Visual editors for all cards, English and German labels, and theme-variable styling for the classic dashboard and UI Lovelace Minimalist.
 - Warn-only documentation drift check for pull requests.
 
-[Unreleased]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/JtheGunner/ha-house-of-cards/compare/v0.2.1...v0.2.2
